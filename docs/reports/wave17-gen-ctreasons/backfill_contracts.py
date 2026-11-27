@@ -72,10 +72,10 @@ PRE_EXISTING = ["chunk-contracts", "diagnostics", "source", "source-effects"]
 #: its before-side comes out of the document itself and its after-side is the
 #: artifact set committed in the same report directory.
 DOCUMENTS = [
-    "docs/reports/wave9-corpus/diff-e01f1-to-wave9.json.gz",
-    "docs/reports/wave10-corpus/diff-wave9-to-wave10.json.gz",
-    "docs/reports/wave11-corpus/diff-wave10-to-wave11.json.gz",
-    "docs/reports/wave12-corpus/diff-wave11-to-wave12.json.gz",
+    "docs/reports/archive/early-waves/wave9-corpus/diff-e01f1-to-wave9.json.gz",
+    "docs/reports/archive/early-waves/wave10-corpus/diff-wave9-to-wave10.json.gz",
+    "docs/reports/archive/early-waves/wave11-corpus/diff-wave10-to-wave11.json.gz",
+    "docs/reports/archive/early-waves/wave12-corpus/diff-wave11-to-wave12.json.gz",
     "docs/reports/wave13-corpus/diff-wave12-to-wave13.json.gz",
     "docs/reports/wave14-corpus/diff-wave13-to-wave14.json.gz",
     "docs/reports/wave15-corpus/diff-wave14-to-wave15.json.gz",
@@ -84,6 +84,34 @@ DOCUMENTS = [
     "docs/reports/wave16-corpus/diff-wave15-to-wave16.json.gz",
 ]
 
+
+#: REPORTS-ARCHIVE-AND-PRUNING moved the wave 9-12 reports under
+#: docs/reports/archive/early-waves/; the commit a backfill record names holds
+#: each document at its path before that move.
+ARCHIVE_PREFIX = "docs/reports/archive/early-waves/"
+
+
+def original_path(relative: str) -> str:
+    """The repository path `relative` had at the commit a backfill record names."""
+    if relative.startswith(ARCHIVE_PREFIX):
+        return "docs/reports/" + relative[len(ARCHIVE_PREFIX):]
+    return relative
+
+
+def current_path(recorded: str) -> pathlib.Path:
+    """Where a path recorded inside a committed document lives now.
+
+    The documents are digest-pinned, so a before-side path they record keeps
+    its pre-archive spelling; the archived copy is used only when that
+    spelling is gone and the archived one exists.
+    """
+    path = ROOT / recorded
+    prefix = "docs/reports/"
+    if not path.exists() and recorded.startswith(prefix):
+        archived = ROOT / ARCHIVE_PREFIX / recorded[len(prefix):]
+        if archived.exists():
+            return archived
+    return path
 
 def serialize(document) -> str:
     """The byte form `diff_artifacts.py` itself writes."""
@@ -141,7 +169,7 @@ def backfill(path: pathlib.Path, original):
     """The backfilled document, or `None` if the section is already there."""
     if SECTION in original.get("artifacts", {}):
         return None
-    before = ROOT / original["archived"]
+    before = current_path(original["archived"])
     after = path.parent / "artifacts"
     if not (before / "manifest.json").is_file():
         raise SystemExit("%s: %s carries no artifact manifest" % (path, before))
@@ -175,7 +203,7 @@ def backfill(path: pathlib.Path, original):
             "document_schema_version_unchanged": original["schema_version"],
             "inputs": {
                 "archived": original["archived"],
-                "measured": after.relative_to(ROOT).as_posix(),
+                "measured": original_path(after.relative_to(ROOT).as_posix()),
             },
             "original_commit": ORIGINAL_COMMIT,
             "original_sha256": digest(serialize(original)),

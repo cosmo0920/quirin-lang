@@ -1,28 +1,13 @@
 {
  "schema": "quirin-pruned-report-artifacts/1",
  "card": "wave10-corpus",
- "total_pruned_files": 4,
- "total_pruned_bytes": 970706,
+ "total_pruned_files": 1,
+ "total_pruned_bytes": 14681,
  "artifacts": [
-  {
-   "path": "artifacts/chunk-contracts.json.gz",
-   "bytes": 281900,
-   "sha256": "44fa0df45e13d8ed8d0209a728bc0bce969e1280fbad6f3ea6d86234e9094883"
-  },
-  {
-   "path": "artifacts/diagnostics.json.gz",
-   "bytes": 386686,
-   "sha256": "90484b011d8f331e09fe2d65c867845e264045f15ea08f9f62a5cd8776ca791c"
-  },
   {
    "path": "corpus-run.log.gz",
    "bytes": 14681,
    "sha256": "1e3ed060dadbf5cf38945c86aff4b4e3fe10d171673a3459b5fdef60c80067ca"
-  },
-  {
-   "path": "diff-wave9-to-wave10.json.gz",
-   "bytes": 287439,
-   "sha256": "7ff8e7fc80ce9f5d63bdc35292d0d461a6dd4e16d36b63910d2d4818ecb960a6"
   }
  ]
 }
