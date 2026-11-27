@@ -176,7 +176,26 @@ not run, because rule 92 is not on any route. The pinned routes
 
 ## 5. Gate
 
-GATE_RESULT
+`python3 scripts/gate_scope.py --base 76c1f9cfc` (full mode, because the diff
+reaches `qcore-c-gateway`), run through `private/toolchain/env.sh` with
+Ubuntu clang 21.1.8 and Lean 4.35.0. Logs are in this worktree's
+`private/gate2/` (`gate.json`, per-step logs).
+
+* **Final tree `46eb008dc`: exit 0.** Submodules 0, fmt 0, Clippy 0.
+* Root Rust: **10,373 passed / 0 failed / 24 ignored** (725 units, 770
+  summaries).
+* Both reevaluation examples exit 0.
+* `check_lean_audits.py`: **532 audits**.
+* Python: **807 tests**, exit 0.
+* No provider path changed, so the provider gate was not run.
+* The LLP64 fixture scan over the card's test files exits 0.
+
+An earlier attempt on `d65d11761` (`private/gate/`) passed every step except
+the Python suite. Exactly one test failed:
+`test_gate_scope_census.test_the_census_covers_the_suite` (703 not greater
+than 703.8). The cause was the card's new integration test binary, which
+added a unit the committed read census has not observed. The tests were then
+moved into the crate's unit tests (GATE-SCOPE-READ-CENSUS-FLOOR).
 
 ## 6. Follow-ups
 
@@ -198,3 +217,7 @@ is a rule 92 reading; the custody leg is unchanged), and
 W46-FLUENT-ACCOUNTING-LOG-CALLBACK-EFFECT (log calls lie only on clamp
 arms, outside the update window). The plan row of FB-BACKLOG-ACCOUNTING is
 left to the integrator, as the brief requires.
+
+## 7. Increment paragraph
+
+**FB-BACKLOG-ACCOUNTING (Fluent Bit P1.2, gateway rule 92).** A census (docs/reports/fb-backlog-accounting/census.json) classifies every backlog/input byte and count ledger site at Fluent Bit 046accf6 as saturating transition, strict bound, batch overshoot, advisory limit or snapshot, with the inequality read from the C: flb_input_chunk_output_would_exceed_limit admits iff fs + bl + c <= T, with every subtraction guarded; cb_queue_chunks overshoots storage.backlog.mem_limit by less than queues * largest chunk; mem_buf_limit and max_chunks_up (bypassed by cio_chunk_up_force) are advisory. Only ChunkIO's unit counters are stated by a contract. The probe pins that the custody gateway reads every ledger update, wrapping or not, as custody-neutral (Safe), so accounting cannot move a custody verdict. Rule 92 (ledger_transition.rs, one pub mod line in the crate root) is a typed-source consumer with its own node admission. It certifies each write to a named unsigned ledger as a guarded saturating subtraction or addition, or one of their two clamps, optionally paired one-to-one per path with mk_list_add/mk_list_del. It refuses a bare wrapping update, any other guard or clamp shape, a store or call between guard and update, a missing or doubled update and any scan loop. Fixtures reproduce flb_input_chunk.c:66-92 and sb.c:224-290 with the flb_warn name argument replaced by a literal, because route T refuses the pinned unsequenced argument lists, and with the removal loop cut to its matching iteration; the mutation controls refuse. Lean: QCore.BacklogLedger (33 audited theorems: no wrap; decision table; the ledger = linked-charges invariant across charge, discharge, repeated removal, residency, partial fan-out and rollback, with clamps unreachable under it; missing and doubled discharge break it or are hidden by the clamp; the admission inequality; the batch bound; the signed-delta magnitude). Opt-in current --monkey-linked, base 76c1f9cfc against tip 8ab7477c3: no moved row, 4,804 function rows and 181 unit statuses identical after blanking evidence_version, which carries the checkout HEAD. Scoped gate (full) on 46eb008dc: exit 0; Rust 10,373/0/24; 532 Lean audits; Python 807. An earlier attempt failed only test_gate_scope_census's 90% read-census floor on the card's new test binary, so the tests moved into the crate's unit tests (GATE-SCOPE-READ-CENSUS-FLOOR). No provider contract changed and the pinned routes cannot run on this host. Follow-ups: FB-LEDGER-LOG-ARGUMENT-ORDER, -LOOP-SITES, -RECOMPUTED-CHARGE, -ROUTE-WIRING, -ADVISORY-LIMITS, -SIGNEDNESS-SITES.
