@@ -1,0 +1,2 @@
+{"base_leaves": ["18107: unresolved resource identity `timer`", "18107: unlink by `flb_sched_timer_destroy` of `timer`, which this function has not published"], "file": "src/flb_scheduler.c", "function": "flb_sched_timer_cb_destroy", "move": "Unknown -> Safe", "occurrence": 1, "tip_declarations": ["flb_sched_timer_destroy"], "tip_summaries": []}
+{"moves": {"Unknown -> Safe": 1}}

@@ -943,6 +943,12 @@ fn apply_with(
                             // decided from the body's own initialisation).
                             if link_member::held_admits(state, site, link) {
                                 state.unlinked.insert(site);
+                            } else if carried_link::admits(state, site, link) {
+                                // Card FB-RETRY-OR6-ELEMENT-IDENTITY (gateway
+                                // rule 91): the caller's links, carried by
+                                // this body's own destroyer clause.
+                                state.unlinked.insert(site);
+                                carried_link::spend(state, site);
                             } else {
                                 let description = link_member::held_refusal(called, name, link);
                                 refuse(function, line, description, Some(name), state, diagnostics);
@@ -1379,6 +1385,9 @@ pub(crate) mod element_release;
 
 #[path = "legacy_link_member.rs"]
 pub(crate) mod link_member;
+
+#[path = "legacy_carried_link.rs"]
+pub(crate) mod carried_link;
 
 #[cfg(test)]
 mod tests {

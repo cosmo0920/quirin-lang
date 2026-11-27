@@ -11945,6 +11945,10 @@ that only when every arriving edge has it.
     `a_mismatched_member_leaves_the_element_linked`, `vectors_hold`, …),
     bound to `FOREIGN_VECTORS`, `INIT_VECTORS` and `HELD_VECTORS` and
     `crates/qcore-c-gateway/tests/link_member_premises.rs`.
+    Amended by [rule 91](#constraint-91): a held object whose entry carries
+    its caller's link obligation (its contract's `resource_unpublished(p,
+    MEMBER)`) is admitted on that record; the obligation is checked at every
+    call of the summary rule 91 publishes.
 
 <a id="constraint-48"></a>
 
@@ -15195,5 +15199,65 @@ an unrelated held call (both `Unknown`, no leak, both holds kept).
     `a_declaration_keeps_the_refusal`, `a_non_call_keeps_the_old_test`,
     `no_ast_answer_keeps_the_old_test`, `a_keyword_declarator_stays`);
     [report](../reports/archive/language-and-tooling/call-with-deref-actual/README.md).
+
+<a id="constraint-91"></a>
+
+91. **A formal's link obligation is carried to its caller, as the
+    destroyer clause the caller already checks.** Card
+    FB-RETRY-OR6-ELEMENT-IDENTITY (`legacy_carried_link.rs`; hooks in
+    `legacy_container_publication.rs` (rule 43's held arm),
+    `legacy_transfer.rs` (`AbstractState::carried_links`, the entry seed in
+    `EntryCustody::build`, the join, the nested-call and per-statement kill,
+    and `observe_exit`'s formal dispositions) and `legacy_summary.rs`
+    (`infer_cfg_summary`'s probe and candidate); rule 46's kill policy
+    factored into `link_member::reach`, unchanged; contract specification
+    §C04.8, amended). It amends rule 46 (3) for a formal and answers
+    LERI-HELD-FORMAL-LINK-OBLIGATION for the bodies it can state.
+    (1) **The entry fact.** A contract (declared or derived) stating
+    `resource_unpublished(p, MEMBER)` at a position the entry binds seeds
+    `p`'s site with `Ready(MEMBER)`: the clause is the caller's obligation
+    that `p`'s `MEMBER` links are valid at the call, and rules 34, 43 and 46
+    check it at every call. The record is forgotten at every statement rule
+    46 forgets a `link_ready` record at (`reach`), at a nested call, and at a
+    rule 36b self-initialisation of an object its base may denote (which
+    overwrites the caller's links); it joins by equality. (2) **The
+    admission.** Rule 43's held arm, refused by rule 46 (3) for want of the
+    body's own initialisation, admits an object whose record is
+    `Ready(MEMBER)` for the destroyer's declared `MEMBER` and makes it
+    `Spent(MEMBER)` (`admits`, `spend`); a `Spent` record survives every
+    statement. (3) **The exit.** A formal the entry carries reads `Released`
+    only when its record there is `Spent`; released any other way (a plain
+    free, a destroyer admitted on the body's own initialisation, a restored
+    publication) it reads `Mixed`, which no mode matches (`observe`), so a
+    declared destroyer whose body frees without the unlink no longer
+    validates. (4) **The summary.** `infer_cfg_summary` offers the clause in
+    its probe at each bound formal the body hands directly to an element
+    destroyer naming a member (one member per formal, `candidates`,
+    `offer`) and attaches it to the candidate only where that formal's
+    settled mode is `Released` (`attach`); the candidate is then checked
+    against a fresh run. The summary is an element destroyer's, so each
+    caller discharges it by its own initialisation (rule 46 (3)), its own
+    published object (rule 10d), an element bound through `MEMBER` (rule 46
+    (2)), or carries it again to its own formal (this rule); every other
+    actual refuses there, and a consumer that does not apply a container
+    effect refuses the call. **Do not** seed a record for a position that
+    states no member, admit on a `Spent` record or for another member, keep
+    a `Ready` record across a statement that may write the object, read a
+    carried formal as released without its destroyer, or state the clause
+    where the formal is not released at every exit: no summary states the
+    obligation without the unlink, so a formal destroyed on one exit class
+    and stored or kept on another (`flb_output_task_queue_enqueue`'s
+    `retry`, the `*_property_check` instance destroyers) publishes nothing
+    and stays refused. Nothing here accuses. Not switchable: off would only
+    refuse. Measured (base `76c1f9cfc`, the opt-in current route): see the
+    [report](../reports/fb-retry-or6-element-identity/README.md).
+    `QCore.CarriedLinkObligation` (`the_seeded_record_holds`,
+    `retaining_keeps_every_ready_record`,
+    `the_carried_admission_is_sound`, `a_spent_record_admits_nothing`,
+    `a_carried_release_is_the_destroyers`,
+    `the_discharge_establishes_the_precondition`,
+    `no_discharge_no_admission`, `vectors_hold`, …), bound to
+    `ADMIT_VECTORS` and `OBSERVE_VECTORS` and
+    `crates/qcore-c-gateway/tests/link_member_premises.rs (module `carried_link_obligation`)`.
 
 <!-- generated:rules:end -->

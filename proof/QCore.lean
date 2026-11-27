@@ -74,6 +74,7 @@ import QCore.CalleeSummaryScope
 import QCore.CallerFrameHoldSwitch
 import QCore.CandidateComposition
 import QCore.CapacityBoundary
+import QCore.CarriedLinkObligation
 import QCore.CarriedPublication
 import QCore.CastActualPlace
 import QCore.CastBeforeAmpersand

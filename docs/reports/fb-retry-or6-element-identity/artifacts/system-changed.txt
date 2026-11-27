@@ -1,0 +1,7 @@
+src/flb_scheduler.c flb_sched_event_handler Unknown -> Unknown
+   - 18031 call to uncontracted function `flb_sched_timer_cb_destroy`
+   + 18031 unresolved resource identity `timer`
+   + 18031 unlink by `flb_sched_timer_cb_destroy` of `timer`, which this function has not published
+src/flb_scheduler.c flb_sched_timer_cb_destroy Unknown -> Safe
+   - 18107 unresolved resource identity `timer`
+   - 18107 unlink by `flb_sched_timer_destroy` of `timer`, which this function has not published

@@ -194,10 +194,26 @@ fn plain(place: &str) -> bool {
             .all(|byte| byte.is_ascii_alphanumeric() || byte == b'_')
 }
 
-/// Forget the records of every object one of `places` may reach: the sites
-/// its root's binding denotes, or every record when a root has no binding or
-/// an unknown one. A place with no identifier root (a literal) reaches none.
-fn forget_reached<'a>(state: &mut AbstractState, places: impl IntoIterator<Item = &'a str>) {
+/// What a statement may write, for the link records it may invalidate.
+/// Card FB-RETRY-OR6-ELEMENT-IDENTITY (gateway rule 91) reads the same
+/// policy for its carried records.
+#[derive(Clone, Debug, PartialEq, Eq)]
+pub(crate) enum Reach {
+    /// No object's memory.
+    Nothing,
+    /// Only objects at these sites.
+    Sites(BTreeSet<usize>),
+    /// Possibly any object.
+    Everything,
+}
+
+/// The objects one of `places` may reach: the sites its root's binding
+/// denotes, or every object when a root has no binding or an unknown one. A
+/// place with no identifier root (a literal) reaches none.
+pub(in crate::legacy_c) fn reach_places<'a>(
+    state: &AbstractState,
+    places: impl IntoIterator<Item = &'a str>,
+) -> Reach {
     let mut reached = BTreeSet::new();
     for place in places {
         let Some(name) = root(place) else {
@@ -205,36 +221,32 @@ fn forget_reached<'a>(state: &mut AbstractState, places: impl IntoIterator<Item 
         };
         match state.pointers.get(name) {
             Some(pointer) if !pointer.unknown => reached.extend(pointer.targets.iter().copied()),
-            _ => {
-                state.link_ready.clear();
-                return;
-            }
+            _ => return Reach::Everything,
         }
     }
-    state.link_ready.retain(|(site, _)| !reached.contains(site));
+    Reach::Sites(reached)
 }
 
-/// Forget every initialisation fact a statement may invalidate, after its
-/// transfer. Statements that write no memory keep every fact (a copy, a
-/// clear or an acquisition into a plain name, a branch, a rule 36b
-/// initialisation); a copy or a clear into a member place, and a contract
-/// call with no nested call, forget the records of the objects their written
-/// place or their actuals may denote; everything else forgets them all.
-pub(in crate::legacy_c) fn retain(instruction: &LegacyInstruction, state: &mut AbstractState) {
-    if state.link_ready.is_empty() {
-        return;
-    }
+/// What `instruction` may write, after its transfer. Statements that write
+/// no memory reach nothing (a copy, a clear or an acquisition into a plain
+/// name, a branch, a rule 36b initialisation); a copy or a clear into a
+/// member place, and a contract call with no nested call, reach the objects
+/// their written place or their actuals may denote; everything else may
+/// reach every object.
+pub(in crate::legacy_c) fn reach(instruction: &LegacyInstruction, state: &AbstractState) -> Reach {
     match instruction {
         LegacyInstruction::NoOp
         | LegacyInstruction::BranchOnNull { .. }
         | LegacyInstruction::BranchOnValidity { .. }
         | LegacyInstruction::BranchOnResult { .. }
-        | LegacyInstruction::TrackedSelfInit { .. } => {}
+        | LegacyInstruction::TrackedSelfInit { .. } => Reach::Nothing,
         LegacyInstruction::Acquire { destination, .. }
         | LegacyInstruction::Alias { destination, .. }
         | LegacyInstruction::Clear { destination } => {
-            if !plain(destination) {
-                forget_reached(state, [destination.as_str()]);
+            if plain(destination) {
+                Reach::Nothing
+            } else {
+                reach_places(state, [destination.as_str()])
             }
         }
         LegacyInstruction::ContractCall {
@@ -244,16 +256,29 @@ pub(in crate::legacy_c) fn retain(instruction: &LegacyInstruction, state: &mut A
             ..
         } if nested.is_empty() && arguments.iter().all(Option::is_some) => {
             let written = destination.as_deref().filter(|place| !plain(place));
-            forget_reached(
+            reach_places(
                 state,
                 arguments
                     .iter()
                     .flatten()
                     .map(String::as_str)
                     .chain(written),
-            );
+            )
         }
-        _ => state.link_ready.clear(),
+        _ => Reach::Everything,
+    }
+}
+
+/// Forget every initialisation fact a statement may invalidate, after its
+/// transfer ([`reach`]).
+pub(in crate::legacy_c) fn retain(instruction: &LegacyInstruction, state: &mut AbstractState) {
+    if state.link_ready.is_empty() {
+        return;
+    }
+    match reach(instruction, state) {
+        Reach::Nothing => {}
+        Reach::Sites(reached) => state.link_ready.retain(|(site, _)| !reached.contains(site)),
+        Reach::Everything => state.link_ready.clear(),
     }
 }
 
