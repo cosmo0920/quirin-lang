@@ -415,6 +415,13 @@ fn contract_clauses(contract: &ResourceFunctionContract, function_map: bool) -> 
         };
         clauses.push(Clause::new(ClauseKind::Container, label));
     }
+    // Card LERI-HELD-FORMAL-LINK-OBLIGATION (gateway rule 91 (5)).
+    for (index, member) in &contract.link_preconditions {
+        clauses.push(Clause::new(
+            ClauseKind::Container,
+            format!("resource_links_valid(#{index}, {member})"),
+        ));
+    }
     let users = &contract.counted_users;
     for (index, operation) in &users.effects {
         clauses.push(Clause::new(

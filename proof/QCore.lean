@@ -197,6 +197,7 @@ import QCore.ExactFormalReturn
 import QCore.ExactFormalReturnSwitch
 import QCore.ExecutableModel
 import QCore.ExecutionCoverage
+import QCore.ExitClassLinkPrecondition
 import QCore.ExitResiduals
 import QCore.ExternCall
 import QCore.ExternalIntegration

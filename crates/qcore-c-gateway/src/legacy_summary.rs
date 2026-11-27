@@ -1233,9 +1233,20 @@ fn infer_cfg_summary(
         // Card FB-RETRY-OR6-ELEMENT-IDENTITY (gateway rule 91).
         crate::legacy_c::container_publication::carried_link::attach(&mut candidate, &carried)?;
         let entry = EntryCustody::build(&cfg, parameters, &candidate)?;
+        let (summary, observations) = analyze_cfg_with_entry(cfg.clone(), &entry);
+        if observations_match_contract(&candidate, &entry, &summary, &observations) {
+            return Some(candidate);
+        }
+        // Card LERI-HELD-FORMAL-LINK-OBLIGATION (gateway rule 91 (5)): the
+        // link precondition, without the unlink, at each carried formal the
+        // candidate binds but does not release; checked by a fresh run.
+        let widened = crate::legacy_c::container_publication::carried_link::attach_preconditions(
+            &candidate, &carried,
+        )?;
+        let entry = EntryCustody::build(&cfg, parameters, &widened)?;
         let (summary, observations) = analyze_cfg_with_entry(cfg, &entry);
-        return observations_match_contract(&candidate, &entry, &summary, &observations)
-            .then_some(candidate);
+        return observations_match_contract(&widened, &entry, &summary, &observations)
+            .then_some(widened);
     }
     None
 }

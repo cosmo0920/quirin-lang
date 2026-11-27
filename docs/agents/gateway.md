@@ -15240,17 +15240,48 @@ an unrelated held call (both `Unknown`, no leak, both holds kept).
     published object (rule 10d), an element bound through `MEMBER` (rule 46
     (2)), or carries it again to its own formal (this rule); every other
     actual refuses there, and a consumer that does not apply a container
-    effect refuses the call. **Do not** seed a record for a position that
-    states no member, admit on a `Spent` record or for another member, keep
-    a `Ready` record across a statement that may write the object, read a
-    carried formal as released without its destroyer, or state the clause
-    where the formal is not released at every exit: no summary states the
-    obligation without the unlink, so a formal destroyed on one exit class
-    and stored or kept on another (`flb_output_task_queue_enqueue`'s
-    `retry`, the `*_property_check` instance destroyers) publishes nothing
-    and stays refused. Nothing here accuses. Not switchable: off would only
-    refuse. Measured (base `76c1f9cfc`, the opt-in current route): see the
-    [report](../reports/fb-retry-or6-element-identity/README.md).
+    effect refuses the call. (5) **The precondition without the unlink**
+    (card LERI-HELD-FORMAL-LINK-OBLIGATION; schema field
+    `ResourceFunctionContract::link_preconditions`, declared as `requires
+    resource_links_valid(p, MEMBER)` at an owned, consumed or released
+    pointer position with no container effect, rejected beside a §C04.13
+    disposition and every other clause a container clause is rejected
+    beside). The clause states the entry obligation of (1) and nothing about
+    the exit: the position's own mode is the exit effect. The entry seeds
+    `Owed(MEMBER)`, which (2) admits and spends and (1)'s policy forgets
+    exactly as `Ready`; at an exit, a formal it alone carries reads `Mixed`
+    when released through the carried destroyer (`Spent`), since the clause
+    states no unlink (`observed_for`), and as its disposition otherwise. W4
+    offers it, after (4)'s candidate failed its fresh run, at each candidate
+    formal the candidate binds but does not release (`attach_preconditions`),
+    and checks the widened candidate by a fresh run; a formal handed directly
+    to a position carrying the clause is a candidate as well. Rule 11r's
+    exit-specific route runs that inference per returned value, so a body
+    destroying its formal on one class and storing or keeping it on another
+    states an element destroy in the first and `resource_links_valid` beside
+    the store or keep in the second; the summary publishes only when every
+    class states the same entry obligations (`classes_agree`), since the
+    caller's state at the call is one state whichever class returns. Each
+    caller checks the clause in the transfer before the call's own reading
+    (`check_preconditions`; route G reads one class per edge, so the check
+    runs on every class): the actual is an object it published (rule 10d),
+    one it holds with its own `MEMBER` initialisation (rule 46 (3)), or its
+    own formal carried with `MEMBER` (`Ready` or `Owed`, not spent; the
+    check spends nothing); every other actual, a foreign element included,
+    refuses the call, and every consumer that does not check it refuses the
+    call too (`has_container_effect` counts it). **Do not** seed a record for
+    a position that states no member, admit on a `Spent` record or for
+    another member, keep a `Ready` or `Owed` record across a statement that
+    may write the object, read a carried formal as released without its
+    destroyer or a precondition-only formal as released through it, state
+    the destroyer clause where the formal is not released at every exit or
+    the precondition where it is released, publish classes that disagree on
+    an entry obligation, or admit a foreign element at a precondition alone.
+    Nothing here accuses. Not switchable: off would only refuse. Measured
+    (base `76c1f9cfc`, the opt-in current route): see the
+    [report](../reports/fb-retry-or6-element-identity/README.md); (5)
+    (base `0956f4d21`, the fluent-bit-system route): see the
+    [report](../reports/leri-held-exit-class-precondition/README.md).
     `QCore.CarriedLinkObligation` (`the_seeded_record_holds`,
     `retaining_keeps_every_ready_record`,
     `the_carried_admission_is_sound`, `a_spent_record_admits_nothing`,
@@ -15258,6 +15289,15 @@ an unrelated held call (both `Unknown`, no leak, both holds kept).
     `the_discharge_establishes_the_precondition`,
     `no_discharge_no_admission`, `vectors_hold`, …), bound to
     `ADMIT_VECTORS` and `OBSERVE_VECTORS` and
-    `crates/qcore-c-gateway/tests/link_member_premises.rs (module `carried_link_obligation`)`.
+    `crates/qcore-c-gateway/tests/link_member_premises.rs (module `carried_link_obligation`)`;
+    (5): `QCore.ExitClassLinkPrecondition`
+    (`a_precondition_release_is_not_the_destroyers`,
+    `one_discharge_seeds_every_class`,
+    `disagreeing_classes_publish_nothing`,
+    `the_precondition_discharge_establishes_it`,
+    `a_foreign_element_does_not_discharge_a_precondition`,
+    `checking_spends_nothing`, `vectors_hold`, …), bound to
+    `PRE_OBSERVE_VECTORS` and `PRE_DISCHARGE_VECTORS` and that module's
+    `exit_class_fixtures`.
 
 <!-- generated:rules:end -->
