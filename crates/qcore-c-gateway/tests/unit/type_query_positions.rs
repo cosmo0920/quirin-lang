@@ -83,8 +83,9 @@ fn the_k2_block_is_new_prefixed_and_lean_s() {
     let line = format!("def k2Sorts : List String := [{}]", sorts.join(", "));
     assert!(LEAN.lines().any(|l| l == line), "no `{line}`");
     // Appended after MES: the K2 block is contiguous and followed only by
-    // the K6 block (card K6-DIRECT-POSITION-ACCESS, rule 81) and the CX block
-    // (card QUIRIN-AUDIT-CONNECT), never reordered.
+    // the K6 block (card K6-DIRECT-POSITION-ACCESS, rule 81), the CX block
+    // (card QUIRIN-AUDIT-CONNECT) and the G1 block (card
+    // P0-G1-CLOSURE-RECORD), never reordered.
     let blocks: Vec<_> = RENDERED_TERMS.iter().map(|t| t.block).collect();
     let first = blocks.iter().position(|b| *b == "K2").unwrap();
     let count = blocks.iter().filter(|b| **b == "K2").count();
@@ -92,7 +93,7 @@ fn the_k2_block_is_new_prefixed_and_lean_s() {
     assert!(
         blocks[first + count..]
             .iter()
-            .all(|b| *b == "K6" || *b == "CX")
+            .all(|b| *b == "K6" || *b == "CX" || *b == "G1")
     );
 }
 
