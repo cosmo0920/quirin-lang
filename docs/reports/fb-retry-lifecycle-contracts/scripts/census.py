@@ -213,13 +213,17 @@ def main() -> int:
             if entry.get("class") != "a" or not entry.get("written"):
                 continue
             cleared, moved = [], []
-            leaf = f"call to uncontracted function `{callee}`"
+
+            def names(d, callee=callee):
+                match = UNCONTRACTED.match(d)
+                return bool(match) and match.group(1) == callee
+
             for key, before in base_table.items():
                 after = table.get(key)
-                hits = [ln for d, ln in leaves(before) if d == leaf]
+                hits = [ln for d, ln in leaves(before) if names(d)]
                 if not hits:
                     continue
-                left = [ln for d, ln in leaves(after or {}) if d == leaf]
+                left = [ln for d, ln in leaves(after or {}) if names(d)]
                 for line in hits:
                     if line not in left:
                         cleared.append({"file": key[0], "function": key[1],
@@ -235,8 +239,23 @@ def main() -> int:
             if a != b:
                 all_moves.append({"file": key[0], "function": key[1], "occurrence": key[2],
                                   "move": f"{a} -> {b}"})
+        # Every lifecycle row whose leaf multiset changed: removed and added.
+        changed = []
+        for key in sorted(set(base_table) | set(table)):
+            before = collections.Counter(leaves(base_table.get(key, {})))
+            after = collections.Counter(leaves(table.get(key, {})))
+            if before == after:
+                continue
+            changed.append({
+                "file": key[0], "function": key[1], "occurrence": key[2],
+                "status": f"{base_table.get(key, {}).get('status', 'absent')} -> "
+                          f"{table.get(key, {}).get('status', 'absent')}",
+                "removed": [f"{ln}: {d}" for (d, ln) in sorted((before - after).elements(), key=str)],
+                "added": [f"{ln}: {d}" for (d, ln) in sorted((after - before).elements(), key=str)],
+            })
     else:
         all_moves = None
+        changed = None
 
     # census.json (compact).
     doc = {
@@ -275,6 +294,7 @@ def main() -> int:
     if base_table is not None:
         doc["movement"] = movement
         doc["moves"] = all_moves
+        doc["changed_rows"] = changed
     pathlib.Path(args.out_json).write_text(json.dumps(doc, indent=1, sort_keys=True) + "\n")
 
     # CENSUS.md.
@@ -377,6 +397,16 @@ def main() -> int:
         w("Every status move:" if all_moves else "No lifecycle row moved status.")
         for mv in all_moves:
             w(f"- {mv['file']} `{mv['function']}` #{mv['occurrence']}: {mv['move']}")
+        w("")
+        w(f"Every lifecycle row whose leaves changed ({len(changed)}), with the base")
+        w("leaves removed (-) and the leaves added (+):")
+        w("")
+        for row in changed:
+            w(f"- {row['file']} `{row['function']}` #{row['occurrence']}: {row['status']}")
+            for leaf in row["removed"]:
+                w(f"  - (-) {leaf}")
+            for leaf in row["added"]:
+                w(f"  - (+) {leaf}")
         w("")
     pathlib.Path(args.out_md).write_text("\n".join(out))
     return 0

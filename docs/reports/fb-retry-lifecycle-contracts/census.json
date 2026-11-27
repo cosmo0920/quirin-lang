@@ -49,14 +49,14 @@
    "rows": 2
   },
   "call to uncontracted function": {
-   "leaves": 668,
-   "rows": 144
+   "leaves": 614,
+   "rows": 134
   },
   "counted users undecided: `\u2026`: `\u2026` calls `\u2026`: `\u2026` calls `\u2026`: call to `\u2026`, which has no contract in force and no body in this unit": {
    "leaves": 2,
    "rows": 2
   },
-  "counted users undecided: `\u2026`: `\u2026` calls `\u2026`: the declaration of `\u2026` does not hold against its body here (`\u2026` undecided: `\u2026` calls `\u2026`: call to `\u2026`, which has no contract in force and no body in this unit)": {
+  "counted users undecided: `\u2026`: `\u2026` calls `\u2026`: call to `\u2026`, which has no contract in force and no body in this unit": {
    "leaves": 2,
    "rows": 2
   },
@@ -69,7 +69,7 @@
    "rows": 4
   },
   "indirect memory access is outside the resource projection": {
-   "leaves": 414,
+   "leaves": 408,
    "rows": 84
   },
   "inline assembly is an opaque boundary: its clobbers and memory effects are not modelled": {
@@ -81,8 +81,8 @@
    "rows": 4
   },
   "nested call `\u2026` inside a modeled call is outside the resource projection": {
-   "leaves": 12,
-   "rows": 6
+   "leaves": 8,
+   "rows": 4
   },
   "publication by `\u2026` into a container this function does not show outlives it (`\u2026`)": {
    "leaves": 6,
@@ -125,14 +125,774 @@
    "rows": 2
   },
   "unresolved resource identity `\u2026`": {
-   "leaves": 440,
-   "rows": 102
+   "leaves": 428,
+   "rows": 98
   },
   "unsupported assignment expression": {
    "leaves": 4,
    "rows": 4
+  },
+  "use of `\u2026` after its object moved or its parent changed (interior-borrow-ended)": {
+   "leaves": 340,
+   "rows": 8
   }
  },
+ "changed_rows": [
+  {
+   "added": [],
+   "file": "src/flb_engine.c",
+   "function": "flb_engine_start",
+   "occurrence": 1,
+   "removed": [
+    "src/flb_engine.c:1296: call to uncontracted function `flb_sched_ctx_init`"
+   ],
+   "status": "Unknown -> Unknown"
+  },
+  {
+   "added": [],
+   "file": "src/flb_engine.c",
+   "function": "flb_engine_start",
+   "occurrence": 2,
+   "removed": [
+    "src/flb_engine.c:1296: call to uncontracted function `flb_sched_ctx_init`"
+   ],
+   "status": "Unknown -> Unknown"
+  },
+  {
+   "added": [
+    "src/flb_engine.c:549: use of `out` after its object moved or its parent changed (interior-borrow-ended)",
+    "src/flb_engine.c:549: use of `tag` after its object moved or its parent changed (interior-borrow-ended)"
+   ],
+   "file": "src/flb_engine.c",
+   "function": "handle_dlq_if_available",
+   "occurrence": 1,
+   "removed": [
+    "src/flb_engine.c:542: call to uncontracted function `flb_input_name`",
+    "src/flb_engine.c:545: call to uncontracted function `flb_output_name`"
+   ],
+   "status": "Unknown -> Unknown"
+  },
+  {
+   "added": [
+    "src/flb_engine.c:549: use of `out` after its object moved or its parent changed (interior-borrow-ended)",
+    "src/flb_engine.c:549: use of `tag` after its object moved or its parent changed (interior-borrow-ended)"
+   ],
+   "file": "src/flb_engine.c",
+   "function": "handle_dlq_if_available",
+   "occurrence": 2,
+   "removed": [
+    "src/flb_engine.c:542: call to uncontracted function `flb_input_name`",
+    "src/flb_engine.c:545: call to uncontracted function `flb_output_name`"
+   ],
+   "status": "Unknown -> Unknown"
+  },
+  {
+   "added": [
+    "src/flb_engine.c:669: unresolved resource identity `ins`",
+    "src/flb_engine.c:671: unresolved resource identity `ins`",
+    "src/flb_engine.c:730: unresolved resource identity `ins`",
+    "src/flb_engine.c:779: unresolved resource identity `ins`",
+    "src/flb_engine.c:780: unresolved resource identity `ins`",
+    "src/flb_engine.c:846: unresolved resource identity `ins`",
+    "src/flb_engine.c:847: unresolved resource identity `ins`",
+    "src/flb_engine.c:875: unresolved resource identity `ins`",
+    "src/flb_engine.c:876: unresolved resource identity `ins`",
+    "src/flb_engine.c:636: use of `in_name` after its object moved or its parent changed (interior-borrow-ended)",
+    "src/flb_engine.c:643: use of `in_name` after its object moved or its parent changed (interior-borrow-ended)",
+    "src/flb_engine.c:646: use of `in_name` after its object moved or its parent changed (interior-borrow-ended)",
+    "src/flb_engine.c:650: use of `in_name` after its object moved or its parent changed (interior-borrow-ended)",
+    "src/flb_engine.c:654: use of `in_name` after its object moved or its parent changed (interior-borrow-ended)",
+    "src/flb_engine.c:661: use of `in_name` after its object moved or its parent changed (interior-borrow-ended)",
+    "src/flb_engine.c:662: use of `in_name` after its object moved or its parent changed (interior-borrow-ended)",
+    "src/flb_engine.c:676: use of `in_name` after its object moved or its parent changed (interior-borrow-ended)",
+    "src/flb_engine.c:679: use of `in_name` after its object moved or its parent changed (interior-borrow-ended)",
+    "src/flb_engine.c:688: use of `in_name` after its object moved or its parent changed (interior-borrow-ended)",
+    "src/flb_engine.c:698: use of `in_name` after its object moved or its parent changed (interior-borrow-ended)",
+    "src/flb_engine.c:702: use of `in_name` after its object moved or its parent changed (interior-borrow-ended)",
+    "src/flb_engine.c:703: use of `in_name` after its object moved or its parent changed (interior-borrow-ended)",
+    "src/flb_engine.c:707: use of `in_name` after its object moved or its parent changed (interior-borrow-ended)",
+    "src/flb_engine.c:710: use of `in_name` after its object moved or its parent changed (interior-borrow-ended)",
+    "src/flb_engine.c:715: use of `in_name` after its object moved or its parent changed (interior-borrow-ended)",
+    "src/flb_engine.c:719: use of `in_name` after its object moved or its parent changed (interior-borrow-ended)",
+    "src/flb_engine.c:724: use of `in_name` after its object moved or its parent changed (interior-borrow-ended)",
+    "src/flb_engine.c:732: use of `in_name` after its object moved or its parent changed (interior-borrow-ended)",
+    "src/flb_engine.c:739: use of `in_name` after its object moved or its parent changed (interior-borrow-ended)",
+    "src/flb_engine.c:740: use of `in_name` after its object moved or its parent changed (interior-borrow-ended)",
+    "src/flb_engine.c:746: use of `in_name` after its object moved or its parent changed (interior-borrow-ended)",
+    "src/flb_engine.c:755: use of `in_name` after its object moved or its parent changed (interior-borrow-ended)",
+    "src/flb_engine.c:758: use of `in_name` after its object moved or its parent changed (interior-borrow-ended)",
+    "src/flb_engine.c:759: use of `in_name` after its object moved or its parent changed (interior-borrow-ended)",
+    "src/flb_engine.c:764: use of `in_name` after its object moved or its parent changed (interior-borrow-ended)",
+    "src/flb_engine.c:768: use of `in_name` after its object moved or its parent changed (interior-borrow-ended)",
+    "src/flb_engine.c:773: use of `in_name` after its object moved or its parent changed (interior-borrow-ended)",
+    "src/flb_engine.c:783: use of `in_name` after its object moved or its parent changed (interior-borrow-ended)",
+    "src/flb_engine.c:790: use of `in_name` after its object moved or its parent changed (interior-borrow-ended)",
+    "src/flb_engine.c:791: use of `in_name` after its object moved or its parent changed (interior-borrow-ended)",
+    "src/flb_engine.c:800: use of `in_name` after its object moved or its parent changed (interior-borrow-ended)",
+    "src/flb_engine.c:809: use of `in_name` after its object moved or its parent changed (interior-borrow-ended)",
+    "src/flb_engine.c:811: use of `in_name` after its object moved or its parent changed (interior-borrow-ended)",
+    "src/flb_engine.c:818: use of `in_name` after its object moved or its parent changed (interior-borrow-ended)",
+    "src/flb_engine.c:822: use of `in_name` after its object moved or its parent changed (interior-borrow-ended)",
+    "src/flb_engine.c:831: use of `in_name` after its object moved or its parent changed (interior-borrow-ended)",
+    "src/flb_engine.c:832: use of `in_name` after its object moved or its parent changed (interior-borrow-ended)",
+    "src/flb_engine.c:835: use of `in_name` after its object moved or its parent changed (interior-borrow-ended)",
+    "src/flb_engine.c:840: use of `in_name` after its object moved or its parent changed (interior-borrow-ended)",
+    "src/flb_engine.c:852: use of `in_name` after its object moved or its parent changed (interior-borrow-ended)",
+    "src/flb_engine.c:854: use of `in_name` after its object moved or its parent changed (interior-borrow-ended)",
+    "src/flb_engine.c:855: use of `in_name` after its object moved or its parent changed (interior-borrow-ended)",
+    "src/flb_engine.c:860: use of `in_name` after its object moved or its parent changed (interior-borrow-ended)",
+    "src/flb_engine.c:864: use of `in_name` after its object moved or its parent changed (interior-borrow-ended)",
+    "src/flb_engine.c:869: use of `in_name` after its object moved or its parent changed (interior-borrow-ended)",
+    "src/flb_engine.c:879: use of `in_name` after its object moved or its parent changed (interior-borrow-ended)",
+    "src/flb_engine.c:880: use of `in_name` after its object moved or its parent changed (interior-borrow-ended)",
+    "src/flb_engine.c:636: use of `out_name` after its object moved or its parent changed (interior-borrow-ended)",
+    "src/flb_engine.c:643: use of `out_name` after its object moved or its parent changed (interior-borrow-ended)",
+    "src/flb_engine.c:646: use of `out_name` after its object moved or its parent changed (interior-borrow-ended)",
+    "src/flb_engine.c:650: use of `out_name` after its object moved or its parent changed (interior-borrow-ended)",
+    "src/flb_engine.c:654: use of `out_name` after its object moved or its parent changed (interior-borrow-ended)",
+    "src/flb_engine.c:661: use of `out_name` after its object moved or its parent changed (interior-borrow-ended)",
+    "src/flb_engine.c:662: use of `out_name` after its object moved or its parent changed (interior-borrow-ended)",
+    "src/flb_engine.c:676: use of `out_name` after its object moved or its parent changed (interior-borrow-ended)",
+    "src/flb_engine.c:679: use of `out_name` after its object moved or its parent changed (interior-borrow-ended)",
+    "src/flb_engine.c:688: use of `out_name` after its object moved or its parent changed (interior-borrow-ended)",
+    "src/flb_engine.c:698: use of `out_name` after its object moved or its parent changed (interior-borrow-ended)",
+    "src/flb_engine.c:702: use of `out_name` after its object moved or its parent changed (interior-borrow-ended)",
+    "src/flb_engine.c:703: use of `out_name` after its object moved or its parent changed (interior-borrow-ended)",
+    "src/flb_engine.c:707: use of `out_name` after its object moved or its parent changed (interior-borrow-ended)",
+    "src/flb_engine.c:710: use of `out_name` after its object moved or its parent changed (interior-borrow-ended)",
+    "src/flb_engine.c:715: use of `out_name` after its object moved or its parent changed (interior-borrow-ended)",
+    "src/flb_engine.c:719: use of `out_name` after its object moved or its parent changed (interior-borrow-ended)",
+    "src/flb_engine.c:724: use of `out_name` after its object moved or its parent changed (interior-borrow-ended)",
+    "src/flb_engine.c:732: use of `out_name` after its object moved or its parent changed (interior-borrow-ended)",
+    "src/flb_engine.c:739: use of `out_name` after its object moved or its parent changed (interior-borrow-ended)",
+    "src/flb_engine.c:740: use of `out_name` after its object moved or its parent changed (interior-borrow-ended)",
+    "src/flb_engine.c:746: use of `out_name` after its object moved or its parent changed (interior-borrow-ended)",
+    "src/flb_engine.c:755: use of `out_name` after its object moved or its parent changed (interior-borrow-ended)",
+    "src/flb_engine.c:758: use of `out_name` after its object moved or its parent changed (interior-borrow-ended)",
+    "src/flb_engine.c:759: use of `out_name` after its object moved or its parent changed (interior-borrow-ended)",
+    "src/flb_engine.c:764: use of `out_name` after its object moved or its parent changed (interior-borrow-ended)",
+    "src/flb_engine.c:768: use of `out_name` after its object moved or its parent changed (interior-borrow-ended)",
+    "src/flb_engine.c:773: use of `out_name` after its object moved or its parent changed (interior-borrow-ended)",
+    "src/flb_engine.c:783: use of `out_name` after its object moved or its parent changed (interior-borrow-ended)",
+    "src/flb_engine.c:790: use of `out_name` after its object moved or its parent changed (interior-borrow-ended)",
+    "src/flb_engine.c:791: use of `out_name` after its object moved or its parent changed (interior-borrow-ended)",
+    "src/flb_engine.c:800: use of `out_name` after its object moved or its parent changed (interior-borrow-ended)",
+    "src/flb_engine.c:809: use of `out_name` after its object moved or its parent changed (interior-borrow-ended)",
+    "src/flb_engine.c:811: use of `out_name` after its object moved or its parent changed (interior-borrow-ended)",
+    "src/flb_engine.c:818: use of `out_name` after its object moved or its parent changed (interior-borrow-ended)",
+    "src/flb_engine.c:822: use of `out_name` after its object moved or its parent changed (interior-borrow-ended)",
+    "src/flb_engine.c:831: use of `out_name` after its object moved or its parent changed (interior-borrow-ended)",
+    "src/flb_engine.c:832: use of `out_name` after its object moved or its parent changed (interior-borrow-ended)",
+    "src/flb_engine.c:835: use of `out_name` after its object moved or its parent changed (interior-borrow-ended)",
+    "src/flb_engine.c:840: use of `out_name` after its object moved or its parent changed (interior-borrow-ended)",
+    "src/flb_engine.c:852: use of `out_name` after its object moved or its parent changed (interior-borrow-ended)",
+    "src/flb_engine.c:854: use of `out_name` after its object moved or its parent changed (interior-borrow-ended)",
+    "src/flb_engine.c:855: use of `out_name` after its object moved or its parent changed (interior-borrow-ended)",
+    "src/flb_engine.c:860: use of `out_name` after its object moved or its parent changed (interior-borrow-ended)",
+    "src/flb_engine.c:864: use of `out_name` after its object moved or its parent changed (interior-borrow-ended)",
+    "src/flb_engine.c:869: use of `out_name` after its object moved or its parent changed (interior-borrow-ended)",
+    "src/flb_engine.c:879: use of `out_name` after its object moved or its parent changed (interior-borrow-ended)",
+    "src/flb_engine.c:880: use of `out_name` after its object moved or its parent changed (interior-borrow-ended)"
+   ],
+   "file": "src/flb_engine.c",
+   "function": "handle_output_event",
+   "occurrence": 1,
+   "removed": [
+    "src/flb_engine.c:622: call to uncontracted function `flb_input_name`",
+    "src/flb_engine.c:669: call to uncontracted function `flb_metrics_sum`",
+    "src/flb_engine.c:671: call to uncontracted function `flb_metrics_sum`",
+    "src/flb_engine.c:730: call to uncontracted function `flb_metrics_sum`",
+    "src/flb_engine.c:779: call to uncontracted function `flb_metrics_sum`",
+    "src/flb_engine.c:780: call to uncontracted function `flb_metrics_sum`",
+    "src/flb_engine.c:846: call to uncontracted function `flb_metrics_sum`",
+    "src/flb_engine.c:847: call to uncontracted function `flb_metrics_sum`",
+    "src/flb_engine.c:875: call to uncontracted function `flb_metrics_sum`",
+    "src/flb_engine.c:876: call to uncontracted function `flb_metrics_sum`",
+    "src/flb_engine.c:623: call to uncontracted function `flb_output_name`",
+    "src/flb_engine.c:687: call to uncontracted function `flb_task_from_fs_storage` in branch condition"
+   ],
+   "status": "Unknown -> Unknown"
+  },
+  {
+   "added": [
+    "src/flb_engine.c:669: unresolved resource identity `ins`",
+    "src/flb_engine.c:671: unresolved resource identity `ins`",
+    "src/flb_engine.c:730: unresolved resource identity `ins`",
+    "src/flb_engine.c:779: unresolved resource identity `ins`",
+    "src/flb_engine.c:780: unresolved resource identity `ins`",
+    "src/flb_engine.c:846: unresolved resource identity `ins`",
+    "src/flb_engine.c:847: unresolved resource identity `ins`",
+    "src/flb_engine.c:875: unresolved resource identity `ins`",
+    "src/flb_engine.c:876: unresolved resource identity `ins`",
+    "src/flb_engine.c:636: use of `in_name` after its object moved or its parent changed (interior-borrow-ended)",
+    "src/flb_engine.c:643: use of `in_name` after its object moved or its parent changed (interior-borrow-ended)",
+    "src/flb_engine.c:646: use of `in_name` after its object moved or its parent changed (interior-borrow-ended)",
+    "src/flb_engine.c:650: use of `in_name` after its object moved or its parent changed (interior-borrow-ended)",
+    "src/flb_engine.c:654: use of `in_name` after its object moved or its parent changed (interior-borrow-ended)",
+    "src/flb_engine.c:661: use of `in_name` after its object moved or its parent changed (interior-borrow-ended)",
+    "src/flb_engine.c:662: use of `in_name` after its object moved or its parent changed (interior-borrow-ended)",
+    "src/flb_engine.c:676: use of `in_name` after its object moved or its parent changed (interior-borrow-ended)",
+    "src/flb_engine.c:679: use of `in_name` after its object moved or its parent changed (interior-borrow-ended)",
+    "src/flb_engine.c:688: use of `in_name` after its object moved or its parent changed (interior-borrow-ended)",
+    "src/flb_engine.c:698: use of `in_name` after its object moved or its parent changed (interior-borrow-ended)",
+    "src/flb_engine.c:702: use of `in_name` after its object moved or its parent changed (interior-borrow-ended)",
+    "src/flb_engine.c:703: use of `in_name` after its object moved or its parent changed (interior-borrow-ended)",
+    "src/flb_engine.c:707: use of `in_name` after its object moved or its parent changed (interior-borrow-ended)",
+    "src/flb_engine.c:710: use of `in_name` after its object moved or its parent changed (interior-borrow-ended)",
+    "src/flb_engine.c:715: use of `in_name` after its object moved or its parent changed (interior-borrow-ended)",
+    "src/flb_engine.c:719: use of `in_name` after its object moved or its parent changed (interior-borrow-ended)",
+    "src/flb_engine.c:724: use of `in_name` after its object moved or its parent changed (interior-borrow-ended)",
+    "src/flb_engine.c:732: use of `in_name` after its object moved or its parent changed (interior-borrow-ended)",
+    "src/flb_engine.c:739: use of `in_name` after its object moved or its parent changed (interior-borrow-ended)",
+    "src/flb_engine.c:740: use of `in_name` after its object moved or its parent changed (interior-borrow-ended)",
+    "src/flb_engine.c:746: use of `in_name` after its object moved or its parent changed (interior-borrow-ended)",
+    "src/flb_engine.c:755: use of `in_name` after its object moved or its parent changed (interior-borrow-ended)",
+    "src/flb_engine.c:758: use of `in_name` after its object moved or its parent changed (interior-borrow-ended)",
+    "src/flb_engine.c:759: use of `in_name` after its object moved or its parent changed (interior-borrow-ended)",
+    "src/flb_engine.c:764: use of `in_name` after its object moved or its parent changed (interior-borrow-ended)",
+    "src/flb_engine.c:768: use of `in_name` after its object moved or its parent changed (interior-borrow-ended)",
+    "src/flb_engine.c:773: use of `in_name` after its object moved or its parent changed (interior-borrow-ended)",
+    "src/flb_engine.c:783: use of `in_name` after its object moved or its parent changed (interior-borrow-ended)",
+    "src/flb_engine.c:790: use of `in_name` after its object moved or its parent changed (interior-borrow-ended)",
+    "src/flb_engine.c:791: use of `in_name` after its object moved or its parent changed (interior-borrow-ended)",
+    "src/flb_engine.c:800: use of `in_name` after its object moved or its parent changed (interior-borrow-ended)",
+    "src/flb_engine.c:809: use of `in_name` after its object moved or its parent changed (interior-borrow-ended)",
+    "src/flb_engine.c:811: use of `in_name` after its object moved or its parent changed (interior-borrow-ended)",
+    "src/flb_engine.c:818: use of `in_name` after its object moved or its parent changed (interior-borrow-ended)",
+    "src/flb_engine.c:822: use of `in_name` after its object moved or its parent changed (interior-borrow-ended)",
+    "src/flb_engine.c:831: use of `in_name` after its object moved or its parent changed (interior-borrow-ended)",
+    "src/flb_engine.c:832: use of `in_name` after its object moved or its parent changed (interior-borrow-ended)",
+    "src/flb_engine.c:835: use of `in_name` after its object moved or its parent changed (interior-borrow-ended)",
+    "src/flb_engine.c:840: use of `in_name` after its object moved or its parent changed (interior-borrow-ended)",
+    "src/flb_engine.c:852: use of `in_name` after its object moved or its parent changed (interior-borrow-ended)",
+    "src/flb_engine.c:854: use of `in_name` after its object moved or its parent changed (interior-borrow-ended)",
+    "src/flb_engine.c:855: use of `in_name` after its object moved or its parent changed (interior-borrow-ended)",
+    "src/flb_engine.c:860: use of `in_name` after its object moved or its parent changed (interior-borrow-ended)",
+    "src/flb_engine.c:864: use of `in_name` after its object moved or its parent changed (interior-borrow-ended)",
+    "src/flb_engine.c:869: use of `in_name` after its object moved or its parent changed (interior-borrow-ended)",
+    "src/flb_engine.c:879: use of `in_name` after its object moved or its parent changed (interior-borrow-ended)",
+    "src/flb_engine.c:880: use of `in_name` after its object moved or its parent changed (interior-borrow-ended)",
+    "src/flb_engine.c:636: use of `out_name` after its object moved or its parent changed (interior-borrow-ended)",
+    "src/flb_engine.c:643: use of `out_name` after its object moved or its parent changed (interior-borrow-ended)",
+    "src/flb_engine.c:646: use of `out_name` after its object moved or its parent changed (interior-borrow-ended)",
+    "src/flb_engine.c:650: use of `out_name` after its object moved or its parent changed (interior-borrow-ended)",
+    "src/flb_engine.c:654: use of `out_name` after its object moved or its parent changed (interior-borrow-ended)",
+    "src/flb_engine.c:661: use of `out_name` after its object moved or its parent changed (interior-borrow-ended)",
+    "src/flb_engine.c:662: use of `out_name` after its object moved or its parent changed (interior-borrow-ended)",
+    "src/flb_engine.c:676: use of `out_name` after its object moved or its parent changed (interior-borrow-ended)",
+    "src/flb_engine.c:679: use of `out_name` after its object moved or its parent changed (interior-borrow-ended)",
+    "src/flb_engine.c:688: use of `out_name` after its object moved or its parent changed (interior-borrow-ended)",
+    "src/flb_engine.c:698: use of `out_name` after its object moved or its parent changed (interior-borrow-ended)",
+    "src/flb_engine.c:702: use of `out_name` after its object moved or its parent changed (interior-borrow-ended)",
+    "src/flb_engine.c:703: use of `out_name` after its object moved or its parent changed (interior-borrow-ended)",
+    "src/flb_engine.c:707: use of `out_name` after its object moved or its parent changed (interior-borrow-ended)",
+    "src/flb_engine.c:710: use of `out_name` after its object moved or its parent changed (interior-borrow-ended)",
+    "src/flb_engine.c:715: use of `out_name` after its object moved or its parent changed (interior-borrow-ended)",
+    "src/flb_engine.c:719: use of `out_name` after its object moved or its parent changed (interior-borrow-ended)",
+    "src/flb_engine.c:724: use of `out_name` after its object moved or its parent changed (interior-borrow-ended)",
+    "src/flb_engine.c:732: use of `out_name` after its object moved or its parent changed (interior-borrow-ended)",
+    "src/flb_engine.c:739: use of `out_name` after its object moved or its parent changed (interior-borrow-ended)",
+    "src/flb_engine.c:740: use of `out_name` after its object moved or its parent changed (interior-borrow-ended)",
+    "src/flb_engine.c:746: use of `out_name` after its object moved or its parent changed (interior-borrow-ended)",
+    "src/flb_engine.c:755: use of `out_name` after its object moved or its parent changed (interior-borrow-ended)",
+    "src/flb_engine.c:758: use of `out_name` after its object moved or its parent changed (interior-borrow-ended)",
+    "src/flb_engine.c:759: use of `out_name` after its object moved or its parent changed (interior-borrow-ended)",
+    "src/flb_engine.c:764: use of `out_name` after its object moved or its parent changed (interior-borrow-ended)",
+    "src/flb_engine.c:768: use of `out_name` after its object moved or its parent changed (interior-borrow-ended)",
+    "src/flb_engine.c:773: use of `out_name` after its object moved or its parent changed (interior-borrow-ended)",
+    "src/flb_engine.c:783: use of `out_name` after its object moved or its parent changed (interior-borrow-ended)",
+    "src/flb_engine.c:790: use of `out_name` after its object moved or its parent changed (interior-borrow-ended)",
+    "src/flb_engine.c:791: use of `out_name` after its object moved or its parent changed (interior-borrow-ended)",
+    "src/flb_engine.c:800: use of `out_name` after its object moved or its parent changed (interior-borrow-ended)",
+    "src/flb_engine.c:809: use of `out_name` after its object moved or its parent changed (interior-borrow-ended)",
+    "src/flb_engine.c:811: use of `out_name` after its object moved or its parent changed (interior-borrow-ended)",
+    "src/flb_engine.c:818: use of `out_name` after its object moved or its parent changed (interior-borrow-ended)",
+    "src/flb_engine.c:822: use of `out_name` after its object moved or its parent changed (interior-borrow-ended)",
+    "src/flb_engine.c:831: use of `out_name` after its object moved or its parent changed (interior-borrow-ended)",
+    "src/flb_engine.c:832: use of `out_name` after its object moved or its parent changed (interior-borrow-ended)",
+    "src/flb_engine.c:835: use of `out_name` after its object moved or its parent changed (interior-borrow-ended)",
+    "src/flb_engine.c:840: use of `out_name` after its object moved or its parent changed (interior-borrow-ended)",
+    "src/flb_engine.c:852: use of `out_name` after its object moved or its parent changed (interior-borrow-ended)",
+    "src/flb_engine.c:854: use of `out_name` after its object moved or its parent changed (interior-borrow-ended)",
+    "src/flb_engine.c:855: use of `out_name` after its object moved or its parent changed (interior-borrow-ended)",
+    "src/flb_engine.c:860: use of `out_name` after its object moved or its parent changed (interior-borrow-ended)",
+    "src/flb_engine.c:864: use of `out_name` after its object moved or its parent changed (interior-borrow-ended)",
+    "src/flb_engine.c:869: use of `out_name` after its object moved or its parent changed (interior-borrow-ended)",
+    "src/flb_engine.c:879: use of `out_name` after its object moved or its parent changed (interior-borrow-ended)",
+    "src/flb_engine.c:880: use of `out_name` after its object moved or its parent changed (interior-borrow-ended)"
+   ],
+   "file": "src/flb_engine.c",
+   "function": "handle_output_event",
+   "occurrence": 2,
+   "removed": [
+    "src/flb_engine.c:622: call to uncontracted function `flb_input_name`",
+    "src/flb_engine.c:669: call to uncontracted function `flb_metrics_sum`",
+    "src/flb_engine.c:671: call to uncontracted function `flb_metrics_sum`",
+    "src/flb_engine.c:730: call to uncontracted function `flb_metrics_sum`",
+    "src/flb_engine.c:779: call to uncontracted function `flb_metrics_sum`",
+    "src/flb_engine.c:780: call to uncontracted function `flb_metrics_sum`",
+    "src/flb_engine.c:846: call to uncontracted function `flb_metrics_sum`",
+    "src/flb_engine.c:847: call to uncontracted function `flb_metrics_sum`",
+    "src/flb_engine.c:875: call to uncontracted function `flb_metrics_sum`",
+    "src/flb_engine.c:876: call to uncontracted function `flb_metrics_sum`",
+    "src/flb_engine.c:623: call to uncontracted function `flb_output_name`",
+    "src/flb_engine.c:687: call to uncontracted function `flb_task_from_fs_storage` in branch condition"
+   ],
+   "status": "Unknown -> Unknown"
+  },
+  {
+   "added": [
+    "src/flb_engine_dispatch.c:63: use of `input_name` after its object moved or its parent changed (interior-borrow-ended)",
+    "src/flb_engine_dispatch.c:65: use of `input_name` after its object moved or its parent changed (interior-borrow-ended)",
+    "src/flb_engine_dispatch.c:70: use of `input_name` after its object moved or its parent changed (interior-borrow-ended)",
+    "src/flb_engine_dispatch.c:73: use of `input_name` after its object moved or its parent changed (interior-borrow-ended)",
+    "src/flb_engine_dispatch.c:63: use of `output_name` after its object moved or its parent changed (interior-borrow-ended)",
+    "src/flb_engine_dispatch.c:65: use of `output_name` after its object moved or its parent changed (interior-borrow-ended)",
+    "src/flb_engine_dispatch.c:70: use of `output_name` after its object moved or its parent changed (interior-borrow-ended)",
+    "src/flb_engine_dispatch.c:73: use of `output_name` after its object moved or its parent changed (interior-borrow-ended)"
+   ],
+   "file": "src/flb_engine_dispatch.c",
+   "function": "record_retry_failure_metrics",
+   "occurrence": 1,
+   "removed": [
+    "src/flb_engine_dispatch.c:50: call to uncontracted function `flb_input_name`",
+    "src/flb_engine_dispatch.c:79: call to uncontracted function `flb_metrics_sum`",
+    "src/flb_engine_dispatch.c:80: call to uncontracted function `flb_metrics_sum`",
+    "src/flb_engine_dispatch.c:51: call to uncontracted function `flb_output_name`"
+   ],
+   "status": "Unknown -> Unknown"
+  },
+  {
+   "added": [
+    "src/flb_engine_dispatch.c:63: use of `input_name` after its object moved or its parent changed (interior-borrow-ended)",
+    "src/flb_engine_dispatch.c:65: use of `input_name` after its object moved or its parent changed (interior-borrow-ended)",
+    "src/flb_engine_dispatch.c:70: use of `input_name` after its object moved or its parent changed (interior-borrow-ended)",
+    "src/flb_engine_dispatch.c:73: use of `input_name` after its object moved or its parent changed (interior-borrow-ended)",
+    "src/flb_engine_dispatch.c:63: use of `output_name` after its object moved or its parent changed (interior-borrow-ended)",
+    "src/flb_engine_dispatch.c:65: use of `output_name` after its object moved or its parent changed (interior-borrow-ended)",
+    "src/flb_engine_dispatch.c:70: use of `output_name` after its object moved or its parent changed (interior-borrow-ended)",
+    "src/flb_engine_dispatch.c:73: use of `output_name` after its object moved or its parent changed (interior-borrow-ended)"
+   ],
+   "file": "src/flb_engine_dispatch.c",
+   "function": "record_retry_failure_metrics",
+   "occurrence": 2,
+   "removed": [
+    "src/flb_engine_dispatch.c:50: call to uncontracted function `flb_input_name`",
+    "src/flb_engine_dispatch.c:79: call to uncontracted function `flb_metrics_sum`",
+    "src/flb_engine_dispatch.c:80: call to uncontracted function `flb_metrics_sum`",
+    "src/flb_engine_dispatch.c:51: call to uncontracted function `flb_output_name`"
+   ],
+   "status": "Unknown -> Unknown"
+  },
+  {
+   "added": [],
+   "file": "src/flb_output.c",
+   "function": "flb_output_flush_finished",
+   "occurrence": 1,
+   "removed": [
+    "src/flb_output.c:734: call to uncontracted function `flb_output_thread_instance_get`"
+   ],
+   "status": "Unknown -> Unknown"
+  },
+  {
+   "added": [],
+   "file": "src/flb_output.c",
+   "function": "flb_output_flush_finished",
+   "occurrence": 2,
+   "removed": [
+    "src/flb_output.c:734: call to uncontracted function `flb_output_thread_instance_get`"
+   ],
+   "status": "Unknown -> Unknown"
+  },
+  {
+   "added": [],
+   "file": "src/flb_output.c",
+   "function": "flb_output_flush_id_get",
+   "occurrence": 1,
+   "removed": [
+    "src/flb_output.c:249: call to uncontracted function `flb_output_thread_instance_get`",
+    "src/flb_output.c:255: unresolved resource identity `th_ins`"
+   ],
+   "status": "Unknown -> Safe"
+  },
+  {
+   "added": [],
+   "file": "src/flb_output.c",
+   "function": "flb_output_flush_id_get",
+   "occurrence": 2,
+   "removed": [
+    "src/flb_output.c:249: call to uncontracted function `flb_output_thread_instance_get`",
+    "src/flb_output.c:255: unresolved resource identity `th_ins`"
+   ],
+   "status": "Unknown -> Safe"
+  },
+  {
+   "added": [],
+   "file": "src/flb_output.c",
+   "function": "flb_output_flush_prepare_destroy",
+   "occurrence": 1,
+   "removed": [
+    "src/flb_output.c:230: call to uncontracted function `flb_output_thread_instance_get`"
+   ],
+   "status": "Unknown -> Unknown"
+  },
+  {
+   "added": [],
+   "file": "src/flb_output.c",
+   "function": "flb_output_flush_prepare_destroy",
+   "occurrence": 2,
+   "removed": [
+    "src/flb_output.c:230: call to uncontracted function `flb_output_thread_instance_get`"
+   ],
+   "status": "Unknown -> Unknown"
+  },
+  {
+   "added": [
+    "src/flb_output.c:1545: use of `name` after its object moved or its parent changed (interior-borrow-ended)",
+    "src/flb_output.c:1555: use of `name` after its object moved or its parent changed (interior-borrow-ended)",
+    "src/flb_output.c:1586: use of `name` after its object moved or its parent changed (interior-borrow-ended)",
+    "src/flb_output.c:1590: use of `name` after its object moved or its parent changed (interior-borrow-ended)",
+    "src/flb_output.c:1594: use of `name` after its object moved or its parent changed (interior-borrow-ended)",
+    "src/flb_output.c:1598: use of `name` after its object moved or its parent changed (interior-borrow-ended)",
+    "src/flb_output.c:1602: use of `name` after its object moved or its parent changed (interior-borrow-ended)",
+    "src/flb_output.c:1606: use of `name` after its object moved or its parent changed (interior-borrow-ended)",
+    "src/flb_output.c:1610: use of `name` after its object moved or its parent changed (interior-borrow-ended)",
+    "src/flb_output.c:1614: use of `name` after its object moved or its parent changed (interior-borrow-ended)",
+    "src/flb_output.c:1617: use of `name` after its object moved or its parent changed (interior-borrow-ended)",
+    "src/flb_output.c:1623: use of `name` after its object moved or its parent changed (interior-borrow-ended)",
+    "src/flb_output.c:1627: use of `name` after its object moved or its parent changed (interior-borrow-ended)",
+    "src/flb_output.c:1631: use of `name` after its object moved or its parent changed (interior-borrow-ended)",
+    "src/flb_output.c:1634: use of `name` after its object moved or its parent changed (interior-borrow-ended)",
+    "src/flb_output.c:1638: use of `name` after its object moved or its parent changed (interior-borrow-ended)",
+    "src/flb_output.c:1641: use of `name` after its object moved or its parent changed (interior-borrow-ended)",
+    "src/flb_output.c:1647: use of `name` after its object moved or its parent changed (interior-borrow-ended)",
+    "src/flb_output.c:1653: use of `name` after its object moved or its parent changed (interior-borrow-ended)",
+    "src/flb_output.c:1659: use of `name` after its object moved or its parent changed (interior-borrow-ended)",
+    "src/flb_output.c:1665: use of `name` after its object moved or its parent changed (interior-borrow-ended)",
+    "src/flb_output.c:1671: use of `name` after its object moved or its parent changed (interior-borrow-ended)",
+    "src/flb_output.c:1677: use of `name` after its object moved or its parent changed (interior-borrow-ended)",
+    "src/flb_output.c:1680: use of `name` after its object moved or its parent changed (interior-borrow-ended)",
+    "src/flb_output.c:1684: use of `name` after its object moved or its parent changed (interior-borrow-ended)",
+    "src/flb_output.c:1692: use of `name` after its object moved or its parent changed (interior-borrow-ended)",
+    "src/flb_output.c:1695: use of `name` after its object moved or its parent changed (interior-borrow-ended)",
+    "src/flb_output.c:1700: use of `name` after its object moved or its parent changed (interior-borrow-ended)",
+    "src/flb_output.c:1709: use of `name` after its object moved or its parent changed (interior-borrow-ended)",
+    "src/flb_output.c:1711: use of `name` after its object moved or its parent changed (interior-borrow-ended)",
+    "src/flb_output.c:1713: use of `name` after its object moved or its parent changed (interior-borrow-ended)",
+    "src/flb_output.c:1715: use of `name` after its object moved or its parent changed (interior-borrow-ended)",
+    "src/flb_output.c:1717: use of `name` after its object moved or its parent changed (interior-borrow-ended)",
+    "src/flb_output.c:1719: use of `name` after its object moved or its parent changed (interior-borrow-ended)",
+    "src/flb_output.c:1721: use of `name` after its object moved or its parent changed (interior-borrow-ended)",
+    "src/flb_output.c:1723: use of `name` after its object moved or its parent changed (interior-borrow-ended)",
+    "src/flb_output.c:1730: use of `name` after its object moved or its parent changed (interior-borrow-ended)",
+    "src/flb_output.c:1740: use of `name` after its object moved or its parent changed (interior-borrow-ended)",
+    "src/flb_output.c:1747: use of `name` after its object moved or its parent changed (interior-borrow-ended)",
+    "src/flb_output.c:1749: use of `name` after its object moved or its parent changed (interior-borrow-ended)",
+    "src/flb_output.c:1757: use of `name` after its object moved or its parent changed (interior-borrow-ended)",
+    "src/flb_output.c:1759: use of `name` after its object moved or its parent changed (interior-borrow-ended)",
+    "src/flb_output.c:1767: use of `name` after its object moved or its parent changed (interior-borrow-ended)",
+    "src/flb_output.c:1769: use of `name` after its object moved or its parent changed (interior-borrow-ended)",
+    "src/flb_output.c:1777: use of `name` after its object moved or its parent changed (interior-borrow-ended)",
+    "src/flb_output.c:1779: use of `name` after its object moved or its parent changed (interior-borrow-ended)",
+    "src/flb_output.c:1831: use of `name` after its object moved or its parent changed (interior-borrow-ended)",
+    "src/flb_output.c:1840: use of `name` after its object moved or its parent changed (interior-borrow-ended)",
+    "src/flb_output.c:1849: use of `name` after its object moved or its parent changed (interior-borrow-ended)",
+    "src/flb_output.c:1856: use of `name` after its object moved or its parent changed (interior-borrow-ended)",
+    "src/flb_output.c:1858: use of `name` after its object moved or its parent changed (interior-borrow-ended)",
+    "src/flb_output.c:1861: use of `name` after its object moved or its parent changed (interior-borrow-ended)",
+    "src/flb_output.c:1866: use of `name` after its object moved or its parent changed (interior-borrow-ended)",
+    "src/flb_output.c:1868: use of `name` after its object moved or its parent changed (interior-borrow-ended)",
+    "src/flb_output.c:1874: use of `name` after its object moved or its parent changed (interior-borrow-ended)",
+    "src/flb_output.c:1875: use of `name` after its object moved or its parent changed (interior-borrow-ended)",
+    "src/flb_output.c:1881: use of `name` after its object moved or its parent changed (interior-borrow-ended)",
+    "src/flb_output.c:1883: use of `name` after its object moved or its parent changed (interior-borrow-ended)",
+    "src/flb_output.c:1890: use of `name` after its object moved or its parent changed (interior-borrow-ended)",
+    "src/flb_output.c:1901: use of `name` after its object moved or its parent changed (interior-borrow-ended)",
+    "src/flb_output.c:1909: use of `name` after its object moved or its parent changed (interior-borrow-ended)",
+    "src/flb_output.c:1910: use of `name` after its object moved or its parent changed (interior-borrow-ended)",
+    "src/flb_output.c:1917: use of `name` after its object moved or its parent changed (interior-borrow-ended)",
+    "src/flb_output.c:1919: use of `name` after its object moved or its parent changed (interior-borrow-ended)"
+   ],
+   "file": "src/flb_output.c",
+   "function": "flb_output_init_all",
+   "occurrence": 1,
+   "removed": [
+    "src/flb_output.c:1569: call to uncontracted function `flb_output_name`",
+    "src/flb_output.c:1550: nested call `flb_output_name` inside a modeled call is outside the resource projection",
+    "src/flb_output.c:1903: nested call `flb_output_name` inside a modeled call is outside the resource projection"
+   ],
+   "status": "Unknown -> Unknown"
+  },
+  {
+   "added": [
+    "src/flb_output.c:1545: use of `name` after its object moved or its parent changed (interior-borrow-ended)",
+    "src/flb_output.c:1555: use of `name` after its object moved or its parent changed (interior-borrow-ended)",
+    "src/flb_output.c:1586: use of `name` after its object moved or its parent changed (interior-borrow-ended)",
+    "src/flb_output.c:1590: use of `name` after its object moved or its parent changed (interior-borrow-ended)",
+    "src/flb_output.c:1594: use of `name` after its object moved or its parent changed (interior-borrow-ended)",
+    "src/flb_output.c:1598: use of `name` after its object moved or its parent changed (interior-borrow-ended)",
+    "src/flb_output.c:1602: use of `name` after its object moved or its parent changed (interior-borrow-ended)",
+    "src/flb_output.c:1606: use of `name` after its object moved or its parent changed (interior-borrow-ended)",
+    "src/flb_output.c:1610: use of `name` after its object moved or its parent changed (interior-borrow-ended)",
+    "src/flb_output.c:1614: use of `name` after its object moved or its parent changed (interior-borrow-ended)",
+    "src/flb_output.c:1617: use of `name` after its object moved or its parent changed (interior-borrow-ended)",
+    "src/flb_output.c:1623: use of `name` after its object moved or its parent changed (interior-borrow-ended)",
+    "src/flb_output.c:1627: use of `name` after its object moved or its parent changed (interior-borrow-ended)",
+    "src/flb_output.c:1631: use of `name` after its object moved or its parent changed (interior-borrow-ended)",
+    "src/flb_output.c:1634: use of `name` after its object moved or its parent changed (interior-borrow-ended)",
+    "src/flb_output.c:1638: use of `name` after its object moved or its parent changed (interior-borrow-ended)",
+    "src/flb_output.c:1641: use of `name` after its object moved or its parent changed (interior-borrow-ended)",
+    "src/flb_output.c:1647: use of `name` after its object moved or its parent changed (interior-borrow-ended)",
+    "src/flb_output.c:1653: use of `name` after its object moved or its parent changed (interior-borrow-ended)",
+    "src/flb_output.c:1659: use of `name` after its object moved or its parent changed (interior-borrow-ended)",
+    "src/flb_output.c:1665: use of `name` after its object moved or its parent changed (interior-borrow-ended)",
+    "src/flb_output.c:1671: use of `name` after its object moved or its parent changed (interior-borrow-ended)",
+    "src/flb_output.c:1677: use of `name` after its object moved or its parent changed (interior-borrow-ended)",
+    "src/flb_output.c:1680: use of `name` after its object moved or its parent changed (interior-borrow-ended)",
+    "src/flb_output.c:1684: use of `name` after its object moved or its parent changed (interior-borrow-ended)",
+    "src/flb_output.c:1692: use of `name` after its object moved or its parent changed (interior-borrow-ended)",
+    "src/flb_output.c:1695: use of `name` after its object moved or its parent changed (interior-borrow-ended)",
+    "src/flb_output.c:1700: use of `name` after its object moved or its parent changed (interior-borrow-ended)",
+    "src/flb_output.c:1709: use of `name` after its object moved or its parent changed (interior-borrow-ended)",
+    "src/flb_output.c:1711: use of `name` after its object moved or its parent changed (interior-borrow-ended)",
+    "src/flb_output.c:1713: use of `name` after its object moved or its parent changed (interior-borrow-ended)",
+    "src/flb_output.c:1715: use of `name` after its object moved or its parent changed (interior-borrow-ended)",
+    "src/flb_output.c:1717: use of `name` after its object moved or its parent changed (interior-borrow-ended)",
+    "src/flb_output.c:1719: use of `name` after its object moved or its parent changed (interior-borrow-ended)",
+    "src/flb_output.c:1721: use of `name` after its object moved or its parent changed (interior-borrow-ended)",
+    "src/flb_output.c:1723: use of `name` after its object moved or its parent changed (interior-borrow-ended)",
+    "src/flb_output.c:1730: use of `name` after its object moved or its parent changed (interior-borrow-ended)",
+    "src/flb_output.c:1740: use of `name` after its object moved or its parent changed (interior-borrow-ended)",
+    "src/flb_output.c:1747: use of `name` after its object moved or its parent changed (interior-borrow-ended)",
+    "src/flb_output.c:1749: use of `name` after its object moved or its parent changed (interior-borrow-ended)",
+    "src/flb_output.c:1757: use of `name` after its object moved or its parent changed (interior-borrow-ended)",
+    "src/flb_output.c:1759: use of `name` after its object moved or its parent changed (interior-borrow-ended)",
+    "src/flb_output.c:1767: use of `name` after its object moved or its parent changed (interior-borrow-ended)",
+    "src/flb_output.c:1769: use of `name` after its object moved or its parent changed (interior-borrow-ended)",
+    "src/flb_output.c:1777: use of `name` after its object moved or its parent changed (interior-borrow-ended)",
+    "src/flb_output.c:1779: use of `name` after its object moved or its parent changed (interior-borrow-ended)",
+    "src/flb_output.c:1831: use of `name` after its object moved or its parent changed (interior-borrow-ended)",
+    "src/flb_output.c:1840: use of `name` after its object moved or its parent changed (interior-borrow-ended)",
+    "src/flb_output.c:1849: use of `name` after its object moved or its parent changed (interior-borrow-ended)",
+    "src/flb_output.c:1856: use of `name` after its object moved or its parent changed (interior-borrow-ended)",
+    "src/flb_output.c:1858: use of `name` after its object moved or its parent changed (interior-borrow-ended)",
+    "src/flb_output.c:1861: use of `name` after its object moved or its parent changed (interior-borrow-ended)",
+    "src/flb_output.c:1866: use of `name` after its object moved or its parent changed (interior-borrow-ended)",
+    "src/flb_output.c:1868: use of `name` after its object moved or its parent changed (interior-borrow-ended)",
+    "src/flb_output.c:1874: use of `name` after its object moved or its parent changed (interior-borrow-ended)",
+    "src/flb_output.c:1875: use of `name` after its object moved or its parent changed (interior-borrow-ended)",
+    "src/flb_output.c:1881: use of `name` after its object moved or its parent changed (interior-borrow-ended)",
+    "src/flb_output.c:1883: use of `name` after its object moved or its parent changed (interior-borrow-ended)",
+    "src/flb_output.c:1890: use of `name` after its object moved or its parent changed (interior-borrow-ended)",
+    "src/flb_output.c:1901: use of `name` after its object moved or its parent changed (interior-borrow-ended)",
+    "src/flb_output.c:1909: use of `name` after its object moved or its parent changed (interior-borrow-ended)",
+    "src/flb_output.c:1910: use of `name` after its object moved or its parent changed (interior-borrow-ended)",
+    "src/flb_output.c:1917: use of `name` after its object moved or its parent changed (interior-borrow-ended)",
+    "src/flb_output.c:1919: use of `name` after its object moved or its parent changed (interior-borrow-ended)"
+   ],
+   "file": "src/flb_output.c",
+   "function": "flb_output_init_all",
+   "occurrence": 2,
+   "removed": [
+    "src/flb_output.c:1569: call to uncontracted function `flb_output_name`",
+    "src/flb_output.c:1550: nested call `flb_output_name` inside a modeled call is outside the resource projection",
+    "src/flb_output.c:1903: nested call `flb_output_name` inside a modeled call is outside the resource projection"
+   ],
+   "status": "Unknown -> Unknown"
+  },
+  {
+   "added": [],
+   "file": "src/flb_output.c",
+   "function": "flb_output_set_property",
+   "occurrence": 1,
+   "removed": [
+    "src/flb_output.c:1161: indirect memory access is outside the resource projection",
+    "src/flb_output.c:1241: indirect memory access is outside the resource projection",
+    "src/flb_output.c:1053: unresolved resource identity `ins`",
+    "src/flb_output.c:1061: unresolved resource identity `ins`",
+    "src/flb_output.c:1068: unresolved resource identity `ins`",
+    "src/flb_output.c:1072: unresolved resource identity `ins`",
+    "src/flb_output.c:1080: unresolved resource identity `ins`",
+    "src/flb_output.c:1086: unresolved resource identity `ins`",
+    "src/flb_output.c:1089: unresolved resource identity `ins`",
+    "src/flb_output.c:1092: unresolved resource identity `ins`",
+    "src/flb_output.c:1096: unresolved resource identity `ins`",
+    "src/flb_output.c:1102: unresolved resource identity `ins`",
+    "src/flb_output.c:1176: unresolved resource identity `ins`",
+    "src/flb_output.c:1261: unresolved resource identity `ins`",
+    "src/flb_output.c:1269: unresolved resource identity `ins`"
+   ],
+   "status": "Unknown -> Unknown"
+  },
+  {
+   "added": [],
+   "file": "src/flb_output.c",
+   "function": "flb_output_set_property",
+   "occurrence": 2,
+   "removed": [
+    "src/flb_output.c:1161: indirect memory access is outside the resource projection",
+    "src/flb_output.c:1241: indirect memory access is outside the resource projection",
+    "src/flb_output.c:1053: unresolved resource identity `ins`",
+    "src/flb_output.c:1061: unresolved resource identity `ins`",
+    "src/flb_output.c:1068: unresolved resource identity `ins`",
+    "src/flb_output.c:1072: unresolved resource identity `ins`",
+    "src/flb_output.c:1080: unresolved resource identity `ins`",
+    "src/flb_output.c:1086: unresolved resource identity `ins`",
+    "src/flb_output.c:1089: unresolved resource identity `ins`",
+    "src/flb_output.c:1092: unresolved resource identity `ins`",
+    "src/flb_output.c:1096: unresolved resource identity `ins`",
+    "src/flb_output.c:1102: unresolved resource identity `ins`",
+    "src/flb_output.c:1176: unresolved resource identity `ins`",
+    "src/flb_output.c:1261: unresolved resource identity `ins`",
+    "src/flb_output.c:1269: unresolved resource identity `ins`"
+   ],
+   "status": "Unknown -> Unknown"
+  },
+  {
+   "added": [
+    "src/flb_output.c:513: counted users undecided: `resource_user_exit(task, -1, restored)`: `flb_output_flush_create` calls `flb_processor_is_active`: call to `flb_processor_is_active`, which has no contract in force and no body in this unit"
+   ],
+   "file": "src/flb_output.c",
+   "function": "flb_output_task_flush",
+   "occurrence": 1,
+   "removed": [
+    "src/flb_output.c:513: counted users undecided: `resource_user_exit(task, -1, restored)`: `flb_output_flush_create` calls `flb_output_flush_id_get`: the declaration of `flb_output_flush_id_get` does not hold against its body here (`resource_user_neutral()` undecided: `flb_output_flush_id_get` calls `flb_output_thread_instance_get`: call to `flb_output_thread_instance_get`, which has no contract in force and no body in this unit)"
+   ],
+   "status": "Unsafe -> Unsafe"
+  },
+  {
+   "added": [
+    "src/flb_output.c:513: counted users undecided: `resource_user_exit(task, -1, restored)`: `flb_output_flush_create` calls `flb_processor_is_active`: call to `flb_processor_is_active`, which has no contract in force and no body in this unit"
+   ],
+   "file": "src/flb_output.c",
+   "function": "flb_output_task_flush",
+   "occurrence": 2,
+   "removed": [
+    "src/flb_output.c:513: counted users undecided: `resource_user_exit(task, -1, restored)`: `flb_output_flush_create` calls `flb_output_flush_id_get`: the declaration of `flb_output_flush_id_get` does not hold against its body here (`resource_user_neutral()` undecided: `flb_output_flush_id_get` calls `flb_output_thread_instance_get`: call to `flb_output_thread_instance_get`, which has no contract in force and no body in this unit)"
+   ],
+   "status": "Unsafe -> Unsafe"
+  },
+  {
+   "added": [],
+   "file": "src/flb_output.c",
+   "function": "flb_output_task_flush_error",
+   "occurrence": 1,
+   "removed": [
+    "src/flb_output.c:453: unresolved resource identity `out_ins`"
+   ],
+   "status": "Unknown -> Unknown"
+  },
+  {
+   "added": [],
+   "file": "src/flb_output.c",
+   "function": "flb_output_task_flush_error",
+   "occurrence": 2,
+   "removed": [
+    "src/flb_output.c:453: unresolved resource identity `out_ins`"
+   ],
+   "status": "Unknown -> Unknown"
+  },
+  {
+   "added": [],
+   "file": "src/flb_scheduler.c",
+   "function": "flb_sched_event_handler",
+   "occurrence": 1,
+   "removed": [
+    "src/flb_scheduler.c:613: call to uncontracted function `flb_sched_timer_cb_disable`"
+   ],
+   "status": "Unknown -> Unknown"
+  },
+  {
+   "added": [],
+   "file": "src/flb_scheduler.c",
+   "function": "flb_sched_event_handler",
+   "occurrence": 2,
+   "removed": [
+    "src/flb_scheduler.c:613: call to uncontracted function `flb_sched_timer_cb_disable`"
+   ],
+   "status": "Unknown -> Unknown"
+  },
+  {
+   "added": [],
+   "file": "src/flb_scheduler.c",
+   "function": "flb_sched_timer_destroy",
+   "occurrence": 1,
+   "removed": [
+    "src/flb_scheduler.c:907: call to uncontracted function `flb_sched_timer_cb_disable`"
+   ],
+   "status": "Unknown -> Unknown"
+  },
+  {
+   "added": [],
+   "file": "src/flb_scheduler.c",
+   "function": "flb_sched_timer_destroy",
+   "occurrence": 2,
+   "removed": [
+    "src/flb_scheduler.c:907: call to uncontracted function `flb_sched_timer_cb_disable`"
+   ],
+   "status": "Unknown -> Unknown"
+  },
+  {
+   "added": [],
+   "file": "src/flb_scheduler.c",
+   "function": "flb_sched_timer_invalidate",
+   "occurrence": 1,
+   "removed": [
+    "src/flb_scheduler.c:896: call to uncontracted function `flb_sched_timer_cb_disable`"
+   ],
+   "status": "Unknown -> Unknown"
+  },
+  {
+   "added": [],
+   "file": "src/flb_scheduler.c",
+   "function": "flb_sched_timer_invalidate",
+   "occurrence": 2,
+   "removed": [
+    "src/flb_scheduler.c:896: call to uncontracted function `flb_sched_timer_cb_disable`"
+   ],
+   "status": "Unknown -> Unknown"
+  },
+  {
+   "added": [],
+   "file": "src/flb_task.c",
+   "function": "flb_task_destroy",
+   "occurrence": 1,
+   "removed": [
+    "src/flb_task.c:909: call to uncontracted function `map_free_task_id`"
+   ],
+   "status": "Unknown -> Unknown"
+  },
+  {
+   "added": [],
+   "file": "src/flb_task.c",
+   "function": "flb_task_destroy",
+   "occurrence": 2,
+   "removed": [
+    "src/flb_task.c:909: call to uncontracted function `map_free_task_id`"
+   ],
+   "status": "Unknown -> Unknown"
+  },
+  {
+   "added": [],
+   "file": "src/flb_task.c",
+   "function": "flb_task_running_print",
+   "occurrence": 1,
+   "removed": [
+    "src/flb_task.c:519: indirect memory access is outside the resource projection"
+   ],
+   "status": "Unknown -> Unknown"
+  },
+  {
+   "added": [],
+   "file": "src/flb_task.c",
+   "function": "flb_task_running_print",
+   "occurrence": 2,
+   "removed": [
+    "src/flb_task.c:519: indirect memory access is outside the resource projection"
+   ],
+   "status": "Unknown -> Unknown"
+  }
+ ],
  "contracts_in_force": {
   "__errno_location": {
    "functions": [
@@ -426,7 +1186,7 @@
     "crates/qcore-c-gateway/tests/cell_result_set_alignment.rs",
     "crates/qcore-c-gateway/tests/fixtures/contracts/o04_path.qv"
    ],
-   "tests_total": 9
+   "tests_total": 10
   },
   "flb_input_chunk_destroy": {
    "functions": [
@@ -495,6 +1255,26 @@
     "crates/qcore-c-gateway/tests/cell_protocol_release_window_frames.rs"
    ],
    "tests_total": 3
+  },
+  "flb_input_name": {
+   "functions": [
+    "flb_output_task_flush_error",
+    "flb_task_create",
+    "flb_task_running_print",
+    "handle_dlq_if_available",
+    "handle_output_event",
+    "record_retry_failure_metrics",
+    "record_unmatched_route_drop_metrics",
+    "tasks_start"
+   ],
+   "modules": [
+    "providers/quirin-provider-fluent-bit/contracts/fluent_bit/retry_lifecycle.qv"
+   ],
+   "rows": 8,
+   "tests": [
+    "crates/qcore-c-gateway/tests/retry_lifetime.rs"
+   ],
+   "tests_total": 1
   },
   "flb_log_check": {
    "functions": [
@@ -605,7 +1385,22 @@
    ],
    "rows": 5,
    "tests": [
+    "crates/qcore-c-gateway/tests/retry_lifetime.rs",
     "crates/qcore-contract/tests/contract_views.rs"
+   ],
+   "tests_total": 2
+  },
+  "flb_metrics_sum": {
+   "functions": [
+    "handle_output_event",
+    "record_retry_failure_metrics"
+   ],
+   "modules": [
+    "providers/quirin-provider-fluent-bit/contracts/fluent_bit/retry_lifecycle.qv"
+   ],
+   "rows": 2,
+   "tests": [
+    "crates/qcore-c-gateway/tests/retry_lifetime.rs"
    ],
    "tests_total": 1
   },
@@ -655,6 +1450,43 @@
    ],
    "tests_total": 3
   },
+  "flb_output_name": {
+   "functions": [
+    "flb_output_init_all",
+    "flb_output_name",
+    "flb_output_set_property",
+    "flb_output_task_flush_error",
+    "flb_output_upstream_set",
+    "flb_task_running_print",
+    "handle_dlq_if_available",
+    "handle_output_event",
+    "record_retry_failure_metrics"
+   ],
+   "modules": [
+    "providers/quirin-provider-fluent-bit/contracts/fluent_bit/null_deref.qv",
+    "providers/quirin-provider-fluent-bit/contracts/fluent_bit/retry_lifecycle.qv"
+   ],
+   "rows": 9,
+   "tests": [
+    "crates/qcore-c-gateway/tests/retry_lifetime.rs"
+   ],
+   "tests_total": 1
+  },
+  "flb_output_thread_instance_get": {
+   "functions": [
+    "flb_output_flush_finished",
+    "flb_output_flush_id_get",
+    "flb_output_flush_prepare_destroy"
+   ],
+   "modules": [
+    "providers/quirin-provider-fluent-bit/contracts/fluent_bit/retry_lifecycle.qv"
+   ],
+   "rows": 3,
+   "tests": [
+    "crates/qcore-c-gateway/tests/retry_lifetime.rs"
+   ],
+   "tests_total": 1
+  },
   "flb_output_thread_pool_flush": {
    "functions": [
     "flb_output_task_flush"
@@ -665,6 +1497,20 @@
    "rows": 1,
    "tests": [],
    "tests_total": 0
+  },
+  "flb_sched_ctx_init": {
+   "functions": [
+    "flb_engine_start",
+    "flb_sched_ctx_init"
+   ],
+   "modules": [
+    "providers/quirin-provider-fluent-bit/contracts/fluent_bit/retry_lifecycle.qv"
+   ],
+   "rows": 2,
+   "tests": [
+    "crates/qcore-c-gateway/tests/retry_lifetime.rs"
+   ],
+   "tests_total": 1
   },
   "flb_sched_request_destroy": {
    "functions": [
@@ -683,6 +1529,22 @@
     "crates/qcore-c-gateway/tests/cell_protocol_release_window_frames.rs"
    ],
    "tests_total": 3
+  },
+  "flb_sched_timer_cb_disable": {
+   "functions": [
+    "flb_sched_event_handler",
+    "flb_sched_timer_cb_disable",
+    "flb_sched_timer_destroy",
+    "flb_sched_timer_invalidate"
+   ],
+   "modules": [
+    "providers/quirin-provider-fluent-bit/contracts/fluent_bit/retry_lifecycle.qv"
+   ],
+   "rows": 4,
+   "tests": [
+    "crates/qcore-c-gateway/tests/retry_lifetime.rs"
+   ],
+   "tests_total": 1
   },
   "flb_sched_timer_destroy": {
    "functions": [
@@ -762,6 +1624,20 @@
     "crates/qcore-c-gateway/tests/cell_protocol_release_window_frames.rs"
    ],
    "tests_total": 3
+  },
+  "flb_task_from_fs_storage": {
+   "functions": [
+    "flb_task_from_fs_storage",
+    "handle_output_event"
+   ],
+   "modules": [
+    "providers/quirin-provider-fluent-bit/contracts/fluent_bit/retry_lifecycle.qv"
+   ],
+   "rows": 2,
+   "tests": [
+    "crates/qcore-c-gateway/tests/retry_lifetime.rs"
+   ],
+   "tests_total": 1
   },
   "flb_task_queue_destroy": {
    "functions": [
@@ -917,6 +1793,20 @@
    ],
    "tests_total": 2
   },
+  "map_free_task_id": {
+   "functions": [
+    "flb_task_destroy",
+    "map_free_task_id"
+   ],
+   "modules": [
+    "providers/quirin-provider-fluent-bit/contracts/fluent_bit/retry_lifecycle.qv"
+   ],
+   "rows": 2,
+   "tests": [
+    "crates/qcore-c-gateway/tests/retry_lifetime.rs"
+   ],
+   "tests_total": 1
+  },
   "memcpy": {
    "functions": [
     "flb_output_upstream_set"
@@ -1046,7 +1936,7 @@
     "crates/qcore-c-gateway/tests/cell_protocol_release_window_frames.rs",
     "crates/qcore-c-gateway/tests/descriptor_cell_protocols.rs"
    ],
-   "tests_total": 10
+   "tests_total": 11
   },
   "mk_event_wait": {
    "functions": [
@@ -1378,13 +2268,406 @@
    "tests_total": 5
   }
  },
- "label": "base-56584db0b",
+ "label": "tip 45a17a70c against base 56584db0b",
  "lifecycle_units": [
   "src/flb_task.c",
   "src/flb_output.c",
   "src/flb_scheduler.c",
   "src/flb_engine_dispatch.c",
   "src/flb_engine.c"
+ ],
+ "movement": {
+  "flb_input_name": {
+   "cleared": [
+    {
+     "file": "src/flb_engine.c",
+     "function": "handle_dlq_if_available",
+     "line": "src/flb_engine.c:542",
+     "occurrence": 1
+    },
+    {
+     "file": "src/flb_engine.c",
+     "function": "handle_output_event",
+     "line": "src/flb_engine.c:622",
+     "occurrence": 1
+    },
+    {
+     "file": "src/flb_engine.c",
+     "function": "handle_dlq_if_available",
+     "line": "src/flb_engine.c:542",
+     "occurrence": 2
+    },
+    {
+     "file": "src/flb_engine.c",
+     "function": "handle_output_event",
+     "line": "src/flb_engine.c:622",
+     "occurrence": 2
+    },
+    {
+     "file": "src/flb_engine_dispatch.c",
+     "function": "record_retry_failure_metrics",
+     "line": "src/flb_engine_dispatch.c:50",
+     "occurrence": 1
+    },
+    {
+     "file": "src/flb_engine_dispatch.c",
+     "function": "record_retry_failure_metrics",
+     "line": "src/flb_engine_dispatch.c:50",
+     "occurrence": 2
+    }
+   ],
+   "moved": []
+  },
+  "flb_metrics_sum": {
+   "cleared": [
+    {
+     "file": "src/flb_engine.c",
+     "function": "handle_output_event",
+     "line": "src/flb_engine.c:669",
+     "occurrence": 1
+    },
+    {
+     "file": "src/flb_engine.c",
+     "function": "handle_output_event",
+     "line": "src/flb_engine.c:671",
+     "occurrence": 1
+    },
+    {
+     "file": "src/flb_engine.c",
+     "function": "handle_output_event",
+     "line": "src/flb_engine.c:730",
+     "occurrence": 1
+    },
+    {
+     "file": "src/flb_engine.c",
+     "function": "handle_output_event",
+     "line": "src/flb_engine.c:779",
+     "occurrence": 1
+    },
+    {
+     "file": "src/flb_engine.c",
+     "function": "handle_output_event",
+     "line": "src/flb_engine.c:780",
+     "occurrence": 1
+    },
+    {
+     "file": "src/flb_engine.c",
+     "function": "handle_output_event",
+     "line": "src/flb_engine.c:846",
+     "occurrence": 1
+    },
+    {
+     "file": "src/flb_engine.c",
+     "function": "handle_output_event",
+     "line": "src/flb_engine.c:847",
+     "occurrence": 1
+    },
+    {
+     "file": "src/flb_engine.c",
+     "function": "handle_output_event",
+     "line": "src/flb_engine.c:875",
+     "occurrence": 1
+    },
+    {
+     "file": "src/flb_engine.c",
+     "function": "handle_output_event",
+     "line": "src/flb_engine.c:876",
+     "occurrence": 1
+    },
+    {
+     "file": "src/flb_engine.c",
+     "function": "handle_output_event",
+     "line": "src/flb_engine.c:669",
+     "occurrence": 2
+    },
+    {
+     "file": "src/flb_engine.c",
+     "function": "handle_output_event",
+     "line": "src/flb_engine.c:671",
+     "occurrence": 2
+    },
+    {
+     "file": "src/flb_engine.c",
+     "function": "handle_output_event",
+     "line": "src/flb_engine.c:730",
+     "occurrence": 2
+    },
+    {
+     "file": "src/flb_engine.c",
+     "function": "handle_output_event",
+     "line": "src/flb_engine.c:779",
+     "occurrence": 2
+    },
+    {
+     "file": "src/flb_engine.c",
+     "function": "handle_output_event",
+     "line": "src/flb_engine.c:780",
+     "occurrence": 2
+    },
+    {
+     "file": "src/flb_engine.c",
+     "function": "handle_output_event",
+     "line": "src/flb_engine.c:846",
+     "occurrence": 2
+    },
+    {
+     "file": "src/flb_engine.c",
+     "function": "handle_output_event",
+     "line": "src/flb_engine.c:847",
+     "occurrence": 2
+    },
+    {
+     "file": "src/flb_engine.c",
+     "function": "handle_output_event",
+     "line": "src/flb_engine.c:875",
+     "occurrence": 2
+    },
+    {
+     "file": "src/flb_engine.c",
+     "function": "handle_output_event",
+     "line": "src/flb_engine.c:876",
+     "occurrence": 2
+    },
+    {
+     "file": "src/flb_engine_dispatch.c",
+     "function": "record_retry_failure_metrics",
+     "line": "src/flb_engine_dispatch.c:79",
+     "occurrence": 1
+    },
+    {
+     "file": "src/flb_engine_dispatch.c",
+     "function": "record_retry_failure_metrics",
+     "line": "src/flb_engine_dispatch.c:80",
+     "occurrence": 1
+    },
+    {
+     "file": "src/flb_engine_dispatch.c",
+     "function": "record_retry_failure_metrics",
+     "line": "src/flb_engine_dispatch.c:79",
+     "occurrence": 2
+    },
+    {
+     "file": "src/flb_engine_dispatch.c",
+     "function": "record_retry_failure_metrics",
+     "line": "src/flb_engine_dispatch.c:80",
+     "occurrence": 2
+    }
+   ],
+   "moved": []
+  },
+  "flb_output_name": {
+   "cleared": [
+    {
+     "file": "src/flb_engine.c",
+     "function": "handle_dlq_if_available",
+     "line": "src/flb_engine.c:545",
+     "occurrence": 1
+    },
+    {
+     "file": "src/flb_engine.c",
+     "function": "handle_output_event",
+     "line": "src/flb_engine.c:623",
+     "occurrence": 1
+    },
+    {
+     "file": "src/flb_engine.c",
+     "function": "handle_dlq_if_available",
+     "line": "src/flb_engine.c:545",
+     "occurrence": 2
+    },
+    {
+     "file": "src/flb_engine.c",
+     "function": "handle_output_event",
+     "line": "src/flb_engine.c:623",
+     "occurrence": 2
+    },
+    {
+     "file": "src/flb_engine_dispatch.c",
+     "function": "record_retry_failure_metrics",
+     "line": "src/flb_engine_dispatch.c:51",
+     "occurrence": 1
+    },
+    {
+     "file": "src/flb_engine_dispatch.c",
+     "function": "record_retry_failure_metrics",
+     "line": "src/flb_engine_dispatch.c:51",
+     "occurrence": 2
+    },
+    {
+     "file": "src/flb_output.c",
+     "function": "flb_output_init_all",
+     "line": "src/flb_output.c:1569",
+     "occurrence": 1
+    },
+    {
+     "file": "src/flb_output.c",
+     "function": "flb_output_init_all",
+     "line": "src/flb_output.c:1569",
+     "occurrence": 2
+    }
+   ],
+   "moved": []
+  },
+  "flb_output_thread_instance_get": {
+   "cleared": [
+    {
+     "file": "src/flb_output.c",
+     "function": "flb_output_flush_finished",
+     "line": "src/flb_output.c:734",
+     "occurrence": 1
+    },
+    {
+     "file": "src/flb_output.c",
+     "function": "flb_output_flush_id_get",
+     "line": "src/flb_output.c:249",
+     "occurrence": 1
+    },
+    {
+     "file": "src/flb_output.c",
+     "function": "flb_output_flush_prepare_destroy",
+     "line": "src/flb_output.c:230",
+     "occurrence": 1
+    },
+    {
+     "file": "src/flb_output.c",
+     "function": "flb_output_flush_finished",
+     "line": "src/flb_output.c:734",
+     "occurrence": 2
+    },
+    {
+     "file": "src/flb_output.c",
+     "function": "flb_output_flush_id_get",
+     "line": "src/flb_output.c:249",
+     "occurrence": 2
+    },
+    {
+     "file": "src/flb_output.c",
+     "function": "flb_output_flush_prepare_destroy",
+     "line": "src/flb_output.c:230",
+     "occurrence": 2
+    }
+   ],
+   "moved": [
+    {
+     "file": "src/flb_output.c",
+     "function": "flb_output_flush_id_get",
+     "move": "Unknown -> Safe",
+     "occurrence": 1
+    },
+    {
+     "file": "src/flb_output.c",
+     "function": "flb_output_flush_id_get",
+     "move": "Unknown -> Safe",
+     "occurrence": 2
+    }
+   ]
+  },
+  "flb_sched_ctx_init": {
+   "cleared": [
+    {
+     "file": "src/flb_engine.c",
+     "function": "flb_engine_start",
+     "line": "src/flb_engine.c:1296",
+     "occurrence": 1
+    },
+    {
+     "file": "src/flb_engine.c",
+     "function": "flb_engine_start",
+     "line": "src/flb_engine.c:1296",
+     "occurrence": 2
+    }
+   ],
+   "moved": []
+  },
+  "flb_sched_timer_cb_disable": {
+   "cleared": [
+    {
+     "file": "src/flb_scheduler.c",
+     "function": "flb_sched_event_handler",
+     "line": "src/flb_scheduler.c:613",
+     "occurrence": 1
+    },
+    {
+     "file": "src/flb_scheduler.c",
+     "function": "flb_sched_timer_destroy",
+     "line": "src/flb_scheduler.c:907",
+     "occurrence": 1
+    },
+    {
+     "file": "src/flb_scheduler.c",
+     "function": "flb_sched_timer_invalidate",
+     "line": "src/flb_scheduler.c:896",
+     "occurrence": 1
+    },
+    {
+     "file": "src/flb_scheduler.c",
+     "function": "flb_sched_event_handler",
+     "line": "src/flb_scheduler.c:613",
+     "occurrence": 2
+    },
+    {
+     "file": "src/flb_scheduler.c",
+     "function": "flb_sched_timer_destroy",
+     "line": "src/flb_scheduler.c:907",
+     "occurrence": 2
+    },
+    {
+     "file": "src/flb_scheduler.c",
+     "function": "flb_sched_timer_invalidate",
+     "line": "src/flb_scheduler.c:896",
+     "occurrence": 2
+    }
+   ],
+   "moved": []
+  },
+  "flb_task_from_fs_storage": {
+   "cleared": [
+    {
+     "file": "src/flb_engine.c",
+     "function": "handle_output_event",
+     "line": "src/flb_engine.c:687",
+     "occurrence": 1
+    },
+    {
+     "file": "src/flb_engine.c",
+     "function": "handle_output_event",
+     "line": "src/flb_engine.c:687",
+     "occurrence": 2
+    }
+   ],
+   "moved": []
+  },
+  "map_free_task_id": {
+   "cleared": [
+    {
+     "file": "src/flb_task.c",
+     "function": "flb_task_destroy",
+     "line": "src/flb_task.c:909",
+     "occurrence": 1
+    },
+    {
+     "file": "src/flb_task.c",
+     "function": "flb_task_destroy",
+     "line": "src/flb_task.c:909",
+     "occurrence": 2
+    }
+   ],
+   "moved": []
+  }
+ },
+ "moves": [
+  {
+   "file": "src/flb_output.c",
+   "function": "flb_output_flush_id_get",
+   "move": "Unknown -> Safe",
+   "occurrence": 1
+  },
+  {
+   "file": "src/flb_output.c",
+   "function": "flb_output_flush_id_get",
+   "move": "Unknown -> Safe",
+   "occurrence": 2
+  }
  ],
  "non_safe_rows": [
   {
@@ -1474,7 +2757,6 @@
    "function": "flb_task_destroy",
    "leaves": [
     "906: indirect memory access is outside the resource projection",
-    "909: call to uncontracted function `map_free_task_id`",
     "914: unmodeled call, aggregate or indirect access in branch condition",
     "916: indirect memory access is outside the resource projection",
     "924: unlink by `mk_list_del` of `task`, which this function has not published",
@@ -1580,7 +2862,6 @@
    "leaves": [
     "510: call to uncontracted function `flb_sds_create_size`",
     "518: call to uncontracted function `mk_list_size`",
-    "519: indirect memory access is outside the resource projection",
     "526: indirect memory access is outside the resource projection",
     "530: unresolved resource identity `routes`",
     "534: unresolved resource identity `tmp`",
@@ -1840,7 +3121,6 @@
     "1285: nested call `ctr_version` inside a modeled call is outside the resource projection",
     "1288: call to uncontracted function `flb_sched_create`",
     "1293: store of a custody-carrying value into `config->sched`, a member of the formal `config` (member-store-through-formal)",
-    "1296: call to uncontracted function `flb_sched_ctx_init`",
     "1297: call to uncontracted function `flb_sched_ctx_set`",
     "1300: call to uncontracted function `flb_input_init_all`",
     "1307: call to uncontracted function `flb_filter_init_all`",
@@ -1912,10 +3192,10 @@
    "leaves": [
     "531: unresolved resource identity `ic`",
     "536: call to uncontracted function `flb_input_chunk_get_tag` in branch condition",
-    "542: call to uncontracted function `flb_input_name`",
-    "545: call to uncontracted function `flb_output_name`",
     "546: unresolved resource identity `ic`",
-    "549: call to uncontracted function `flb_storage_quarantine_chunk`"
+    "549: call to uncontracted function `flb_storage_quarantine_chunk`",
+    "549: use of `out` after its object moved or its parent changed (interior-borrow-ended)",
+    "549: use of `tag` after its object moved or its parent changed (interior-borrow-ended)"
    ],
    "rows": 2,
    "status": "Unknown"
@@ -1935,75 +3215,168 @@
    "leaves": [
     "618: call to uncontracted function `flb_output_get_instance`",
     "620: call to uncontracted function `flb_output_flush_finished`",
-    "622: call to uncontracted function `flb_input_name`",
-    "623: call to uncontracted function `flb_output_name`",
     "628: unresolved resource identity `task`",
     "629: unresolved resource identity `task`",
     "636: call to uncontracted function `flb_output_task_singleplex_flush_next`",
+    "636: use of `in_name` after its object moved or its parent changed (interior-borrow-ended)",
+    "636: use of `out_name` after its object moved or its parent changed (interior-borrow-ended)",
     "643: braced initializer, expression, or declaration is not modeled",
+    "643: use of `in_name` after its object moved or its parent changed (interior-borrow-ended)",
+    "643: use of `out_name` after its object moved or its parent changed (interior-borrow-ended)",
     "646: braced initializer, expression, or declaration is not modeled",
+    "646: use of `in_name` after its object moved or its parent changed (interior-borrow-ended)",
+    "646: use of `out_name` after its object moved or its parent changed (interior-borrow-ended)",
     "649: unresolved resource identity `task`",
     "650: braced initializer, expression, or declaration is not modeled",
+    "650: use of `in_name` after its object moved or its parent changed (interior-borrow-ended)",
+    "650: use of `out_name` after its object moved or its parent changed (interior-borrow-ended)",
     "654: braced initializer, expression, or declaration is not modeled",
+    "654: use of `in_name` after its object moved or its parent changed (interior-borrow-ended)",
+    "654: use of `out_name` after its object moved or its parent changed (interior-borrow-ended)",
     "661: indirect memory access is outside the resource projection",
+    "661: use of `in_name` after its object moved or its parent changed (interior-borrow-ended)",
+    "661: use of `out_name` after its object moved or its parent changed (interior-borrow-ended)",
     "662: braced initializer, expression, or declaration is not modeled",
-    "669: call to uncontracted function `flb_metrics_sum`",
-    "671: call to uncontracted function `flb_metrics_sum`",
+    "662: use of `in_name` after its object moved or its parent changed (interior-borrow-ended)",
+    "662: use of `out_name` after its object moved or its parent changed (interior-borrow-ended)",
+    "669: unresolved resource identity `ins`",
+    "671: unresolved resource identity `ins`",
     "676: unmodeled call, aggregate or indirect access in branch condition",
+    "676: use of `in_name` after its object moved or its parent changed (interior-borrow-ended)",
+    "676: use of `out_name` after its object moved or its parent changed (interior-borrow-ended)",
     "679: indirect memory access is outside the resource projection",
-    "687: call to uncontracted function `flb_task_from_fs_storage` in branch condition",
+    "679: use of `in_name` after its object moved or its parent changed (interior-borrow-ended)",
+    "679: use of `out_name` after its object moved or its parent changed (interior-borrow-ended)",
     "688: indirect memory access is outside the resource projection",
+    "688: use of `in_name` after its object moved or its parent changed (interior-borrow-ended)",
+    "688: use of `out_name` after its object moved or its parent changed (interior-borrow-ended)",
     "698: braced initializer, expression, or declaration is not modeled",
+    "698: use of `in_name` after its object moved or its parent changed (interior-borrow-ended)",
+    "698: use of `out_name` after its object moved or its parent changed (interior-borrow-ended)",
     "702: call to uncontracted function `flb_task_retry_clean`",
+    "702: use of `in_name` after its object moved or its parent changed (interior-borrow-ended)",
+    "702: use of `out_name` after its object moved or its parent changed (interior-borrow-ended)",
     "703: call to `flb_task_users_dec` outside its declared literal-argument premise",
+    "703: use of `in_name` after its object moved or its parent changed (interior-borrow-ended)",
+    "703: use of `out_name` after its object moved or its parent changed (interior-borrow-ended)",
     "707: call to uncontracted function `handle_dlq_if_available`",
+    "707: use of `in_name` after its object moved or its parent changed (interior-borrow-ended)",
+    "707: use of `out_name` after its object moved or its parent changed (interior-borrow-ended)",
     "710: braced initializer, expression, or declaration is not modeled",
+    "710: use of `in_name` after its object moved or its parent changed (interior-borrow-ended)",
+    "710: use of `out_name` after its object moved or its parent changed (interior-borrow-ended)",
     "713: unresolved resource identity `task`",
     "715: braced initializer, expression, or declaration is not modeled",
+    "715: use of `in_name` after its object moved or its parent changed (interior-borrow-ended)",
+    "715: use of `out_name` after its object moved or its parent changed (interior-borrow-ended)",
     "719: braced initializer, expression, or declaration is not modeled",
+    "719: use of `in_name` after its object moved or its parent changed (interior-borrow-ended)",
+    "719: use of `out_name` after its object moved or its parent changed (interior-borrow-ended)",
     "724: braced initializer, expression, or declaration is not modeled",
-    "730: call to uncontracted function `flb_metrics_sum`",
+    "724: use of `in_name` after its object moved or its parent changed (interior-borrow-ended)",
+    "724: use of `out_name` after its object moved or its parent changed (interior-borrow-ended)",
+    "730: unresolved resource identity `ins`",
     "732: indirect memory access is outside the resource projection",
+    "732: use of `in_name` after its object moved or its parent changed (interior-borrow-ended)",
+    "732: use of `out_name` after its object moved or its parent changed (interior-borrow-ended)",
     "739: call to uncontracted function `flb_task_retry_clean`",
+    "739: use of `in_name` after its object moved or its parent changed (interior-borrow-ended)",
+    "739: use of `out_name` after its object moved or its parent changed (interior-borrow-ended)",
     "740: call to `flb_task_users_dec` outside its declared literal-argument premise",
+    "740: use of `in_name` after its object moved or its parent changed (interior-borrow-ended)",
+    "740: use of `out_name` after its object moved or its parent changed (interior-borrow-ended)",
     "746: call to uncontracted function `flb_task_retry_create`",
+    "746: use of `in_name` after its object moved or its parent changed (interior-borrow-ended)",
+    "746: use of `out_name` after its object moved or its parent changed (interior-borrow-ended)",
     "755: call to uncontracted function `handle_dlq_if_available`",
+    "755: use of `in_name` after its object moved or its parent changed (interior-borrow-ended)",
+    "755: use of `out_name` after its object moved or its parent changed (interior-borrow-ended)",
     "758: braced initializer, expression, or declaration is not modeled",
+    "758: use of `in_name` after its object moved or its parent changed (interior-borrow-ended)",
+    "758: use of `out_name` after its object moved or its parent changed (interior-borrow-ended)",
     "759: braced initializer, expression, or declaration is not modeled",
+    "759: use of `in_name` after its object moved or its parent changed (interior-borrow-ended)",
+    "759: use of `out_name` after its object moved or its parent changed (interior-borrow-ended)",
     "762: unresolved resource identity `task`",
     "764: braced initializer, expression, or declaration is not modeled",
+    "764: use of `in_name` after its object moved or its parent changed (interior-borrow-ended)",
+    "764: use of `out_name` after its object moved or its parent changed (interior-borrow-ended)",
     "768: braced initializer, expression, or declaration is not modeled",
+    "768: use of `in_name` after its object moved or its parent changed (interior-borrow-ended)",
+    "768: use of `out_name` after its object moved or its parent changed (interior-borrow-ended)",
     "773: braced initializer, expression, or declaration is not modeled",
-    "779: call to uncontracted function `flb_metrics_sum`",
-    "780: call to uncontracted function `flb_metrics_sum`",
+    "773: use of `in_name` after its object moved or its parent changed (interior-borrow-ended)",
+    "773: use of `out_name` after its object moved or its parent changed (interior-borrow-ended)",
+    "779: unresolved resource identity `ins`",
+    "780: unresolved resource identity `ins`",
     "783: indirect memory access is outside the resource projection",
+    "783: use of `in_name` after its object moved or its parent changed (interior-borrow-ended)",
+    "783: use of `out_name` after its object moved or its parent changed (interior-borrow-ended)",
     "790: call to uncontracted function `flb_task_retry_clean`",
+    "790: use of `in_name` after its object moved or its parent changed (interior-borrow-ended)",
+    "790: use of `out_name` after its object moved or its parent changed (interior-borrow-ended)",
     "791: call to `flb_task_users_dec` outside its declared literal-argument premise",
+    "791: use of `in_name` after its object moved or its parent changed (interior-borrow-ended)",
+    "791: use of `out_name` after its object moved or its parent changed (interior-borrow-ended)",
     "797: counted-user operation by `flb_task_users_dec` on `task`, which is not a formal this function never rebinds",
     "800: call to uncontracted function `flb_sched_request_create`",
+    "800: use of `in_name` after its object moved or its parent changed (interior-borrow-ended)",
+    "800: use of `out_name` after its object moved or its parent changed (interior-borrow-ended)",
     "809: call to uncontracted function `handle_dlq_if_available`",
+    "809: use of `in_name` after its object moved or its parent changed (interior-borrow-ended)",
+    "809: use of `out_name` after its object moved or its parent changed (interior-borrow-ended)",
     "811: indirect memory access is outside the resource projection",
+    "811: use of `in_name` after its object moved or its parent changed (interior-borrow-ended)",
+    "811: use of `out_name` after its object moved or its parent changed (interior-borrow-ended)",
     "817: unresolved resource identity `retry`",
     "817: unlink by `flb_task_retry_destroy` of `retry`, which this function has not published",
     "818: call to uncontracted function `flb_task_users_release`",
+    "818: use of `in_name` after its object moved or its parent changed (interior-borrow-ended)",
+    "818: use of `out_name` after its object moved or its parent changed (interior-borrow-ended)",
     "822: indirect memory access is outside the resource projection",
+    "822: use of `in_name` after its object moved or its parent changed (interior-borrow-ended)",
+    "822: use of `out_name` after its object moved or its parent changed (interior-borrow-ended)",
     "831: braced initializer, expression, or declaration is not modeled",
+    "831: use of `in_name` after its object moved or its parent changed (interior-borrow-ended)",
+    "831: use of `out_name` after its object moved or its parent changed (interior-borrow-ended)",
     "832: braced initializer, expression, or declaration is not modeled",
+    "832: use of `in_name` after its object moved or its parent changed (interior-borrow-ended)",
+    "832: use of `out_name` after its object moved or its parent changed (interior-borrow-ended)",
     "835: braced initializer, expression, or declaration is not modeled",
+    "835: use of `in_name` after its object moved or its parent changed (interior-borrow-ended)",
+    "835: use of `out_name` after its object moved or its parent changed (interior-borrow-ended)",
     "840: braced initializer, expression, or declaration is not modeled",
-    "846: call to uncontracted function `flb_metrics_sum`",
-    "847: call to uncontracted function `flb_metrics_sum`",
+    "840: use of `in_name` after its object moved or its parent changed (interior-borrow-ended)",
+    "840: use of `out_name` after its object moved or its parent changed (interior-borrow-ended)",
+    "846: unresolved resource identity `ins`",
+    "847: unresolved resource identity `ins`",
     "852: call to uncontracted function `handle_dlq_if_available`",
+    "852: use of `in_name` after its object moved or its parent changed (interior-borrow-ended)",
+    "852: use of `out_name` after its object moved or its parent changed (interior-borrow-ended)",
     "854: braced initializer, expression, or declaration is not modeled",
+    "854: use of `in_name` after its object moved or its parent changed (interior-borrow-ended)",
+    "854: use of `out_name` after its object moved or its parent changed (interior-borrow-ended)",
     "855: braced initializer, expression, or declaration is not modeled",
+    "855: use of `in_name` after its object moved or its parent changed (interior-borrow-ended)",
+    "855: use of `out_name` after its object moved or its parent changed (interior-borrow-ended)",
     "858: unresolved resource identity `task`",
     "860: braced initializer, expression, or declaration is not modeled",
+    "860: use of `in_name` after its object moved or its parent changed (interior-borrow-ended)",
+    "860: use of `out_name` after its object moved or its parent changed (interior-borrow-ended)",
     "864: braced initializer, expression, or declaration is not modeled",
+    "864: use of `in_name` after its object moved or its parent changed (interior-borrow-ended)",
+    "864: use of `out_name` after its object moved or its parent changed (interior-borrow-ended)",
     "869: braced initializer, expression, or declaration is not modeled",
-    "875: call to uncontracted function `flb_metrics_sum`",
-    "876: call to uncontracted function `flb_metrics_sum`",
+    "869: use of `in_name` after its object moved or its parent changed (interior-borrow-ended)",
+    "869: use of `out_name` after its object moved or its parent changed (interior-borrow-ended)",
+    "875: unresolved resource identity `ins`",
+    "876: unresolved resource identity `ins`",
     "879: call to uncontracted function `flb_task_retry_clean`",
-    "880: call to `flb_task_users_dec` outside its declared literal-argument premise"
+    "879: use of `in_name` after its object moved or its parent changed (interior-borrow-ended)",
+    "879: use of `out_name` after its object moved or its parent changed (interior-borrow-ended)",
+    "880: call to `flb_task_users_dec` outside its declared literal-argument premise",
+    "880: use of `in_name` after its object moved or its parent changed (interior-borrow-ended)",
+    "880: use of `out_name` after its object moved or its parent changed (interior-borrow-ended)"
    ],
    "rows": 2,
    "status": "Unknown"
@@ -2071,14 +3444,18 @@
    "file": "src/flb_engine_dispatch.c",
    "function": "record_retry_failure_metrics",
    "leaves": [
-    "50: call to uncontracted function `flb_input_name`",
-    "51: call to uncontracted function `flb_output_name`",
     "63: braced initializer, expression, or declaration is not modeled",
+    "63: use of `input_name` after its object moved or its parent changed (interior-borrow-ended)",
+    "63: use of `output_name` after its object moved or its parent changed (interior-borrow-ended)",
     "65: braced initializer, expression, or declaration is not modeled",
+    "65: use of `input_name` after its object moved or its parent changed (interior-borrow-ended)",
+    "65: use of `output_name` after its object moved or its parent changed (interior-borrow-ended)",
     "70: braced initializer, expression, or declaration is not modeled",
+    "70: use of `input_name` after its object moved or its parent changed (interior-borrow-ended)",
+    "70: use of `output_name` after its object moved or its parent changed (interior-borrow-ended)",
     "73: braced initializer, expression, or declaration is not modeled",
-    "79: call to uncontracted function `flb_metrics_sum`",
-    "80: call to uncontracted function `flb_metrics_sum`"
+    "73: use of `input_name` after its object moved or its parent changed (interior-borrow-ended)",
+    "73: use of `output_name` after its object moved or its parent changed (interior-borrow-ended)"
    ],
    "rows": 2,
    "status": "Unknown"
@@ -2189,7 +3566,6 @@
     "603: unlink by `flb_sched_request_destroy` of `req`, which this function has not published",
     "607: unresolved resource identity `timer`",
     "609: call to uncontracted function `schedule_request_promote`",
-    "613: call to uncontracted function `flb_sched_timer_cb_disable`",
     "614: indirect memory access is outside the resource projection",
     "615: unresolved resource identity `timer`",
     "615: unlink by `flb_sched_timer_cb_destroy` of `timer`, which this function has not published",
@@ -2352,7 +3728,6 @@
    "file": "src/flb_scheduler.c",
    "function": "flb_sched_timer_destroy",
    "leaves": [
-    "907: call to uncontracted function `flb_sched_timer_cb_disable`",
     "909: unlink by `mk_list_del` of `timer`, which this function has not published",
     "910: unresolved resource identity `timer`"
    ],
@@ -2363,7 +3738,6 @@
    "file": "src/flb_scheduler.c",
    "function": "flb_sched_timer_invalidate",
    "leaves": [
-    "896: call to uncontracted function `flb_sched_timer_cb_disable`",
     "900: unlink by `mk_list_del` of `timer`, which this function has not published",
     "901: indirect memory access is outside the resource projection"
    ],
@@ -2474,7 +3848,6 @@
    "function": "flb_output_flush_finished",
    "leaves": [
     "728: call to uncontracted function `flb_output_get_instance`",
-    "734: call to uncontracted function `flb_output_thread_instance_get`",
     "735: indirect memory access is outside the resource projection",
     "738: indirect memory access is outside the resource projection",
     "744: unresolved resource identity `out_flush`",
@@ -2485,19 +3858,8 @@
   },
   {
    "file": "src/flb_output.c",
-   "function": "flb_output_flush_id_get",
-   "leaves": [
-    "249: call to uncontracted function `flb_output_thread_instance_get`",
-    "255: unresolved resource identity `th_ins`"
-   ],
-   "rows": 2,
-   "status": "Unknown"
-  },
-  {
-   "file": "src/flb_output.c",
    "function": "flb_output_flush_prepare_destroy",
    "leaves": [
-    "230: call to uncontracted function `flb_output_thread_instance_get`",
     "231: unresolved resource identity `th_ins`",
     "232: unlink by `mk_list_del` of `out_flush`, which this function has not published",
     "233: unresolved resource identity `th_ins`",
@@ -2566,76 +3928,137 @@
     "1540: unresolved resource identity `config`",
     "1542: unresolved resource identity `ins`",
     "1545: indirect memory access is outside the resource projection",
-    "1550: nested call `flb_output_name` inside a modeled call is outside the resource projection",
+    "1545: use of `name` after its object moved or its parent changed (interior-borrow-ended)",
     "1555: indirect memory access is outside the resource projection",
+    "1555: use of `name` after its object moved or its parent changed (interior-borrow-ended)",
     "1564: unresolved resource identity `ins`",
-    "1569: call to uncontracted function `flb_output_name`",
     "1575: indirect memory access is outside the resource projection",
     "1586: braced initializer, expression, or declaration is not modeled",
+    "1586: use of `name` after its object moved or its parent changed (interior-borrow-ended)",
     "1590: braced initializer, expression, or declaration is not modeled",
+    "1590: use of `name` after its object moved or its parent changed (interior-borrow-ended)",
     "1594: braced initializer, expression, or declaration is not modeled",
+    "1594: use of `name` after its object moved or its parent changed (interior-borrow-ended)",
     "1598: braced initializer, expression, or declaration is not modeled",
+    "1598: use of `name` after its object moved or its parent changed (interior-borrow-ended)",
     "1602: braced initializer, expression, or declaration is not modeled",
+    "1602: use of `name` after its object moved or its parent changed (interior-borrow-ended)",
     "1606: braced initializer, expression, or declaration is not modeled",
+    "1606: use of `name` after its object moved or its parent changed (interior-borrow-ended)",
     "1610: braced initializer, expression, or declaration is not modeled",
+    "1610: use of `name` after its object moved or its parent changed (interior-borrow-ended)",
     "1614: braced initializer, expression, or declaration is not modeled",
+    "1614: use of `name` after its object moved or its parent changed (interior-borrow-ended)",
     "1617: braced initializer, expression, or declaration is not modeled",
+    "1617: use of `name` after its object moved or its parent changed (interior-borrow-ended)",
     "1623: braced initializer, expression, or declaration is not modeled",
+    "1623: use of `name` after its object moved or its parent changed (interior-borrow-ended)",
     "1627: braced initializer, expression, or declaration is not modeled",
+    "1627: use of `name` after its object moved or its parent changed (interior-borrow-ended)",
     "1631: braced initializer, expression, or declaration is not modeled",
+    "1631: use of `name` after its object moved or its parent changed (interior-borrow-ended)",
     "1634: braced initializer, expression, or declaration is not modeled",
+    "1634: use of `name` after its object moved or its parent changed (interior-borrow-ended)",
     "1638: braced initializer, expression, or declaration is not modeled",
+    "1638: use of `name` after its object moved or its parent changed (interior-borrow-ended)",
     "1641: braced initializer, expression, or declaration is not modeled",
+    "1641: use of `name` after its object moved or its parent changed (interior-borrow-ended)",
     "1647: braced initializer, expression, or declaration is not modeled",
+    "1647: use of `name` after its object moved or its parent changed (interior-borrow-ended)",
     "1653: braced initializer, expression, or declaration is not modeled",
+    "1653: use of `name` after its object moved or its parent changed (interior-borrow-ended)",
     "1659: braced initializer, expression, or declaration is not modeled",
+    "1659: use of `name` after its object moved or its parent changed (interior-borrow-ended)",
     "1665: braced initializer, expression, or declaration is not modeled",
+    "1665: use of `name` after its object moved or its parent changed (interior-borrow-ended)",
     "1671: braced initializer, expression, or declaration is not modeled",
+    "1671: use of `name` after its object moved or its parent changed (interior-borrow-ended)",
     "1677: call to uncontracted function `cmt_histogram_buckets_create_size`",
+    "1677: use of `name` after its object moved or its parent changed (interior-borrow-ended)",
+    "1680: use of `name` after its object moved or its parent changed (interior-borrow-ended)",
     "1684: braced initializer, expression, or declaration is not modeled",
+    "1684: use of `name` after its object moved or its parent changed (interior-borrow-ended)",
     "1692: call to uncontracted function `cmt_histogram_buckets_create_size`",
+    "1692: use of `name` after its object moved or its parent changed (interior-borrow-ended)",
+    "1695: use of `name` after its object moved or its parent changed (interior-borrow-ended)",
     "1700: braced initializer, expression, or declaration is not modeled",
+    "1700: use of `name` after its object moved or its parent changed (interior-borrow-ended)",
     "1709: indirect memory access is outside the resource projection",
+    "1709: use of `name` after its object moved or its parent changed (interior-borrow-ended)",
     "1711: call to uncontracted function `flb_metrics_add`",
+    "1711: use of `name` after its object moved or its parent changed (interior-borrow-ended)",
     "1713: call to uncontracted function `flb_metrics_add`",
+    "1713: use of `name` after its object moved or its parent changed (interior-borrow-ended)",
     "1715: call to uncontracted function `flb_metrics_add`",
+    "1715: use of `name` after its object moved or its parent changed (interior-borrow-ended)",
     "1717: call to uncontracted function `flb_metrics_add`",
+    "1717: use of `name` after its object moved or its parent changed (interior-borrow-ended)",
     "1719: call to uncontracted function `flb_metrics_add`",
+    "1719: use of `name` after its object moved or its parent changed (interior-borrow-ended)",
     "1721: call to uncontracted function `flb_metrics_add`",
+    "1721: use of `name` after its object moved or its parent changed (interior-borrow-ended)",
     "1723: call to uncontracted function `flb_metrics_add`",
+    "1723: use of `name` after its object moved or its parent changed (interior-borrow-ended)",
     "1730: indirect memory access is outside the resource projection",
+    "1730: use of `name` after its object moved or its parent changed (interior-borrow-ended)",
     "1740: indirect memory access is outside the resource projection",
+    "1740: use of `name` after its object moved or its parent changed (interior-borrow-ended)",
     "1747: call to uncontracted function `flb_tls_set_verify_hostname`",
+    "1747: use of `name` after its object moved or its parent changed (interior-borrow-ended)",
     "1749: indirect memory access is outside the resource projection",
+    "1749: use of `name` after its object moved or its parent changed (interior-borrow-ended)",
     "1757: call to uncontracted function `flb_tls_set_minmax_proto`",
+    "1757: use of `name` after its object moved or its parent changed (interior-borrow-ended)",
     "1759: indirect memory access is outside the resource projection",
+    "1759: use of `name` after its object moved or its parent changed (interior-borrow-ended)",
     "1767: call to uncontracted function `flb_tls_set_ciphers`",
+    "1767: use of `name` after its object moved or its parent changed (interior-borrow-ended)",
     "1769: indirect memory access is outside the resource projection",
+    "1769: use of `name` after its object moved or its parent changed (interior-borrow-ended)",
     "1777: call to uncontracted function `flb_tls_set_crl_file`",
+    "1777: use of `name` after its object moved or its parent changed (interior-borrow-ended)",
     "1779: indirect memory access is outside the resource projection",
+    "1779: use of `name` after its object moved or its parent changed (interior-borrow-ended)",
     "1831: call to uncontracted function `flb_output_proxy_tls_ca_check` in branch condition",
+    "1831: use of `name` after its object moved or its parent changed (interior-borrow-ended)",
     "1840: call to uncontracted function `flb_output_plugin_property_check` in branch condition",
+    "1840: use of `name` after its object moved or its parent changed (interior-borrow-ended)",
     "1849: indirect memory access is outside the resource projection",
+    "1849: use of `name` after its object moved or its parent changed (interior-borrow-ended)",
     "1856: `__builtin_offsetof` is the Clang extension node OffsetOfExpr, which no resource contract or route models",
     "1856: indirect memory access is outside the resource projection",
+    "1856: use of `name` after its object moved or its parent changed (interior-borrow-ended)",
     "1858: unresolved resource identity `m`",
+    "1858: use of `name` after its object moved or its parent changed (interior-borrow-ended)",
     "1861: unresolved resource identity `m`",
+    "1861: use of `name` after its object moved or its parent changed (interior-borrow-ended)",
     "1866: call to uncontracted function `flb_net_setup_init`",
+    "1866: use of `name` after its object moved or its parent changed (interior-borrow-ended)",
     "1868: call to uncontracted function `flb_output_net_property_check` in branch condition",
+    "1868: use of `name` after its object moved or its parent changed (interior-borrow-ended)",
     "1874: unmodeled call, aggregate or indirect access in branch condition",
+    "1874: use of `name` after its object moved or its parent changed (interior-borrow-ended)",
     "1875: call to uncontracted function `flb_output_oauth2_property_check` in branch condition",
+    "1875: use of `name` after its object moved or its parent changed (interior-borrow-ended)",
     "1881: unmodeled call, aggregate or indirect access in branch condition",
+    "1881: use of `name` after its object moved or its parent changed (interior-borrow-ended)",
     "1883: call to uncontracted function `flb_output_http_server_property_check` in branch condition",
+    "1883: use of `name` after its object moved or its parent changed (interior-borrow-ended)",
     "1890: indirect memory access is outside the resource projection",
+    "1890: use of `name` after its object moved or its parent changed (interior-borrow-ended)",
     "1898: unresolved resource identity `config`",
     "1898: unresolved resource identity `ins`",
     "1901: call to uncontracted function `flb_output_enable_multi_threading`",
-    "1903: nested call `flb_output_name` inside a modeled call is outside the resource projection",
+    "1901: use of `name` after its object moved or its parent changed (interior-borrow-ended)",
     "1909: unmodeled call, aggregate or indirect access in branch condition",
+    "1909: use of `name` after its object moved or its parent changed (interior-borrow-ended)",
     "1910: indirect memory access is outside the resource projection",
+    "1910: use of `name` after its object moved or its parent changed (interior-borrow-ended)",
     "1914: unresolved resource identity `ins`",
     "1917: call to uncontracted function `flb_processor_init`",
-    "1919: indirect memory access is outside the resource projection"
+    "1917: use of `name` after its object moved or its parent changed (interior-borrow-ended)",
+    "1919: indirect memory access is outside the resource projection",
+    "1919: use of `name` after its object moved or its parent changed (interior-borrow-ended)"
    ],
    "rows": 2,
    "status": "Unknown"
@@ -2851,30 +4274,20 @@
     "1047: call to uncontracted function `prop_key_check` in branch condition",
     "1048: call to uncontracted function `flb_log_get_level_str`",
     "1049: unresolved resource identity `tmp`",
-    "1053: unresolved resource identity `ins`",
     "1055: call to uncontracted function `prop_key_check` in branch condition",
     "1056: call to uncontracted function `flb_utils_time_to_seconds`",
     "1057: unresolved resource identity `tmp`",
-    "1061: unresolved resource identity `ins`",
     "1063: call to uncontracted function `prop_key_check` in branch condition",
     "1064: indirect memory access is outside the resource projection",
     "1066: call to uncontracted function `prop_key_check` in branch condition",
     "1067: unresolved resource identity `tmp`",
-    "1068: unresolved resource identity `ins`",
     "1069: unresolved resource identity `tmp`",
-    "1072: unresolved resource identity `ins`",
     "1075: call to uncontracted function `prop_key_check` in branch condition",
     "1076: indirect memory access is outside the resource projection",
     "1077: unresolved resource identity `tmp`",
     "1079: call to uncontracted function `prop_key_check` in branch condition",
-    "1080: unresolved resource identity `ins`",
     "1081: unresolved resource identity `tmp`",
-    "1086: unresolved resource identity `ins`",
-    "1089: unresolved resource identity `ins`",
-    "1092: unresolved resource identity `ins`",
-    "1096: unresolved resource identity `ins`",
     "1099: unresolved resource identity `tmp`",
-    "1102: unresolved resource identity `ins`",
     "1105: call to uncontracted function `strncasecmp` in branch condition",
     "1106: call to uncontracted function `flb_kv_item_create`",
     "1108: unresolved resource identity `tmp`",
@@ -2900,7 +4313,6 @@
     "1153: unresolved resource identity `tmp`",
     "1158: call to uncontracted function `prop_key_check` in branch condition",
     "1159: indirect memory access is outside the resource projection",
-    "1161: indirect memory access is outside the resource projection",
     "1162: unresolved resource identity `tmp`",
     "1165: unresolved resource identity `tmp`",
     "1167: call to uncontracted function `prop_key_check` in branch condition",
@@ -2910,7 +4322,6 @@
     "1172: indirect memory access is outside the resource projection",
     "1173: unresolved resource identity `tmp`",
     "1175: call to uncontracted function `prop_key_check` in branch condition",
-    "1176: unresolved resource identity `ins`",
     "1177: unresolved resource identity `tmp`",
     "1179: call to uncontracted function `prop_key_check` in branch condition",
     "1180: indirect memory access is outside the resource projection",
@@ -2944,14 +4355,11 @@
     "1221: indirect memory access is outside the resource projection",
     "1236: call to uncontracted function `prop_key_check` in branch condition",
     "1237: call to uncontracted function `flb_utils_bool` in branch condition",
-    "1241: indirect memory access is outside the resource projection",
     "1245: call to uncontracted function `flb_utils_size_to_bytes`",
     "1247: unresolved resource identity `tmp`",
     "1256: unresolved resource identity `tmp`",
     "1259: call to uncontracted function `prop_key_check` in branch condition",
-    "1261: unresolved resource identity `ins`",
     "1262: unresolved resource identity `tmp`",
-    "1269: unresolved resource identity `ins`",
     "1270: unresolved resource identity `tmp`",
     "1271: unresolved resource identity `tmp`",
     "1273: call to uncontracted function `flb_sds_create`",
@@ -2972,7 +4380,7 @@
     "493: call to uncontracted function `flb_output_flush_create`",
     "504: call to uncontracted function `flb_output_task_flush_error`",
     "510: call to uncontracted function `flb_output_task_singleplex_flush_next`",
-    "513: counted users undecided: `resource_user_exit(task, -1, restored)`: `flb_output_flush_create` calls `flb_output_flush_id_get`: the declaration of `flb_output_flush_id_get` does not hold against its body here (`resource_user_neutral()` undecided: `flb_output_flush_id_get` calls `flb_output_thread_instance_get`: call to `flb_output_thread_instance_get`, which has no contract in force and no body in this unit)",
+    "513: counted users undecided: `resource_user_exit(task, -1, restored)`: `flb_output_flush_create` calls `flb_processor_is_active`: call to `flb_processor_is_active`, which has no contract in force and no body in this unit",
     "522: unresolved resource identity `config`",
     "526: unresolved resource identity `out_flush`",
     "526: unlink by `flb_output_flush_destroy` of `out_flush`, which this function has not published",
@@ -2986,8 +4394,7 @@
    "file": "src/flb_output.c",
    "function": "flb_output_task_flush_error",
    "leaves": [
-    "432: indirect memory access is outside the resource projection",
-    "453: unresolved resource identity `out_ins`"
+    "432: indirect memory access is outside the resource projection"
    ],
    "rows": 2,
    "status": "Unknown"
@@ -3091,8 +4498,9 @@
   }
  ],
  "read_sha256": {
-  "docs/reports/fb-retry-lifecycle-contracts/scripts/classification.json": "6624813d0a2373e2b14e17b453d015162a13b1ba7c7327bd9272f81ade3228bf",
-  "private/m/sys-base/resource-diagnostics.json": "3c45d0812850af4854d681a4243953cf5005dde3d8eb40c7c6bf12904b4559fb"
+  "docs/reports/fb-retry-lifecycle-contracts/scripts/classification.json": "05ece100f8e0ffd23ccc3786cb7c14ed21e20516ec24f71a0a26824587336c5e",
+  "private/m/sys-base/resource-diagnostics.json": "3c45d0812850af4854d681a4243953cf5005dde3d8eb40c7c6bf12904b4559fb",
+  "private/m/sys-tip2/resource-diagnostics.json": "b44abdeb9853dd0fee55c8aaf4f0d73df2cb243b04168d6bf3ebe1e854ef5138"
  },
  "schema": "fb-retry-lifecycle-census/1",
  "sources_sha256": {
@@ -3103,8 +4511,8 @@
   "src/flb_task.c": "6105cc5dccd5d8eac71b804f363832c42d18eec2e2b2483d3177c756da4c8b6d"
  },
  "status": {
-  "Safe": 70,
-  "Unknown": 184,
+  "Safe": 72,
+  "Unknown": 182,
   "Unsafe": 4
  },
  "status_by_file": {
@@ -3116,8 +4524,8 @@
    "Unknown": 10
   },
   "src/flb_output.c": {
-   "Safe": 10,
-   "Unknown": 64,
+   "Safe": 12,
+   "Unknown": 62,
    "Unsafe": 4
   },
   "src/flb_scheduler.c": {
@@ -3133,13 +4541,6 @@
   {
    "callee": "flb_config_map_properties_check",
    "class": "d",
-   "leaves": 8,
-   "rows": 8,
-   "written": false
-  },
-  {
-   "callee": "flb_output_name",
-   "class": "a",
    "leaves": 8,
    "rows": 8,
    "written": false
@@ -3180,38 +4581,10 @@
    "written": false
   },
   {
-   "callee": "flb_input_name",
-   "class": "a",
-   "leaves": 6,
-   "rows": 6,
-   "written": false
-  },
-  {
-   "callee": "flb_output_thread_instance_get",
-   "class": "a",
-   "leaves": 6,
-   "rows": 6,
-   "written": false
-  },
-  {
-   "callee": "flb_sched_timer_cb_disable",
-   "class": "a",
-   "leaves": 6,
-   "rows": 6,
-   "written": false
-  },
-  {
    "callee": "flb_tls_destroy",
    "class": "d",
    "leaves": 6,
    "rows": 6,
-   "written": false
-  },
-  {
-   "callee": "flb_metrics_sum",
-   "class": "a",
-   "leaves": 22,
-   "rows": 4,
    "written": false
   },
   {
@@ -4083,13 +5456,6 @@
    "written": false
   },
   {
-   "callee": "flb_sched_ctx_init",
-   "class": "a",
-   "leaves": 2,
-   "rows": 2,
-   "written": false
-  },
-  {
    "callee": "flb_sched_ctx_set",
    "class": "c",
    "leaves": 2,
@@ -4232,13 +5598,6 @@
   {
    "callee": "flb_task_create",
    "class": "c",
-   "leaves": 2,
-   "rows": 2,
-   "written": false
-  },
-  {
-   "callee": "flb_task_from_fs_storage",
-   "class": "a",
    "leaves": 2,
    "rows": 2,
    "written": false
@@ -4421,13 +5780,6 @@
   {
    "callee": "labs",
    "class": "d",
-   "leaves": 2,
-   "rows": 2,
-   "written": false
-  },
-  {
-   "callee": "map_free_task_id",
-   "class": "a",
    "leaves": 2,
    "rows": 2,
    "written": false
