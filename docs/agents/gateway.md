@@ -15150,4 +15150,53 @@ on every path in two schedules (both `Unknown`). Kept pins:
     `no_ast_answer_keeps_the_old_test`, `a_keyword_declarator_stays`);
     [report](../reports/call-with-deref-actual/README.md).
 
+<a id="constraint-90"></a>
+
+90. **A static function's formal that every call fixes is read at its
+    constant.** Card FB-CHUNK-LIFECYCLE (`legacy_static_constant_formal.rs`,
+    one hook in `build_function_cfg_with` in `legacy_c.rs`). Fluent Bit's
+    `sb_remove_chunk_from_segregated_backlog(target_chunk, backlog, destroy)`
+    (`plugins/in_storage_backlog/sb.c:214-246`) frees the wrapper it unlinks
+    only `if (destroy)`; over an unconstrained `destroy` the false arm leaked
+    it, a provisional `Unsafe` no invocation can reach (its one call passes
+    `FLB_TRUE`). A formal `NAME` at index `i` of a definition is **fixed** to
+    the truth `t` when (1) the definition has internal linkage (`static`, no
+    `extern`, rule 4a's reading), so by C11 6.2.2p3 no use outside the unit
+    denotes it; (2) every occurrence of the function's identifier in the
+    unit's token stream is its own declarator, a file-scope prototype ending
+    in `;`, or a direct call in a call position, so the calls are every
+    invocation (an address taken, a designator, a member or label of the
+    same spelling, a parenthesised name or a block-scope declaration
+    refuses); (3) there is a call, each call has the parameter count of
+    actuals, and each actual at `i` is a decimal constant of at most four
+    digits (matched enclosing parentheses only: no sign, suffix, octal, cast
+    or expression), all zero or all nonzero; (4) the formal is declared with
+    only `const`, `int`, `signed`, `unsigned` or `_Bool`, in which every such
+    constant keeps its truth (C11 6.3.1.2, 6.3.1.3p1); (5) every occurrence of
+    `NAME` in the body is exactly `if ( NAME )` or `if ( ! NAME )`, so it is
+    never written, address-taken or shadowed; and (6) the built CFG has
+    exactly that many two-way `BranchOnNull` nodes on `NAME`, none a loop
+    header or a cell-protocol test. Each such branch then becomes a `NoOp`
+    whose one successor is the arm `t` selects (rule 11x's `contextual_cfg`
+    selection); no node is removed, so a node left unreachable keeps its
+    instruction for the certificate firewall and reports nothing. The
+    selection runs over the stream the build was handed, so W4 derivation,
+    checked-specification settlement (rule 5l), the row's analysis and
+    certificate rederivation read the same graph, and the row, with every row
+    whose derivation reaches the function (rule ARM-OBLIGATIONS-UNIT-GRAIN),
+    lists the premise `static-call-sites-closed` among its assumptions: its
+    scope is the invocations the unit contains. **Do not** read the false arm
+    as discharged: under zero actuals it is the arm kept and its leak stands,
+    and with mixed or variable actuals nothing is selected. **Do not** extend
+    this to an external-linkage or address-taken function, a `while`/`for`/
+    `do` test (SCALAR-ROUTE-EXIT-EDGE's orphaned exit), a compound condition
+    or a computed actual without its own rule. Premise stated, not proved: the
+    token stream is the whole preprocessed unit (trust boundary 28).
+    `QCore.StaticConstantFormal` (`every_call_agrees`,
+    `selected_arm_is_taken_at_every_call`, `selection_is_cs_choice`,
+    `selection_only_removes_edges`, `an_escape_refuses`,
+    `a_block_scope_declaration_refuses`, `a_variable_actual_refuses`,
+    `mixed_truths_refuse`, `no_call_refuses`, `a_zero_actual_keeps_the_zero_arm`,
+    `a_read_constant_fits`); [report](../reports/fb-chunk-lifecycle/README.md).
+
 <!-- generated:rules:end -->

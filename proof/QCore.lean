@@ -528,6 +528,7 @@ import QCore.SourceValidation
 import QCore.Sr5Soundness
 import QCore.StagedCheckpoints
 import QCore.StatementExpressions
+import QCore.StaticConstantFormal
 import QCore.StdBuffer
 import QCore.StdEvent
 import QCore.StdHttp

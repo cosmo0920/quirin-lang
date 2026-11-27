@@ -227,6 +227,12 @@ mod typed_declaration_gate;
 #[path = "legacy_call_not_declarator.rs"]
 mod call_not_declarator;
 
+// Card FB-CHUNK-LIFECYCLE (rule 90): a static function's integer formal every
+// call in the unit fixes to a constant, read at that constant where the body
+// tests it. One thin hook in `build_function_cfg_with`.
+#[path = "legacy_static_constant_formal.rs"]
+mod static_constant_formal;
+
 // Card W47-TYPED-ROOT-DECLARATION-READER (rule 10l): the typed positions'
 // never-bound, `may_bind` and declared-local premises, from the Clang AST
 // where the lexical declaration reader answers nothing. Hooks are thin.
@@ -3954,6 +3960,9 @@ fn build_function_cfg_with(
     let result = crate::contract_dependencies::within(function, || {
         build_function_cfg_unscoped(tokens, function, contracts, admit_derived_returns, own)
     });
+    // FB-CHUNK-LIFECYCLE hook (rule 90): begin
+    let result = result.map(|cfg| static_constant_formal::select(tokens, function, cfg));
+    // FB-CHUNK-LIFECYCLE hook (rule 90): end
     crate::audit_ir_capture::record_build(
         function,
         tokens,
