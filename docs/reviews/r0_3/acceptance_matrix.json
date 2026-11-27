@@ -15171,13 +15171,6 @@
    "recorded_by": "PRIORITY0-ATTRIBUTION"
   },
   {
-   "id": "P0-G1-CLOSURE-RECORD",
-   "title": "No record states REEVALUATION_SPEC §9's G1 (certificate containment) closed",
-   "why": "PRIORITY0-ATTRIBUTION searched the specification, status, matrix and reports: the 2026-09-05 six-finding repair in docs/REEVALUATION_SPEC.md records the WM01-WM03 and VP01-VP02 fixes, and every landing gate runs reevaluation_probe with exit 0 (failed_expectations 0), but no record evaluates G1's 'explicit profile restrictions' deliverable or its criterion (invalid candidates and insufficient evidence cannot obtain the affected certificates; positive controls survive) and declares the gate met; the spec lists capability-specific witnesses and third-party Unsafe witness validation as open. G1 is not claimed. DISCHARGE: a closure record against §9's deliverable and criterion (the probes, the profile restrictions in force and the open items it excludes), or a statement that G1 remains open with what is missing.",
-   "source": "docs/reports/priority0-remeasurement/README.md",
-   "recorded_by": "PRIORITY0-ATTRIBUTION"
-  },
-  {
    "id": "CONNECT-DECLARED-REVISION-BLOCKS",
    "title": "measure chain --declared refuses a PREDICTION.md with two measure-prediction blocks",
    "why": "Found by PRIORITY0-ATTRIBUTION with QUIRIN-AUDIT-CONNECT abc7ce7ad: `--declared` reads exactly one block (`2 measure-prediction blocks; exactly one is read`), and two committed predictions carry two: cg10-indirect-access-sole-residuals-r3 (a revision) and member-effect-stores (a block written after its landing measurement, 'for the record only'). The card split them by hand (docs/reports/priority0-remeasurement/chain/predictions/). Also observed: a unit row attributed by derivation carries no source label (`derived_from_function_rows` only), and a four-route --runs chain peaked at 1.7 GiB resident against the short lane's 1 GiB admission budget. DISCHARGE: a stated rule for several blocks (the last before the implementation commit, or every block marked as a revision), a label on derived attributions, and a slot class or budget for chains.",
