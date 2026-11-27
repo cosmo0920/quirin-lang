@@ -336,12 +336,14 @@ fn a_unit_built_without_strict_aliasing_stays_refused() {
 
 #[test]
 fn the_other_refusals_of_rule_11r6_stand() {
+    // Card FB-CHUNK-LIFECYCLE: `k` is the caller's own variable, so rule 90
+    // fixes nothing and both classes are read, as the shape intends.
     expect(
         "a store after release on the failure class, the scalar store beside it",
         "static int r(char **buf, x_size_t *size, int k) {\n char *d = x_alloc(4);\n \
          if (!d) {\n return -1;\n } if (k) {\n *buf = d;\n *size = 4;\n x_free(d);\n return -1;\n } \
          *buf = d;\n *size = 4;\n return 0;\n } \
-         int w(void) {\n char *b;\n x_size_t n;\n if (r(&b, &n, 1) != 0) return -1;\n x_free(b);\n \
+         int w(int k) {\n char *b;\n x_size_t n;\n if (r(&b, &n, k) != 0) return -1;\n x_free(b);\n \
          return 0;\n }",
         false,
         &[

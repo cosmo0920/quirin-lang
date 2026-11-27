@@ -32,6 +32,10 @@ mod clang_gap;
 
 use clang_gap::*;
 
+// Card FB-CHUNK-LIFECYCLE (gateway rule 90).
+#[path = "clang_gap_phase4/static_constant_formal.rs"]
+mod static_constant_formal;
+
 const S: &str = "struct S { int a; int b; unsigned bf : 3; void *p; void *v; \
 struct I { void *p; int x; } in; int arr[4]; void *slots[4]; void (*cb)(void); };\n";
 
@@ -423,10 +427,16 @@ fn k11_an_exit_specific_disposition_has_no_summary() {
     // Control: a helper that releases on every exit summarises.
     assert!(gs("static void rel(void *p) { q_free(p); } void subject(void) { void *p = q_alloc(); rel(p); }").safe());
     // Released on one exit only: no summary, so the call is uncontracted.
+    // (Card FB-CHUNK-LIFECYCLE: the actual is a variable, so rule 90 fixes
+    // nothing; with every call passing `1` the release arm is the only one.)
     let run = gs(
-        "static void rel(void *p, int c) { if (c) q_free(p); } void subject(void) { void *p = q_alloc(); rel(p, 1); }",
+        "static void rel(void *p, int c) { if (c) q_free(p); } void subject(int c) { void *p = q_alloc(); rel(p, c); }",
     );
     assert!(run.refused(&uncontracted("rel")), "{run:?}");
+    let fixed = gs(
+        "static void rel(void *p, int c) { if (c) q_free(p); } void subject(void) { void *p = q_alloc(); rel(p, 1); }",
+    );
+    assert!(fixed.safe(), "{fixed:?}");
 }
 
 // ---------------------------------------------------------------------------
