@@ -1,0 +1,33 @@
+{
+ "schema": "quirin-amendments/2",
+ "card": "CONNECT-LIBC-EFFECT-CLAIMS",
+ "base": "9903b027a",
+ "measured_tip": "c1f3b2f7d",
+ "profiles": [],
+ "increment_paragraph": "**CONNECT-LIBC-EFFECT-CLAIMS** (round 41; USER DECISION 2026-11-27, \"Option A\"; rule 10j, contract spec C15.2, CX block of C04.18.9; Lean `QCore.MeasureConnect`; [report](../../reports/connect-libc-effect-claims/README.md)). Census over the shipped and user load paths (13 crates, 166 modules, 1003 declarations, quirin-provider-libc excepted): 5 effect claims about libc symbols, all in qcore-provider-libevent. Three are libc declarations (`effect_send`, `effect_perror`, `effect_errno_location`: callee == F, task_spawn == 0, defer == 0) and two are call-site observations of cb_timeout (`path_call_sequences`, `path_calls`); 10 further hits are not effect claims. The card stopped first because quirin-provider-libc had no task/defer vocabulary and `linkage_contract_v1` links only resource-v1 declarations with a lock digest; the user chose Option A. The three declarations moved verbatim to a new non-view libc module `libc/callee_effects.qv`; `qcore_verification::callback_task_handoff` reads each callee's effect from its owner and refuses a libc effect held elsewhere; `quirin-audit callback-task-handoff` (configuration schema 2) binds the module against the verifier copy and quirin-provider-libc's `contract-inventory.lock`, refusing any mismatch (Unknown); the observations stay in libevent, marked. `providers/contracts.py check` refuses a task/defer declaration of a libc callee outside quirin-provider-libc, or of a non-libc callee inside it (`QL010`). 7 new CX formulas and 4 terms (80 and 94), each validated by `guarded_proposition` with an audited Lean theorem. The fixture deviation was accepted by the user: \"resolves from libc\" and \"a changed libc module refuses the audit\" replace the brief's link fixtures. No contracts.lock, pin or link changed. Predicted: no verdict move on corpus, twelve-home, system or slice. No card gate (round-41 brief); targeted tests, Lean module and audit.",
+ "status_edits": [],
+ "ledger": [
+  {
+   "id": "CONNECT-LIBC-EFFECT-CLAIMS",
+   "operation": "retire",
+   "why": "DISCHARGE (CONNECT-LIBC-EFFECT-CLAIMS, user decision of 2026-11-27, \"Option A\"): the three task/defer effect declarations of libc callees (effect_send, effect_perror, effect_errno_location) moved verbatim to quirin-provider-libc's libc/callee_effects.qv. The callback task-handoff reader reads each callee's effect from its owner, and the audit binds the libc module against the crate's contract-inventory.lock, refusing a mismatch (Unknown). timeout_teardown.qv's path_calls and path_call_sequences are observations of cb_timeout, owned by libevent and marked as such. providers/contracts.py check refuses a libc effect declaration outside quirin-provider-libc (QL010, cx_refuse_libc_effect_elsewhere), so the rule holds for new contracts. The census is census.json.",
+   "source": "docs/reports/connect-libc-effect-claims/README.md"
+  },
+  {
+   "id": "CALLEE-EFFECT-RESOURCE-VOCABULARY",
+   "operation": "register",
+   "title": "Task/defer effects of libc callees have no resource-v1 vocabulary",
+   "text": "MEASURED by card CONNECT-LIBC-EFFECT-CLAIMS: the libc callees' task/defer effects live in a literal-fact module (libc/callee_effects.qv) outside every view and every contracts.lock. A dependent therefore cannot link them with linkage_contract_v1, and a change is caught only by the callback task-handoff audit's identity check against the crate's contract-inventory.lock (Unknown), never held Pending through a link. The long-term home (Option B of the card's hand-back) is a resource-v1 predicate on the libc declarations themselves (send, perror, __errno_location), for example resource_task_effect(none). It would need loader, schema, C04 spec, grammar and Lean work, with the verifier reading the loaded libc environment. DISCHARGE: that vocabulary with its consumers, or a recorded decision to keep the literal module.",
+   "source": "docs/reports/connect-libc-effect-claims/README.md",
+   "recorded_by": "CONNECT-LIBC-EFFECT-CLAIMS"
+  },
+  {
+   "id": "CALLEE-EFFECT-OWNER-GENERAL",
+   "operation": "register",
+   "title": "Callee-effect ownership is checked for libc callees only",
+   "text": "MEASURED by card CONNECT-LIBC-EFFECT-CLAIMS: QL010 (cx_refuse_libc_effect_elsewhere) refuses a task/defer effect declaration of a libc callee outside quirin-provider-libc. Nothing checks that the effect of any other callee is declared by that callee's owner crate. At the card's tip, libevent's remaining four (event_del, event_free, evutil_closesocket, mk_mem_free) name libevent or Monkey functions and so sit with their owner. DISCHARGE: an ownership map from callee to owning crate and QL010 generalised to it, or a recorded decision that only libc needs the check.",
+   "source": "docs/reports/connect-libc-effect-claims/README.md",
+   "recorded_by": "CONNECT-LIBC-EFFECT-CLAIMS"
+  }
+ ]
+}

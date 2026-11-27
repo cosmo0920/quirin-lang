@@ -4357,6 +4357,31 @@ pub const RENDERED_TERMS: &[RenderedTerm] = &[
         meaning: "`#cx_load_refused(#b,#g)`: the loader refuses the module of `#b`'s `#g` (total-or-reject)",
         block: "CX",
     },
+    // Card CONNECT-LIBC-EFFECT-CLAIMS: callee-effect ownership (QL010).
+    RenderedTerm {
+        name: "cx_effect_callee",
+        sort: RenderedSort::Predicate(&["cx_bundle", "cx_fn", "cx_fn"]),
+        meaning: "`#cx_effect_callee(#b,#g,#h)`: `#b`'s declaration `#g` states a task/defer effect (`task_spawn`, `defer`) of callee `#h` (`callee == \"h\"`)",
+        block: "CX",
+    },
+    RenderedTerm {
+        name: "cx_observes_call",
+        sort: RenderedSort::Predicate(&["cx_bundle", "cx_fn", "cx_fn"]),
+        meaning: "`#cx_observes_call(#b,#g,#h)`: `#b`'s declaration `#g` records `#h` as one of the calls of a body `#b` observes (`path_calls`, `path_call_sequences`)",
+        block: "CX",
+    },
+    RenderedTerm {
+        name: "cx_effect_refused",
+        sort: RenderedSort::Predicate(&["cx_bundle", "cx_fn"]),
+        meaning: "`#cx_effect_refused(#b,#g)`: the callee-effect check (`providers/contracts.py check`, QL010) refuses `#b`'s `#g`",
+        block: "CX",
+    },
+    RenderedTerm {
+        name: "cx_effect_check_passes",
+        sort: RenderedSort::Predicate(&["cx_bundle"]),
+        meaning: "`#cx_effect_check_passes(#b)`: the callee-effect check passes for bundle `#b`",
+        block: "CX",
+    },
     // ---- Card P0-G1-CLOSURE-RECORD (REEVALUATION_SPEC §9, gate G1): the
     // terms of the certificate-containment criterion, evaluated per finding
     // over the executed control cases of

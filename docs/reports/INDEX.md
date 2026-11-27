@@ -295,6 +295,8 @@ Regenerate with `python3 scripts/build_docs_index.py`; validate with `--check`.
 
 | [connect-adopt-declared-dependencies](connect-adopt-declared-dependencies/README.md) | CONNECT-ADOPT-DECLARED-DEPENDENCIES: every verdict reliance, declared |
 
+| [connect-libc-effect-claims](connect-libc-effect-claims/README.md) | CONNECT-LIBC-EFFECT-CLAIMS: libc effect claims held outside quirin-provider-libc |
+
 | [contract-adoption-not-in-force](archive/contracts-and-premises/contract-adoption-not-in-force/README.md) | CONTRACT-ADOPTION-NOT-IN-FORCE |
 
 | [contract-check-load-path](archive/contracts-and-premises/contract-check-load-path/README.md) | CONTRACT-CHECK-LOAD-PATH |

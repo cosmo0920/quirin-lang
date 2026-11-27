@@ -53,6 +53,10 @@ pub const PUBLISHED: &[&str] = &["libc/memory.qv", "libc/string.qv"];
 /// is the name `contract/corpus.json` resolves (for example `libc/errno.qv`).
 pub const CONTRACTS: &[(&str, &str)] = &[
     (
+        "libc/callee_effects.qv",
+        include_str!("../contracts/libc/callee_effects.qv"),
+    ),
+    (
         "libc/dirent.qv",
         include_str!("../contracts/libc/dirent.qv"),
     ),

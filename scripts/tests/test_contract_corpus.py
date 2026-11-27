@@ -90,11 +90,25 @@ class CanonicalCorpus(unittest.TestCase):
         names = contract_corpus.libc_names(root)
         self.assertGreater(len(names), 1000)
         owned = set()
+        effects = {}
         prefix = contract_corpus.LIBC_CRATE + "/contracts/"
         for relative in files:
             if relative.startswith(prefix) and relative.endswith((".qcore", ".qv")):
                 owned |= set(contract_corpus.declared_functions(root / relative))
-        # Every name the libc crate declares is a listed libc/POSIX name.
+                # Card CONNECT-LIBC-EFFECT-CLAIMS: a declared task/defer effect
+                # (`callee == "F"` beside `task_spawn`/`defer`) is named for
+                # its callee, and the callee is what must be a libc name
+                # (QL010, `cx_refuse_foreign_effect_in_libc`).
+                text = re.sub(r"//[^\n]*", "", (root / relative).read_text())
+                for function, block in re.findall(
+                        r"\bextern\s+fn\s+([A-Za-z_]\w*)(.*?)\};", text, re.S):
+                    callee = re.search(r'\bcallee\s*==\s*"([A-Za-z_]\w*)"', block)
+                    if callee and re.search(r"\b(?:task_spawn|defer)\s*==", block):
+                        effects[function] = callee.group(1)
+        self.assertEqual(sorted(effects), ["effect_errno_location", "effect_perror", "effect_send"])
+        self.assertTrue(set(effects.values()) <= names, sorted(set(effects.values()) - names))
+        # Every other name the libc crate declares is a listed libc/POSIX name.
+        owned -= set(effects)
         self.assertTrue(owned and owned <= names, sorted(owned - names))
 
     def test_libc_placement_refuses_a_misplaced_or_unlisted_declaration(self):
