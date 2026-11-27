@@ -1,0 +1,83 @@
+{
+ "schema": "quirin-amendments/2",
+ "card": "FB-RETRY-LIFECYCLE-CONTRACTS",
+ "base": "56584db0b",
+ "measured_tip": "45a17a70c",
+ "profiles": [],
+ "increment_paragraph": "**FB-RETRY-LIFECYCLE-CONTRACTS** (user decision 2026-11-27; no gateway rule, no Lean change; [report](../../reports/fb-retry-lifecycle-contracts/README.md)). The Fluent Bit retry-lifecycle contracts are written down as a census a human can check without running anything ([CENSUS.md](../../reports/fb-retry-lifecycle-contracts/CENSUS.md), `census.json` with the SHA-256 of every file read, `scripts/census.py`): the 258 rows of `flb_task.c`, `flb_output.c`, `flb_scheduler.c`, `flb_engine_dispatch.c` and `flb_engine.c` on the fluent-bit-system route, the 67 declarations their calls resolve in force with the test files that state or load each (15 with none, among them `flb_task_retry_destroy` and `flb_task_users_inc`/`_dec`), every non-Safe row with its leaves by source line, and each of the 200 callees called uncontracted classified in a reviewed table: 8 statable now, 10 needing vocabulary, 67 blocked by their own body, 115 out of scope. The eight are declared in the new `fluent_bit/retry_lifecycle.qv` (`flb_sched_timer_cb_disable` borrowed with its event's descriptor stale or kept; `map_free_task_id`, `flb_task_from_fs_storage` borrowed and user-neutral; `flb_sched_ctx_init`, `flb_output_thread_instance_get` without custody; `flb_metrics_sum` borrowed; `flb_output_name`, `flb_input_name` with a result borrowed from the instance), each proved on its callee's shape and refused on a violating body in `retry_lifetime.rs`, synced, pinned at 046accf6 and selected in `cycle19-resource-contracts.json`. Measured base `56584db0b` against tip `45a17a70c` on the fluent-bit-system route over this host's 046accf6 preparation: custody 116/0/328/4 -> 122/0/322/4, combined custody+null Safe 76 -> 80; `flb_output_flush_id_get` and the sibling unit's `flb_input_chunk_output_size_subtract` and `input_chunk_output_size_add` move Unknown -> Safe in both configurations (each now rests on a declared accessor; the prediction said none); 54 lifecycle uncontracted-call leaves clear; the name accessors' borrowed results add 299 `interior-borrow-ended` leaves in seven rows that stay Unknown (BORROW-ENDING-PRECISION); OR-7's undecided `-1` clause now stops at `flb_processor_is_active`.",
+ "status_edits": [],
+ "ledger": [
+  {
+   "id": "FB-RETRY-LIFECYCLE-BODY-BLOCKERS",
+   "operation": "register",
+   "title": "Retry-lifecycle callees whose own body is the blocker (census class c)",
+   "text": "FB-RETRY-LIFECYCLE-CONTRACTS' census (docs/reports/fb-retry-lifecycle-contracts/CENSUS.md, fluent-bit-system route at 046accf6, tip 45a17a70c) classifies 64 callees the lifecycle rows of flb_task.c, flb_output.c, flb_scheduler.c, flb_engine_dispatch.c and flb_engine.c call uncontracted as blocked by their own body (146 rows / 220 leaves): each has a non-Safe row of its own in a lifecycle unit, so no summary is derived and a declaration would be checked against the same body and not established (among them schedule_request_now, flb_sched_request_create, flb_sched_timer_cb_create, flb_sched_retry_now, flb_task_retry_create, flb_task_retry_reschedule, flb_engine_dispatch_retry, flb_engine_reschedule_retries, map_get_task_id, task_alloc, flb_output_get_instance), plus flb_coro_resume, flb_coro_create (coroutine switch and creation) and sched_timer_cb_params_set (an allocation retained by thread-local storage). Each one's leaves are listed in the census. DISCHARGE: per callee, the leaves of its own row, after which its W4 summary or a declaration checked against the body resolves its callers; the census re-run shows which rows move.",
+   "source": "docs/reports/fb-retry-lifecycle-contracts/README.md",
+   "recorded_by": "FB-RETRY-LIFECYCLE-CONTRACTS"
+  },
+  {
+   "id": "FB-RETURN-LINKED-ELEMENT",
+   "operation": "register",
+   "title": "No result mode states a returned object already linked into a container its formal reaches",
+   "text": "flb_sched_timer_create (src/flb_scheduler.c:869-892 at 046accf6) flb_callocs a timer, links it into sched->timers with mk_list_add(&timer->_head, &sched->timers) and returns it; its callers (flb_sched_create, flb_sched_request_create, flb_sched_retry_now, flb_sched_timer_cb_create; 8 lifecycle rows / 8 leaves) later destroy it with the _head element destroyer flb_sched_timer_destroy. resource_return_owned loses the link (rule 43's held arm needs self-initialised links), and resource_return_borrowed_from forbids the release, so the callee stays uncontracted and its own row is Unknown. DISCHARGE: a result mode stating an owned result already published into a container reachable from a named formal (the caller holding the element as rule 34/46 hold a published one), with gateway and Lean parity, then the declaration checked against the body.",
+   "source": "docs/reports/fb-retry-lifecycle-contracts/README.md",
+   "recorded_by": "FB-RETRY-LIFECYCLE-CONTRACTS"
+  },
+  {
+   "id": "FB-RETRY-CONTRACT-FIXTURES",
+   "operation": "register",
+   "title": "Retry-lifecycle contracts in force that no test loads as production text",
+   "text": "FB-RETRY-LIFECYCLE-CONTRACTS' census lists, per declaration a lifecycle row resolves in force, the Rust test files that state it (extern fn NAME( in their contract text) or load its module (include_str!). At base 56584db0b 15 have none, among them the retry lifecycle's own flb_task_retry_destroy, flb_task_users_inc, flb_task_users_dec, flb_task_retry_count, flb_task_running_count, flb_task_set_route_status, flb_output_thread_pool_flush and flb_output_flush_id_get (the counted-user ones have generic analogues in retry_lifetime.rs's u_* family). Their clauses are pinned and checked by the route where a body is analysed, but no fixture reproduces each callee's shape against the production text and refuses a violating body. DISCHARGE: a fixture per declaration in an existing test file, as retry_lifetime.rs's retry_lifecycle_contracts module does for retry_lifecycle.qv.",
+   "source": "docs/reports/fb-retry-lifecycle-contracts/README.md",
+   "recorded_by": "FB-RETRY-LIFECYCLE-CONTRACTS"
+  },
+  {
+   "id": "W45-FB-OR7-FLUSH-CREATE-OPAQUE",
+   "operation": "amend",
+   "text": "ADVANCED by FB-RETRY-LIFECYCLE-CONTRACTS (tip 45a17a70c, fluent-bit-system route at 046accf6): flb_output_thread_instance_get is declared (fluent_bit/retry_lifecycle.qv, no custody) and flb_output_flush_id_get's row moves Unknown -> Safe; the -1 clause's derivation through flb_output_flush_create now stops at the uncontracted flb_processor_is_active. flb_output_task_flush stays a provisional Unsafe candidate (the 0 clause, threaded arm). Size unchanged: 1 clause.",
+   "source": "docs/reports/fb-retry-lifecycle-contracts/README.md"
+  },
+  {
+   "id": "BORROW-ENDING-PRECISION",
+   "operation": "amend",
+   "text": "AMENDED by FB-RETRY-LIFECYCLE-CONTRACTS (fluent-bit-system route at 046accf6, base 56584db0b -> tip 45a17a70c): declaring flb_output_name and flb_input_name with resource_return_borrowed_from(ins, nullable) adds 299 interior-borrow-ended leaves in seven Unknown rows where the name is used after a later call naming the instance (metrics_append_input 96, handle_output_event 96, flb_output_init_all 64, input_chunk_append_raw 22, update_logs_tag_records_metrics 11, record_retry_failure_metrics 8, handle_dlq_if_available 2); every one of those rows has other refusals, none is otherwise decided.",
+   "source": "docs/reports/fb-retry-lifecycle-contracts/README.md"
+  },
+  {
+   "id": "W45-FB-BACKLOG-REACHABLE-RELEASE",
+   "operation": "amend",
+   "text": "CENSUSED by FB-RETRY-LIFECYCLE-CONTRACTS (fluent-bit-system route at 046accf6, tip 45a17a70c): five uncontracted callees of the retry-lifecycle rows are of this class, 14 rows / 20 leaves: flb_sched_request_invalidate, flb_task_retry_clean, flb_output_exit, flb_input_exit_all (a list element released through a borrowed formal) and flb_task_clear_route_retry_context (flb_task.h, which calls route->retry_context_destroy(route->retry_context) through a function pointer read from the task's routes).",
+   "source": "docs/reports/fb-retry-lifecycle-contracts/README.md"
+  },
+  {
+   "id": "W45-FB-USERS-RELEASE-CHECK",
+   "operation": "amend",
+   "text": "CENSUSED by FB-RETRY-LIFECYCLE-CONTRACTS (fluent-bit-system route at 046accf6, tip 45a17a70c): flb_task_users_release is called uncontracted by 4 lifecycle rows (flb_engine_dispatch_retry, handle_output_event; 4 leaves).",
+   "source": "docs/reports/fb-retry-lifecycle-contracts/README.md"
+  },
+  {
+   "id": "LERI-HELD-FORMAL-LINK-OBLIGATION",
+   "operation": "amend",
+   "text": "CENSUSED by FB-RETRY-LIFECYCLE-CONTRACTS (tip 45a17a70c): flb_output_task_queue_enqueue is still called uncontracted by flb_output_task_singleplex_enqueue (2 rows / 2 leaves); unchanged.",
+   "source": "docs/reports/fb-retry-lifecycle-contracts/README.md"
+  },
+  {
+   "id": "MEMBER-EFFECT-STORES",
+   "operation": "amend",
+   "text": "CENSUSED by FB-RETRY-LIFECYCLE-CONTRACTS (fluent-bit-system route at 046accf6): flb_event_chunk_update (src/flb_event.c:60-67, evc->data = buf_data) is of this class and blocks flb_engine_dispatch_retry's call (2 rows / 2 leaves).",
+   "source": "docs/reports/fb-retry-lifecycle-contracts/README.md"
+  },
+  {
+   "id": "SLOT-MOVE-FIELD-SLOT",
+   "operation": "amend",
+   "text": "CENSUSED by FB-RETRY-LIFECYCLE-CONTRACTS (fluent-bit-system route at 046accf6): flb_config_task_map_grow (src/flb_config.c:1681-1689, resizing config->task_map through flb_config_task_map_resize) is of this class and blocks map_get_task_id's call (2 rows / 2 leaves).",
+   "source": "docs/reports/fb-retry-lifecycle-contracts/README.md"
+  },
+  {
+   "id": "W45-FB-OR6-ELEMENT-IDENTITY",
+   "operation": "amend",
+   "text": "CENSUSED by FB-RETRY-LIFECYCLE-CONTRACTS (tip 45a17a70c): the pair is called uncontracted by 10 lifecycle rows (14 leaves: flb_output_task_flush, flb_output_task_queue_flush_one, flb_output_task_singleplex_flush_next, flb_output_task_singleplex_enqueue, handle_output_event); unchanged.",
+   "source": "docs/reports/fb-retry-lifecycle-contracts/README.md"
+  }
+ ]
+}
