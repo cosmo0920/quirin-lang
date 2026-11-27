@@ -670,6 +670,50 @@ MODULES = [
     ("cprofiles OTLP codec", "adjacent", r"^lib/cprofiles/cprof_(encode|decode)_opentelemetry\.c$"),
     ("processor_content_modifier OTel", "adjacent", r"^plugins/processor_content_modifier/cm_opentelemetry\.c$"),
 ]
+# The formulas (docs/reports/otel-proto-audit/formulas.json) each site class
+# and obligation is stated by.
+OBLIGATION_FORMULAS = {
+    "O0": "otp_unpack_result_tested",
+    "O1": "otp_deref_needs_nonnull",
+    "O2": "otp_subscript_needs_bound",
+    "O3": "otp_member_needs_case",
+    "O4": "otp_data_needs_length",
+    "O5": "otp_enum_index_needs_name",
+}
+CLASSIFICATION_FORMULAS = [
+    "otp_classes_partition", "otp_candidate_is_wire_and_unguarded", "otp_unguarded_off_wire_undetermined",
+    "otp_guard_is_cited", "otp_undetermined_names_reason", "otp_no_unsafe_claimed",
+]
+PREMISE_FORMULAS = [
+    "otp_absent_message_is_null", "otp_repeated_elements_nonnull", "otp_repeated_array_nonnull",
+    "otp_selected_member_nonnull", "otp_string_nonnull", "otp_bytes_data_iff_length",
+    "otp_bounded_element_nonnull", "otp_selected_member_guarded_nonnull",
+]
+SITE_CLASSES = ("guarded", "candidate", "not-determinable")
+
+
+def check_sites(sites: list[dict]) -> list[str]:
+    """The classification formulas, checked on the census rows: the classes
+    partition the sites, a candidate is on the wire, a guarded site cites its
+    guard, an undetermined site names its reason (no class is an Unsafe)."""
+    problems = []
+    for s in sites:
+        where = f"{s.get('file')}:{s.get('line')} {s.get('obligation')}"
+        if s.get("class") not in SITE_CLASSES:
+            problems.append(f"{where}: class {s.get('class')!r}")
+        if s.get("obligation") not in OBLIGATION_FORMULAS:
+            problems.append(f"{where}: obligation without a formula")
+        if s.get("class") == "candidate" and not s.get("wire_reachable"):
+            problems.append(f"{where}: a candidate off the wire")
+        if s.get("class") == "guarded" and not s.get("detail"):
+            problems.append(f"{where}: a guard without a citation")
+        if s.get("class") == "not-determinable" and not s.get("reason"):
+            problems.append(f"{where}: no reason named")
+        if s.get("class") != "not-determinable" and s.get("reason"):
+            problems.append(f"{where}: a reason on a decided site")
+    return problems
+
+
 # Generated-code and runtime units carry no decoder/encoder site of their own.
 NO_SITE_MODULES = {"fluent-otel-proto generated descriptors", "fluent-otel-proto protobuf-c runtime"}
 
@@ -780,9 +824,16 @@ def build_report(measure_tip: Path, sites_doc: dict, conformance_doc: dict, iden
             continue
         for s in units[path]["sites"]:
             sites.append(dict(s, file=path, module=module, scope=scope))
+    problems = check_sites(sites)
+    if problems:
+        raise Refused("; ".join(problems[:10]))
     return {
         "schema": "otel-proto-audit/1",
         "protocol_identity": ident,
+        "identity_formulas": ["otp_identity_refused_unless_pinned", "otp_pinned_identity_admitted"],
+        "obligation_formulas": OBLIGATION_FORMULAS,
+        "classification_formulas": CLASSIFICATION_FORMULAS,
+        "premise_formulas": PREMISE_FORMULAS,
         "inputs": inputs,
         "functions": functions,
         "coverage": coverage_counts(functions),

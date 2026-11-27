@@ -2696,6 +2696,28 @@ pub const RENDERED_VALUE_SORTS: &[(&str, &str)] = &[
         "cx_dep",
         "a declared contract dependency: a `linkage_contract_v1` link or a `contract inherit` directive, elaborated (contract spec C15.2)",
     ),
+    // Card OTEL-PROTO-AUDIT (the OTP block): the sorts of the protocol
+    // obligations, prefixed `otp_`.
+    (
+        "otp_msg",
+        "a protobuf-c message of the generated OpenTelemetry descriptors: one a protobuf-c unpack returned (or a sub-message of it), or one the analysed body built",
+    ),
+    (
+        "otp_field",
+        "a field of a generated OpenTelemetry message descriptor (`ProtobufCFieldDescriptor`)",
+    ),
+    (
+        "otp_pos",
+        "a position of a repeated field's array (`#otp_at` is its integer index)",
+    ),
+    (
+        "otp_site",
+        "an obligation site of an analysed body: a dereference, subscript, member read or call argument that relies on a protobuf-c field fact",
+    ),
+    (
+        "otp_identity",
+        "a protocol identity: an opentelemetry-proto commit and every `.proto` file's sha256",
+    ),
 ];
 
 /// The G01p sort of a rendered term: a value of a rendered value sort, a
@@ -4346,6 +4368,221 @@ pub const RENDERED_TERMS: &[RenderedTerm] = &[
         sort: RenderedSort::Predicate(&["cx_bundle", "cx_fn"]),
         meaning: "`#cx_load_refused(#b,#g)`: the loader refuses the module of `#b`'s `#g` (total-or-reject)",
         block: "CX",
+    },
+    // Card OTEL-PROTO-AUDIT (the OTP block): the protocol-derived
+    // obligations of the OpenTelemetry decoders and encoders as protobuf-c
+    // realises them, the classification of their sites and the pinned
+    // protocol identity (docs/reports/otel-proto-audit/formulas.json),
+    // prefixed `otp_`.
+    RenderedTerm {
+        name: "otp_unpacked",
+        sort: RenderedSort::Predicate(&["otp_msg"]),
+        meaning: "`#otp_unpacked(#m)`: `#m` is, or is a sub-message of, the result of a successful protobuf-c unpack",
+        block: "OTP",
+    },
+    RenderedTerm {
+        name: "otp_message_typed",
+        sort: RenderedSort::Predicate(&["otp_field"]),
+        meaning: "`#otp_message_typed(#f)`: `#f`'s type is a message (`PROTOBUF_C_TYPE_MESSAGE`)",
+        block: "OTP",
+    },
+    RenderedTerm {
+        name: "otp_repeated",
+        sort: RenderedSort::Predicate(&["otp_field"]),
+        meaning: "`#otp_repeated(#f)`: `#f` is repeated (`n_f` and an array)",
+        block: "OTP",
+    },
+    RenderedTerm {
+        name: "otp_oneof",
+        sort: RenderedSort::Predicate(&["otp_field"]),
+        meaning: "`#otp_oneof(#f)`: `#f` is a member of a oneof (`PROTOBUF_C_FIELD_FLAG_ONEOF`)",
+        block: "OTP",
+    },
+    RenderedTerm {
+        name: "otp_string",
+        sort: RenderedSort::Predicate(&["otp_field"]),
+        meaning: "`#otp_string(#f)`: `#f`'s type is `string`",
+        block: "OTP",
+    },
+    RenderedTerm {
+        name: "otp_bytes",
+        sort: RenderedSort::Predicate(&["otp_field"]),
+        meaning: "`#otp_bytes(#f)`: `#f`'s type is `bytes` (`ProtobufCBinaryData`)",
+        block: "OTP",
+    },
+    RenderedTerm {
+        name: "otp_enum",
+        sort: RenderedSort::Predicate(&["otp_field"]),
+        meaning: "`#otp_enum(#f)`: `#f`'s type is an enum",
+        block: "OTP",
+    },
+    RenderedTerm {
+        name: "otp_present",
+        sort: RenderedSort::Predicate(&["otp_msg", "otp_field"]),
+        meaning: "`#otp_present(#m,#f)`: the wire bytes `#m` was unpacked from carry `#f`",
+        block: "OTP",
+    },
+    RenderedTerm {
+        name: "otp_nonnull",
+        sort: RenderedSort::Predicate(&["otp_msg", "otp_field"]),
+        meaning: "`#otp_nonnull(#m,#f)`: `#m`'s pointer member for `#f` (a sub-message, a string or a repeated array) is not NULL",
+        block: "OTP",
+    },
+    RenderedTerm {
+        name: "otp_count",
+        sort: RenderedSort::Function(&["otp_msg", "otp_field"], "integer"),
+        meaning: "`#otp_count(#m,#f)`: `#m->n_f`, the element count of repeated `#f`",
+        block: "OTP",
+    },
+    RenderedTerm {
+        name: "otp_at",
+        sort: RenderedSort::Function(&["otp_pos"], "integer"),
+        meaning: "`#otp_at(#p)`: the integer index of position `#p`",
+        block: "OTP",
+    },
+    RenderedTerm {
+        name: "otp_elem_nonnull",
+        sort: RenderedSort::Predicate(&["otp_msg", "otp_field", "otp_pos"]),
+        meaning: "`#otp_elem_nonnull(#m,#f,#p)`: element `#p` of `#m`'s array for repeated message field `#f` is not NULL",
+        block: "OTP",
+    },
+    RenderedTerm {
+        name: "otp_case",
+        sort: RenderedSort::Function(&["otp_msg", "otp_field"], "integer"),
+        meaning: "`#otp_case(#m,#f)`: the `*_case` discriminant of the oneof `#f` belongs to, in `#m`",
+        block: "OTP",
+    },
+    RenderedTerm {
+        name: "otp_number",
+        sort: RenderedSort::Function(&["otp_field"], "integer"),
+        meaning: "`#otp_number(#f)`: `#f`'s field number",
+        block: "OTP",
+    },
+    RenderedTerm {
+        name: "otp_len",
+        sort: RenderedSort::Function(&["otp_msg", "otp_field"], "integer"),
+        meaning: "`#otp_len(#m,#f)`: the `len` of `#m`'s bytes field `#f`",
+        block: "OTP",
+    },
+    RenderedTerm {
+        name: "otp_data_nonnull",
+        sort: RenderedSort::Predicate(&["otp_msg", "otp_field"]),
+        meaning: "`#otp_data_nonnull(#m,#f)`: the `data` of `#m`'s bytes field `#f` is not NULL",
+        block: "OTP",
+    },
+    RenderedTerm {
+        name: "otp_value_named",
+        sort: RenderedSort::Predicate(&["otp_msg", "otp_field"]),
+        meaning: "`#otp_value_named(#m,#f)`: `#m`'s value of enum field `#f` is a value the enum names (a decoder keeps any other `int32`)",
+        block: "OTP",
+    },
+    RenderedTerm {
+        name: "otp_reads",
+        sort: RenderedSort::Predicate(&["otp_site", "otp_msg", "otp_field"]),
+        meaning: "`#otp_reads(#s,#m,#f)`: site `#s` relies on field `#f` of message `#m`",
+        block: "OTP",
+    },
+    RenderedTerm {
+        name: "otp_unpack_site",
+        sort: RenderedSort::Predicate(&["otp_site"]),
+        meaning: "`#otp_unpack_site(#s)`: `#s` dereferences an unpack result (O0)",
+        block: "OTP",
+    },
+    RenderedTerm {
+        name: "otp_result_nonnull",
+        sort: RenderedSort::Predicate(&["otp_site"]),
+        meaning: "`#otp_result_nonnull(#s)`: the unpack result `#s` dereferences is not NULL",
+        block: "OTP",
+    },
+    RenderedTerm {
+        name: "otp_deref_site",
+        sort: RenderedSort::Predicate(&["otp_site"]),
+        meaning: "`#otp_deref_site(#s)`: `#s` dereferences, or passes to a callee, a singular or oneof sub-message pointer (O1)",
+        block: "OTP",
+    },
+    RenderedTerm {
+        name: "otp_subscript_site",
+        sort: RenderedSort::Predicate(&["otp_site"]),
+        meaning: "`#otp_subscript_site(#s)`: `#s` subscripts a repeated field's array, directly or through a callee (O2)",
+        block: "OTP",
+    },
+    RenderedTerm {
+        name: "otp_pos_of",
+        sort: RenderedSort::Function(&["otp_site"], "otp_pos"),
+        meaning: "`#otp_pos_of(#s)`: the position subscript site `#s` reads",
+        block: "OTP",
+    },
+    RenderedTerm {
+        name: "otp_member_site",
+        sort: RenderedSort::Predicate(&["otp_site"]),
+        meaning: "`#otp_member_site(#s)`: `#s` reads a oneof member (O3)",
+        block: "OTP",
+    },
+    RenderedTerm {
+        name: "otp_data_site",
+        sort: RenderedSort::Predicate(&["otp_site"]),
+        meaning: "`#otp_data_site(#s)`: `#s` dereferences, or passes on, a bytes field's `data` (O4)",
+        block: "OTP",
+    },
+    RenderedTerm {
+        name: "otp_enum_site",
+        sort: RenderedSort::Predicate(&["otp_site"]),
+        meaning: "`#otp_enum_site(#s)`: `#s` uses a decoded enum value as an index, or passes it to a callee (O5)",
+        block: "OTP",
+    },
+    RenderedTerm {
+        name: "otp_guarded",
+        sort: RenderedSort::Predicate(&["otp_site"]),
+        meaning: "`#otp_guarded(#s)`: the body establishes `#s`'s guard on every path to it (a dominating test, or the unit callee's own test)",
+        block: "OTP",
+    },
+    RenderedTerm {
+        name: "otp_candidate",
+        sort: RenderedSort::Predicate(&["otp_site"]),
+        meaning: "`#otp_candidate(#s)`: `#s` is a candidate: unguarded and reachable from an unpack of wire input in its unit (never a defect claim)",
+        block: "OTP",
+    },
+    RenderedTerm {
+        name: "otp_undetermined",
+        sort: RenderedSort::Predicate(&["otp_site"]),
+        meaning: "`#otp_undetermined(#s)`: the reader does not decide `#s` (a named reason)",
+        block: "OTP",
+    },
+    RenderedTerm {
+        name: "otp_wire",
+        sort: RenderedSort::Predicate(&["otp_site"]),
+        meaning: "`#otp_wire(#s)`: `#s`'s function is reachable from an unpack of wire bytes in the same unit",
+        block: "OTP",
+    },
+    RenderedTerm {
+        name: "otp_cited",
+        sort: RenderedSort::Predicate(&["otp_site"]),
+        meaning: "`#otp_cited(#s)`: the census cites `#s`'s guard by kind and line",
+        block: "OTP",
+    },
+    RenderedTerm {
+        name: "otp_reason_named",
+        sort: RenderedSort::Predicate(&["otp_site"]),
+        meaning: "`#otp_reason_named(#s)`: the census names why `#s` is not determined",
+        block: "OTP",
+    },
+    RenderedTerm {
+        name: "otp_unsafe_claimed",
+        sort: RenderedSort::Predicate(&["otp_site"]),
+        meaning: "`#otp_unsafe_claimed(#s)`: the audit claims an Unsafe at `#s`",
+        block: "OTP",
+    },
+    RenderedTerm {
+        name: "otp_pinned",
+        sort: RenderedSort::Predicate(&["otp_identity"]),
+        meaning: "`#otp_pinned(#d)`: `#d` equals the census's pinned protocol identity (commit and every file digest)",
+        block: "OTP",
+    },
+    RenderedTerm {
+        name: "otp_refused",
+        sort: RenderedSort::Predicate(&["otp_identity"]),
+        meaning: "`#otp_refused(#d)`: a use of the protocol at identity `#d` is refused",
+        block: "OTP",
     },
 ];
 

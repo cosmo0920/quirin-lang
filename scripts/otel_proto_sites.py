@@ -760,14 +760,10 @@ class Unit:
             wire = fn.name in self.wire
             for n in fn.nodes:
                 k = n.get("kind")
-                if k == "MemberExpr":
-                    kt = classify_member(fn, n)
-                    if kt is None:
-                        continue
-                    if kt[0] == "oneof":
-                        use = deref_uses(fn, n)
-                        if use == "store":
-                            continue
+                kt = classify_member(fn, n) if k == "MemberExpr" else None
+                if kt is not None:
+                    use = deref_uses(fn, n)
+                    if kt[0] == "oneof" and use != "store":
                         out.append(self._oneof_site(fn, n, kt, use, wire, consts))
                     if kt[0] == "scalar" and kt[1] == "enum":
                         p, child = fn.use_parent(n)
@@ -801,9 +797,16 @@ class Unit:
                           f"callee {callee} never indexes by `{pname}`")
 
     def _site(self, fn, n, ob, form, subject, wire, cls, reason, guard):
+        if reason is not None and " " in reason:
+            # a callee's sentence becomes its stable code; the sentence stays
+            # as the site's detail
+            guard = guard or reason
+            reason = ("callee-passes-parameter-on" if " passes " in reason
+                      else "callee-copies-parameter" if "copies" in reason
+                      else "callee-reason-unclassified")
         return {"file": self.source, "function": fn.name, "line": line(n), "obligation": ob,
                 "form": form, "subject": subject, "wire_reachable": wire,
-                "class": cls, "reason": reason, "guard": guard}
+                "class": cls, "reason": reason, "detail": guard}
 
     def _oneof_site(self, fn, n, kt, use, wire, consts):
         rec, base, arrow = base_record(n)
