@@ -7,11 +7,11 @@
 Under explicit user decisions on 2026-11-27 (`A1` artifact pruning overriding constraint 21 for unreferenced bloat, `A2` physical archive categorization for unpinned historical directories, and `A3` standing operational rule + automated `land.py check` hygiene gate):
 
 1. **Unreferenced bloat pruned with cryptographic provenance (`A1`)**:
-   - Pruned **9,279 unreferenced bulk/log/attempt files** totaling **1,408,527,233 bytes (`1,343.28 MiB`, an `89.1%` net reduction from `1,505.32 MiB` to `163.54 MiB`)** across **594** card directories.
+   - Pruned **9,280 unreferenced bulk/log/attempt files** totaling **1,408,577,574 bytes (`1,343.32 MiB`, an `89.1%` net reduction to `163.63 MiB`)** across **595** card directories.
    - Wrote deterministic `<report-dir>/pruned-artifacts.json` manifests (`schema: "quirin-pruned-report-artifacts/1"`) recording sorted `path`, `bytes`, and 64-hex `sha256` for every pruned file.
    - Retained 100% of `README.md` narratives, compact diffs/summaries, scripts, `.c`/`.h`/`.qr`/`.qv` source fixtures, `mutations/` harnesses, and mechanically test/ledger-pinned inputs (including `tests/support/*.rs` `include_str!` migration records).
 2. **Two-tier directory architecture (`A2`)**:
-   - Kept **270** mechanically referenced or active report directories (+ this report = **271** top-level directories) at `docs/reports/<card>/` (preserving every Rust test, `tests/support/` `include_str!` input, Python trace test, `scripts/gate_scope_walkers.json` entry, `read-census.json` path, `contract/evaluations/*` baseline pointer, `contract/contributions/*` ledger pointer, and `reconciliation.json` `verify` file path).
+   - Kept **271** mechanically referenced or active report directories (+ this report = **272** top-level directories) at `docs/reports/<card>/` (preserving every Rust test, `tests/support/` `include_str!` input, Python trace test, `scripts/gate_scope_walkers.json` entry, `read-census.json` path, `contract/evaluations/*` baseline pointer, `contract/contributions/*` ledger pointer, and `reconciliation.json` `verify` file path).
    - Moved **710** historical unpinned report directories into 8 era and subsystem buckets under `docs/reports/archive/`:
      - `early-waves` (`135`), `waves-20-39` (`30`), `cycles-18-19` (`24`), `waves-40-47` (`80`), `wave-48` (`37`), `gateway-and-clang` (`86`), `contracts-and-premises` (`68`), and `language-and-tooling` (`250`).
    - Rebased relative Markdown links and `docs/reports/<card>` references across **575+** Markdown documents, `docs/agents/rules/*.md` (regenerating `docs/agents/*.md` via `scripts/gen_rule_docs.py`), and `docs/reviews/r0_3/acceptance_matrix.json#named_followups` (`0` broken report `.md` links across `13,785` checked links).
