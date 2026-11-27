@@ -614,6 +614,8 @@ Regenerate with `python3 scripts/build_docs_index.py`; validate with `--check`.
 
 | [fb-quant-contract-census](archive/contracts-and-premises/fb-quant-contract-census/README.md) | FB-QUANT-CONTRACT-CENSUS |
 
+| [fb-retry-or6-element-identity](fb-retry-or6-element-identity/README.md) | FB-RETRY-OR6-ELEMENT-IDENTITY: a formal's link obligation, carried to the caller |
+
 | [fb-system-audit-cards](archive/contracts-and-premises/fb-system-audit-cards/README.md) | Fluent Bit system audit investigation cards |
 
 | [fb-teardown-destroy-declarations](archive/contracts-and-premises/fb-teardown-destroy-declarations/README.md) | FB-TEARDOWN-DESTROY-DECLARATIONS: rule 30 at a direct call, the parameter guard, and Fluent Bit's destroyers |

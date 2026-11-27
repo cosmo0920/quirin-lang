@@ -4,7 +4,7 @@
 
 Card and integration reports are organized into two tiers so active/test-pinned landmarks stay immediately accessible while historical wave reports are grouped by era and subsystem:
 
-- **Top-level active & mechanically pinned reports (`docs/reports/<card>/`)**: **272** directories referenced directly by Rust/Python test harnesses, evaluation baselines, contribution ledgers, or rule gates.
+- **Top-level active & mechanically pinned reports (`docs/reports/<card>/`)**: **273** directories referenced directly by Rust/Python test harnesses, evaluation baselines, contribution ledgers, or rule gates.
 - **Categorized historical archive (`docs/reports/archive/<category>/<card>/`)**: **700** directories grouped into era and subsystem buckets below.
 
 ## Historical archive categories
