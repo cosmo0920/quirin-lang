@@ -466,47 +466,5 @@ pub fn check_ledger_transitions(
 }
 
 #[cfg(test)]
-mod tests {
-    use super::*;
-
-    #[test]
-    fn the_admission_is_valid() {
-        LEDGER_ADMISSION.validate().unwrap();
-    }
-
-    /// The decision vectors `QCore.BacklogLedger.decide_vectors` restates.
-    #[test]
-    fn decision_vectors() {
-        use LedgerTransition::*;
-        use WriteForm::*;
-        let forms = [Subtract, Add, Zero, Maximum, Other];
-        let guards = [
-            None,
-            Some((false, false)),
-            Some((false, true)),
-            Some((true, false)),
-            Some((true, true)),
-        ];
-        let mut admitted = Vec::new();
-        for form in forms {
-            for guard in guards {
-                for clean in [false, true] {
-                    if let Some(t) = decide(form, guard, clean) {
-                        admitted.push((form, guard, clean, t));
-                    }
-                }
-            }
-        }
-        assert_eq!(
-            admitted,
-            vec![
-                (Subtract, Some((false, false)), true, Discharge),
-                (Add, Some((true, false)), true, Charge),
-                (Zero, Some((false, true)), false, UnderflowClamp),
-                (Zero, Some((false, true)), true, UnderflowClamp),
-                (Maximum, Some((true, true)), false, OverflowClamp),
-                (Maximum, Some((true, true)), true, OverflowClamp),
-            ]
-        );
-    }
-}
+#[path = "../tests/unit/ledger_transition.rs"]
+mod tests;

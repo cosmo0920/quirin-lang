@@ -71,6 +71,14 @@
    "recorded_by": "FB-BACKLOG-ACCOUNTING"
   },
   {
+   "id": "GATE-SCOPE-READ-CENSUS-FLOOR",
+   "operation": "register",
+   "title": "test_gate_scope_census fails once one more root test binary is added: the read census covers 703 of 781 units at r77",
+   "text": "Card FB-BACKLOG-ACCOUNTING's first scoped gate (base 76c1f9cfc) failed only test_the_census_covers_the_suite: adding one integration test binary made 703 observed units of 782, under the 0.9 floor (703.8); the base passes by 0.1 unit. The card moved its tests into the crate's unit tests instead. Every card that adds a root test binary will hit it. DISCHARGE: regenerate docs/reports/gate-scope-precise-selection/read-census.json (a new census run) or replace the fixed ratio with a check that names unobserved units, with the Python suite green.",
+   "source": "docs/reports/fb-backlog-accounting/README.md",
+   "recorded_by": "FB-BACKLOG-ACCOUNTING"
+  },
+  {
    "id": "FB-LEDGER-SIGNEDNESS-SITES",
    "operation": "register",
    "title": "Two backlog signedness sites rest on premises: a dead size_t < 0 test and a size_t/ssize_t eviction requirement",

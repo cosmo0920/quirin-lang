@@ -89,7 +89,7 @@ the write there may be no store, call or local store. The four transitions
 and their decision table are `decide` in Rust and `decide'` in Lean, matched
 row for row (`decision_vectors`, `decide_vectors`).
 
-**Fixtures** (`crates/qcore-c-gateway/tests/backlog_ledger.rs`):
+**Fixtures** (`crates/qcore-c-gateway/tests/unit/ledger_transition.rs`, compiled into the crate's own unit tests: a new test binary would push `test_gate_scope_census`'s read-census coverage below its 90% floor, 703 of 782):
 
 | Shape | Source | Result |
 |---|---|---|
@@ -147,14 +147,23 @@ lock, schema or route changes. The generated files are
 
 ## 4. Measurement
 
-PREDICTION: no row moves on any route.
+PREDICTION: no row moves on any route. **Measured: as predicted.**
 
-| Run | Exit | Units S/U/Unk/data | Functions S/P/Unk/Unsafe |
+| Run | Exit | Units Safe/Unsafe/Unknown/data-only | Functions Safe/Pending/Unknown/Unsafe |
 |---|---|---|---|
-| base `76c1f9cfc` | MEASURE_BASE_EXIT | MEASURE_BASE_UNITS | MEASURE_BASE_FUNCTIONS |
-| tip `8ab7477c3` | MEASURE_TIP_EXIT | MEASURE_TIP_UNITS | MEASURE_TIP_FUNCTIONS |
+| base `76c1f9cfc` | 0 | 9 / 6 / 162 / 4 (181) | 1,205 / 2 / 3,590 / 7 (4,804) |
+| tip `8ab7477c3` | 0 | 9 / 6 / 162 / 4 (181) | 1,205 / 2 / 3,590 / 7 (4,804) |
 
-MEASURE_RESULT
+There are no moved rows. `changed_rows.py` finds no row whose status or
+leaf multiset differs, and `moved.py` reports `{}`. The reports are not
+byte-identical. `evidence_version` carries the measuring checkout's git
+HEAD: both side trees sit inside this worktree, so they read `a971680e9`
+and `d65d11761`. The reading-site environment digests derived from it differ
+too, and each function's reading-site evidence is listed in digest order.
+[identity.py](scripts/identity.py) blanks those fields and compares the
+evidence as a multiset. With that, all 4,804 function rows and all 181 unit
+statuses are identical ([identity.json](artifacts/identity.json);
+[totals](artifacts/)). Binary SHA-256: base `fe5c6770…`, tip `da958902…`.
 
 The runs used opt-in `current --monkey-linked` over
 `private/fb-046accf6`, each from its own `git archive` tree and release
@@ -180,6 +189,8 @@ Registered in [integration-amendments.json](integration-amendments.json):
 * FB-LEDGER-ADVISORY-LIMITS: which resident-byte bound to certify (a human
   choice).
 * FB-LEDGER-SIGNEDNESS-SITES: the two premises of §1.
+* GATE-SCOPE-READ-CENSUS-FLOOR: one more root test binary fails the
+  Python suite's read-census floor (§5).
 
 Amended: FB-PLAN-CARDS-UNTRACKED (this card's slice and the ids above now
 track the plan card), W45-FB-BACKLOG-PUBLICATION-BLOCKED (OB-8's arithmetic

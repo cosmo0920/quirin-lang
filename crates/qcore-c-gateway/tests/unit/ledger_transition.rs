@@ -12,8 +12,9 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-//! Card FB-BACKLOG-ACCOUNTING, probe: the base behaviour the ledger checker
-//! (gateway rule 92) starts from, pinned before any semantic change.
+//! Card FB-BACKLOG-ACCOUNTING (gateway rule 92). The first two tests are the
+//! probe: the base behaviour the ledger checker starts from, pinned before
+//! any semantic change.
 //!
 //! * The custody gateway (G) reads an unsigned ledger update through a member
 //!   chain as custody-neutral: a bare, wrapping `L -= d` is `Safe` there,
@@ -28,10 +29,33 @@
 //! `src/flb_input_chunk.c:66-92`); the census is
 //! `docs/reports/fb-backlog-accounting/census.json`.
 
-#[path = "support/clang_gap.rs"]
-mod clang_gap;
+use super::*;
+use crate::legacy_c::{
+    AnalysisStatus, C11TranslationUnit, UnrestrictedLegacyResult, analyze_unrestricted_c11,
+};
+use crate::test_support::clang_available;
+use crate::typed_source::{SourceImportProfile, SourceResult, SourceSummary};
 
-use clang_gap::*;
+/// The scalar `sizeof` operand types route T is given here.
+const T_SIZEOF: &[&str] = &["int", "unsigned long"];
+
+/// The custody gateway's status for function `subject`, with no contracts.
+fn custody_status(source: &str) -> AnalysisStatus {
+    let outcome = analyze_unrestricted_c11(
+        &C11TranslationUnit {
+            source,
+            ..Default::default()
+        },
+        "subject",
+        &Default::default(),
+    )
+    .unwrap_or_else(|error| panic!("fixture rejected by Clang: {error:?}\n{source}"));
+    match outcome {
+        UnrestrictedLegacyResult::Safe(_) => AnalysisStatus::Safe,
+        UnrestrictedLegacyResult::Unsafe(_) => AnalysisStatus::Unsafe,
+        UnrestrictedLegacyResult::Unknown { .. } => AnalysisStatus::Unknown,
+    }
+}
 
 /// Clang's spelling of `__SIZE_TYPE__` on the test's target (LLP64 on
 /// Windows), so the ledger type and the signature constraints read the same
@@ -62,15 +86,15 @@ fn custody_route_reads_every_ledger_update_as_custody_neutral() {
         "void subject(struct sb_ch *chunk, struct sb_q *backlog) {\n backlog->ins->fs_backlog_chunks_size -= chunk->size;\n}",
         "void subject(struct sb_ch *chunk, struct sb_q *backlog) {\n backlog->ins->fs_backlog_chunks_size -= chunk->size;\n backlog->ins->fs_backlog_chunks_size -= chunk->size;\n}",
     ] {
-        let source = format!("{RECORDS}{body}");
-        assert!(g(&source).safe(), "{source}");
+        let source = format!("typedef __SIZE_TYPE__ size_t;\n{RECORDS}{body}");
+        assert_eq!(custody_status(&source), AnalysisStatus::Safe, "{source}");
     }
 }
 
 /// `src/flb_input_chunk.c:66-92` at `046accf6`; `flb_warn` is its
 /// `flb_log.h:259-261` expansion over declared functions, `SIZE_MAX` its
 /// LP64 value.
-pub const HELPERS: &str = "\
+const HELPERS: &str = "\
 typedef __SIZE_TYPE__ size_t;
 struct flb_output_instance { int id; size_t fs_chunks_size; };
 int flb_log_check(int level);
@@ -113,14 +137,14 @@ fn typed_route_refuses_the_ledger_helpers_under_the_legacy_admission() {
         ("flb_input_chunk_output_size_subtract", "compound -="),
         ("input_chunk_output_size_add", "binary -"),
     ] {
-        let results = qcore_c_gateway::typed_source::import_source_functions(
-            &qcore_c_gateway::legacy_c::C11TranslationUnit {
+        let results = crate::typed_source::import_source_functions(
+            &C11TranslationUnit {
                 source: HELPERS,
                 ..Default::default()
             },
             "046accf6",
             &[function],
-            &qcore_c_gateway::typed_source::SourceImportProfile {
+            &SourceImportProfile {
                 records: &["flb_output_instance"],
                 sizeof_types: T_SIZEOF,
                 signature_constraints: &[(function, "void", types)],
@@ -128,9 +152,7 @@ fn typed_route_refuses_the_ledger_helpers_under_the_legacy_admission() {
             },
         )
         .expect("unit admitted");
-        let [qcore_c_gateway::typed_source::SourceResult::Unknown { reason, .. }] =
-            results.as_slice()
-        else {
+        let [SourceResult::Unknown { reason, .. }] = results.as_slice() else {
             panic!("{function}: {results:?}");
         };
         assert_eq!(
@@ -148,13 +170,8 @@ fn typed_route_refuses_the_ledger_helpers_under_the_legacy_admission() {
 // ledger statements, and the mutation controls.
 // ---------------------------------------------------------------------------
 
+use crate::typed_source::import_source_functions_admitting;
 use LedgerTransition::*;
-use qcore_c_gateway::ledger_transition::{
-    LEDGER_ADMISSION, LedgerPairing, LedgerSpec, LedgerTransition, check_ledger_transitions,
-};
-use qcore_c_gateway::typed_source::{
-    SourceImportProfile, SourceResult, SourceSummary, import_source_functions_admitting,
-};
 
 const SIZE_MAX: &str = "18446744073709551615";
 
@@ -192,7 +209,7 @@ fn import(
         "hook_fails",
     ];
     let results = import_source_functions_admitting(
-        &qcore_c_gateway::legacy_c::C11TranslationUnit {
+        &C11TranslationUnit {
             source,
             ..Default::default()
         },
@@ -657,5 +674,46 @@ fn a_missing_or_doubled_update_refuses() {
             "rule 92: ledger `fs_chunks_size` write is not an admitted saturating transition"
                 .into()
         )
+    );
+}
+
+#[test]
+fn the_admission_is_valid() {
+    LEDGER_ADMISSION.validate().unwrap();
+}
+
+/// The decision vectors `QCore.BacklogLedger.decide_vectors` restates.
+#[test]
+fn decision_vectors() {
+    use LedgerTransition::*;
+    use WriteForm::*;
+    let forms = [Subtract, Add, Zero, Maximum, Other];
+    let guards = [
+        None,
+        Some((false, false)),
+        Some((false, true)),
+        Some((true, false)),
+        Some((true, true)),
+    ];
+    let mut admitted = Vec::new();
+    for form in forms {
+        for guard in guards {
+            for clean in [false, true] {
+                if let Some(t) = decide(form, guard, clean) {
+                    admitted.push((form, guard, clean, t));
+                }
+            }
+        }
+    }
+    assert_eq!(
+        admitted,
+        vec![
+            (Subtract, Some((false, false)), true, Discharge),
+            (Add, Some((true, false)), true, Charge),
+            (Zero, Some((false, true)), false, UnderflowClamp),
+            (Zero, Some((false, true)), true, UnderflowClamp),
+            (Maximum, Some((true, true)), false, OverflowClamp),
+            (Maximum, Some((true, true)), true, OverflowClamp),
+        ]
     );
 }
