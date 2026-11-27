@@ -324,6 +324,18 @@ pub struct ResourceFunctionContract {
     /// before.
     #[serde(default, skip_serializing_if = "BTreeSet::is_empty")]
     pub failure_uses: BTreeSet<usize>,
+    /// Card **LERI-HELD-FORMAL-LINK-OBLIGATION** (gateway rule 91 (5),
+    /// contract specification §C04.8): the entry precondition
+    /// `resource_links_valid(p, MEMBER)`, by the index of a bound position:
+    /// `p`'s `MEMBER` links are valid at the call, and the caller owes it. It
+    /// states nothing about the exit: the position's own mode (and any
+    /// container effect elsewhere) is the exit effect, so an exit class that
+    /// stores or keeps `p` states the obligation without an unlink. A consumer
+    /// that does not check it MUST refuse the call
+    /// ([`Self::has_container_effect`]). Omitted when empty, so every contract
+    /// without one serializes byte for byte as before.
+    #[serde(default, skip_serializing_if = "BTreeMap::is_empty")]
+    pub link_preconditions: BTreeMap<usize, String>,
 }
 
 /// Card **W45-FB-RETRY-LIFETIME**: an intrusive-container effect on the object
@@ -444,6 +456,9 @@ impl std::fmt::Debug for ResourceFunctionContract {
         if !self.failure_uses.is_empty() {
             debug.field("failure_uses", &self.failure_uses);
         }
+        if !self.link_preconditions.is_empty() {
+            debug.field("link_preconditions", &self.link_preconditions);
+        }
         debug.finish()
     }
 }
@@ -463,6 +478,7 @@ impl ResourceFunctionContract {
             counted_users: CountedUserClauses::default(),
             link_members: BTreeMap::new(),
             failure_uses: BTreeSet::new(),
+            link_preconditions: BTreeMap::new(),
         }
     }
 
@@ -471,7 +487,10 @@ impl ResourceFunctionContract {
     /// because its modes are all `Borrowed` MUST refuse such a call instead.
     #[must_use]
     pub fn has_container_effect(&self) -> bool {
-        !self.container_effects.is_empty()
+        // Card LERI-HELD-FORMAL-LINK-OBLIGATION (gateway rule 91 (5)): an
+        // entry link precondition is checked where container effects are, so
+        // every route that does not apply them refuses it too.
+        !self.container_effects.is_empty() || !self.link_preconditions.is_empty()
     }
 
     /// Card W45-FB-RETRY-LIFETIME: the same contract without its container
@@ -486,6 +505,8 @@ impl ResourceFunctionContract {
         // Card CG25-IN-PLACE-REGEX-REGERROR-FAILURE-EDGE: no derived summary
         // states where a use is defined on a failed object.
         projection.failure_uses.clear();
+        // Card LERI-HELD-FORMAL-LINK-OBLIGATION: nor a link precondition.
+        projection.link_preconditions.clear();
         projection
     }
 

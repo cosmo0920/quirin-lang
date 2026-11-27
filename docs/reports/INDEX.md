@@ -753,6 +753,8 @@ Regenerate with `python3 scripts/build_docs_index.py`; validate with `--check`.
 
 | [leri-held-and-link-member-premises](archive/language-and-tooling/leri-held-and-link-member-premises/README.md) | LERI-HELD-AND-LINK-MEMBER-PREMISES: an element destroyer's link premises, checked |
 
+| [leri-held-exit-class-precondition](leri-held-exit-class-precondition/README.md) | LERI-HELD-FORMAL-LINK-OBLIGATION: the link precondition without the unlink, per exit class |
+
 | [lexical-routes-typed-fallbacks](lexical-routes-typed-fallbacks/README.md) | LEXICAL-ROUTES-PREEMPT-TYPED-FALLBACKS |
 
 | [lexical-scalar-noop-alias-read](archive/gateway-and-clang/lexical-scalar-noop-alias-read/README.md) | LEXICAL-SCALAR-NOOP-ALIAS-READ |

@@ -57,6 +57,25 @@
 //!   element bound through `M` (rule 46 (2)), or carried again to the
 //!   caller's own formal by this rule; any other actual refuses there.
 //!
+//! * **The precondition without the unlink** (card
+//!   LERI-HELD-FORMAL-LINK-OBLIGATION, rule 91 (5)). A contract may state
+//!   `resource_links_valid(p, M)` ([`ResourceFunctionContract::link_preconditions`])
+//!   at a bound position whose exit effect is not an element destroy: the
+//!   caller owes `p`'s `M` links valid on entry, and the clause says nothing
+//!   about the exit. The entry seeds an `Owed(M)` record, which admits and is
+//!   forgotten exactly as `Ready(M)` is; at an exit, a formal released through
+//!   the carried destroyer (`Spent`) reads `Mixed` instead, since the clause
+//!   states no unlink ([`observed_for`]). A derivation attaches it, after the
+//!   destroyer clause's candidate failed its fresh run, at each candidate
+//!   formal whose mode is not `Released` ([`attach_preconditions`]); an
+//!   exit-specific summary's classes must agree on every entry obligation
+//!   ([`classes_agree`]), since the caller's state at the call is one state
+//!   whichever class returns. Each caller checks the clause before the call's
+//!   own reading ([`check_preconditions`]): the actual is an object it
+//!   published, one it holds with its own `M` initialisation (rule 46 (3)), or
+//!   its own formal carried with `M` (this rule, not spent); every other
+//!   actual, a foreign element included, refuses the call.
+//!
 //! Nothing here accepts an entry without a checked discharge: the body's
 //! admission rests on a clause its summary states, the summary validates only
 //! when every exit released the formal through the destroyer, and every
@@ -78,6 +97,16 @@ pub(crate) enum CarriedLink {
     Ready(String),
     /// An element destroyer unlinking `M` took the object on this path.
     Spent(String),
+    /// Card LERI-HELD-FORMAL-LINK-OBLIGATION (rule 91 (5)): as `Ready`, from
+    /// a `resource_links_valid(p, M)` precondition, which states no unlink.
+    Owed(String),
+}
+
+impl CarriedLink {
+    /// Whether the record is still unspent (`Ready` or `Owed`).
+    fn unspent(&self) -> bool {
+        !matches!(self, Self::Spent(_))
+    }
 }
 
 /// The positions a contract states a carried link obligation at: a
@@ -91,14 +120,37 @@ pub(crate) fn carried_members(contract: &ResourceFunctionContract) -> BTreeMap<u
         .collect()
 }
 
-/// Seed the entry's `Ready` records: each bound formal whose position the
-/// contract states a carried link obligation at.
+/// Card LERI-HELD-FORMAL-LINK-OBLIGATION: every entry link obligation a
+/// contract states, by position: the destroyer clauses' and the
+/// preconditions'.
+pub(crate) fn entry_obligations(contract: &ResourceFunctionContract) -> BTreeMap<usize, String> {
+    let mut obligations = carried_members(contract);
+    for (index, member) in &contract.link_preconditions {
+        obligations.entry(*index).or_insert_with(|| member.clone());
+    }
+    obligations
+}
+
+/// Seed the entry's records: `Ready` at each bound formal whose position the
+/// contract states a carried link obligation at, `Owed` at each bound formal
+/// it states only a link precondition at.
 pub(in crate::legacy_c) fn seed(
     state: &mut AbstractState,
     parameter_sites: &[Option<usize>],
     contract: &ResourceFunctionContract,
 ) {
-    for (index, member) in carried_members(contract) {
+    let carried = carried_members(contract);
+    for (index, member) in &contract.link_preconditions {
+        if carried.contains_key(index) {
+            continue;
+        }
+        if let Some(Some(site)) = parameter_sites.get(*index) {
+            state
+                .carried_links
+                .insert(*site, CarriedLink::Owed(member.clone()));
+        }
+    }
+    for (index, member) in carried {
         if let Some(Some(site)) = parameter_sites.get(index) {
             state
                 .carried_links
@@ -110,7 +162,10 @@ pub(in crate::legacy_c) fn seed(
 /// `QCore.CarriedLinkObligation.admits`: the destroyer's declared member is
 /// the one the record carries, and the record is still `Ready`.
 pub(crate) fn decides(link: Option<&str>, record: Option<&CarriedLink>) -> bool {
-    matches!((link, record), (Some(link), Some(CarriedLink::Ready(member))) if member == link)
+    matches!(
+        (link, record),
+        (Some(link), Some(CarriedLink::Ready(member) | CarriedLink::Owed(member))) if member == link
+    )
 }
 
 /// Whether the held arm may take `site` on its carried record.
@@ -120,7 +175,9 @@ pub(in crate::legacy_c) fn admits(state: &AbstractState, site: usize, link: Opti
 
 /// The destroyer took `site` on its carried record.
 pub(in crate::legacy_c) fn spend(state: &mut AbstractState, site: usize) {
-    if let Some(CarriedLink::Ready(member)) = state.carried_links.get(&site).cloned() {
+    if let Some(CarriedLink::Ready(member) | CarriedLink::Owed(member)) =
+        state.carried_links.get(&site).cloned()
+    {
         state.carried_links.insert(site, CarriedLink::Spent(member));
     }
 }
@@ -145,11 +202,7 @@ pub(in crate::legacy_c) fn forget_ready(state: &mut AbstractState) {
 /// rule 46's kill policy ([`super::link_member::reach`]), and a rule 36b
 /// self-initialisation of any object its base may denote.
 pub(in crate::legacy_c) fn retain(instruction: &LegacyInstruction, state: &mut AbstractState) {
-    if !state
-        .carried_links
-        .values()
-        .any(|record| matches!(record, CarriedLink::Ready(_)))
-    {
+    if !state.carried_links.values().any(CarriedLink::unspent) {
         return;
     }
     let reach = match instruction {
@@ -183,15 +236,38 @@ pub(crate) fn observed(
     }
 }
 
-/// [`observed`] for `site` at an exit, against the entry state.
+/// Card LERI-HELD-FORMAL-LINK-OBLIGATION (rule 91 (5)):
+/// `QCore.ExitClassLinkPrecondition.observedReleasedFor`. A formal the entry
+/// seeds from a destroyer clause reads as [`observed`]; one it seeds from a
+/// precondition alone reads `Released` only when its record there is not
+/// `Spent`: the clause states no unlink, so a release through the carried
+/// destroyer is not what it states.
+pub(crate) fn observed_for(
+    entry: Option<&CarriedLink>,
+    record: Option<&CarriedLink>,
+    disposition: super::super::SiteDisposition,
+) -> super::super::SiteDisposition {
+    use super::super::SiteDisposition;
+    match (entry, disposition) {
+        (Some(CarriedLink::Owed(_)), SiteDisposition::Released)
+            if matches!(record, Some(CarriedLink::Spent(_))) =>
+        {
+            SiteDisposition::Mixed
+        }
+        (Some(CarriedLink::Owed(_)), other) => other,
+        (entry, other) => observed(entry.is_some(), record, other),
+    }
+}
+
+/// [`observed_for`] for `site` at an exit, against the entry state.
 pub(in crate::legacy_c) fn observe(
     entry: &AbstractState,
     state: &AbstractState,
     site: usize,
     disposition: super::super::SiteDisposition,
 ) -> super::super::SiteDisposition {
-    observed(
-        entry.carried_links.contains_key(&site),
+    observed_for(
+        entry.carried_links.get(&site),
         state.carried_links.get(&site),
         disposition,
     )
@@ -205,15 +281,33 @@ pub(crate) fn candidates(
     parameters: &[Option<String>],
 ) -> BTreeMap<usize, String> {
     let mut found: BTreeMap<usize, Option<String>> = BTreeMap::new();
+    let mut note = |name: &str, link: &str| {
+        let Some(index) = parameters
+            .iter()
+            .position(|parameter| parameter.as_deref() == Some(name))
+        else {
+            return;
+        };
+        found
+            .entry(index)
+            .and_modify(|member| {
+                if member.as_deref() != Some(link) {
+                    *member = None;
+                }
+            })
+            .or_insert_with(|| Some(link.to_owned()));
+    };
     for node in &cfg.nodes {
         let LegacyInstruction::ContractCall {
-            container: Some(operands),
+            container,
+            arguments,
+            contract,
             ..
         } = &node.instruction
         else {
             continue;
         };
-        for operand in &operands.0 {
+        for operand in container.iter().flat_map(|operands| &operands.0) {
             let Operand::Unpublished {
                 entry: Entry::Name(name),
                 link: Some(link),
@@ -222,20 +316,15 @@ pub(crate) fn candidates(
             else {
                 continue;
             };
-            let Some(index) = parameters
-                .iter()
-                .position(|parameter| parameter.as_deref() == Some(name.as_str()))
-            else {
-                continue;
-            };
-            found
-                .entry(index)
-                .and_modify(|member| {
-                    if member.as_deref() != Some(link.as_str()) {
-                        *member = None;
-                    }
-                })
-                .or_insert_with(|| Some(link.clone()));
+            note(name, link);
+        }
+        // Card LERI-HELD-FORMAL-LINK-OBLIGATION (rule 91 (5)): a formal
+        // handed directly to a position whose precondition names a member is
+        // carried as well.
+        for (index, link) in &contract.link_preconditions {
+            if let Some(Some(name)) = arguments.get(*index) {
+                note(name, link);
+            }
         }
     }
     found
@@ -286,6 +375,115 @@ pub(crate) fn attach(
     Some(())
 }
 
+/// Card LERI-HELD-FORMAL-LINK-OBLIGATION (rule 91 (5)): the candidate with a
+/// link precondition at each candidate formal it binds but does not release,
+/// for a second fresh run after the destroyer clause's candidate failed its
+/// own. `None` when no such formal exists, or one already states a container
+/// effect (no summary).
+pub(crate) fn attach_preconditions(
+    candidate: &ResourceFunctionContract,
+    candidates: &BTreeMap<usize, String>,
+) -> Option<ResourceFunctionContract> {
+    let mut widened = candidate.clone();
+    for (index, member) in candidates {
+        match candidate.parameters.get(*index) {
+            None
+            | Some(
+                ResourceParameterMode::Borrowed
+                | ResourceParameterMode::Out { .. }
+                | ResourceParameterMode::Released { .. },
+            ) => continue,
+            Some(_) => {}
+        }
+        if candidate.container_effects.contains_key(index) {
+            return None;
+        }
+        widened.link_preconditions.insert(*index, member.clone());
+    }
+    (widened.link_preconditions != candidate.link_preconditions).then_some(widened)
+}
+
+/// Card LERI-HELD-FORMAL-LINK-OBLIGATION (rule 91 (5)):
+/// `QCore.ExitClassLinkPrecondition.classesAgree`. The caller's state at a
+/// call is one state whichever class returns, and each class's body run
+/// rests on its own entry obligations, so an exit-specific summary is
+/// published only when every class states the same ones.
+pub(crate) fn classes_agree(classes: &[qcore_schemas::relational_post::ExitClass]) -> bool {
+    let mut obligations = classes
+        .iter()
+        .map(|class| entry_obligations(&class.contract));
+    let Some(first) = obligations.next() else {
+        return true;
+    };
+    obligations.all(|other| other == first)
+}
+
+/// Card LERI-HELD-FORMAL-LINK-OBLIGATION (rule 91 (5)):
+/// `QCore.ExitClassLinkPrecondition.preDischarges`. Whether a caller passing
+/// an object discharges a `resource_links_valid(p, M)` precondition: it
+/// published the object (`published`), holds it with its own `M`
+/// initialisation (`initialised`, rule 46 (3)), or carries it as its own
+/// formal with an unspent `M` record (rule 91). Nothing else does.
+pub(crate) fn pre_decides(
+    member: &str,
+    published: bool,
+    initialised: bool,
+    record: Option<&CarriedLink>,
+) -> bool {
+    published || initialised || decides(Some(member), record)
+}
+
+/// Card LERI-HELD-FORMAL-LINK-OBLIGATION (rule 91 (5)): check each link
+/// precondition of a call against the caller's state before the call's own
+/// reading. The check changes nothing it admits (a carried record is not
+/// spent: the clause states no unlink); a position it cannot discharge
+/// refuses the call there.
+pub(in crate::legacy_c) fn check_preconditions(
+    function: &str,
+    line: usize,
+    called: &str,
+    arguments: &[Option<String>],
+    contract: &ResourceFunctionContract,
+    state: &mut AbstractState,
+    diagnostics: &mut std::collections::BTreeSet<super::LegacyDiagnostic>,
+) {
+    for (index, member) in &contract.link_preconditions {
+        let name = arguments.get(*index).cloned().flatten();
+        let admitted = name.as_deref().is_some_and(|name| {
+            let Ok(Some(site)) = super::settled_site(state, name) else {
+                return false;
+            };
+            let published = state.published.contains(&site)
+                && state.resources.get(&site) == Some(&super::ESCAPED);
+            let held = super::element_release::destroyer_takes_held(state, site);
+            pre_decides(
+                member,
+                published,
+                held && super::link_member::held_admits(state, site, Some(member)),
+                if held {
+                    state.carried_links.get(&site)
+                } else {
+                    None
+                },
+            )
+        });
+        if !admitted {
+            let spelling = name.clone().unwrap_or_else(|| format!("argument {index}"));
+            super::refuse(
+                function,
+                line,
+                format!(
+                    "call to `{called}`, which requires `{spelling}`'s `{member}` links valid on \
+                     entry, which this function does not show"
+                ),
+                name.as_deref(),
+                state,
+                diagnostics,
+            );
+        }
+    }
+}
+
 /// The vectors `QCore.CarriedLinkObligation.vectors_hold` checks: the
 /// admission (declared member, record, admitted) and the exit (carried,
 /// record, disposition released, observed released).
@@ -311,6 +509,40 @@ pub(crate) const OBSERVE_VECTORS: &[ObserveVector] = &[
     (true, None, true, false),
     (false, None, true, true),
     (true, None, false, false),
+];
+
+/// Card LERI-HELD-FORMAL-LINK-OBLIGATION: the vectors
+/// `QCore.ExitClassLinkPrecondition.vectors_hold` checks. The exit (the
+/// entry's record: 0 none, 1 `Ready`, 2 `Owed`; the record at the exit;
+/// disposition released; observed released) and the caller's discharge
+/// (published, initialised, record, admitted) of a `_head` precondition.
+#[cfg(test)]
+pub(crate) type PreObserveVector = (u8, Option<(bool, &'static str)>, bool, bool);
+#[cfg(test)]
+pub(crate) type PreDischargeVector = (bool, bool, Option<(u8, &'static str)>, bool);
+
+#[cfg(test)]
+pub(crate) const PRE_OBSERVE_VECTORS: &[PreObserveVector] = &[
+    (2, Some((true, "_head")), true, true),
+    (2, None, true, true),
+    (2, Some((false, "_head")), true, false),
+    (2, Some((false, "_head")), false, false),
+    (2, Some((true, "_head")), false, false),
+    (1, Some((false, "_head")), true, true),
+    (1, Some((true, "_head")), true, false),
+    (0, None, true, true),
+];
+
+/// A discharge record `(kind, member)`: kind 0 `Ready`, 1 `Owed`, 2 `Spent`.
+#[cfg(test)]
+pub(crate) const PRE_DISCHARGE_VECTORS: &[PreDischargeVector] = &[
+    (true, false, None, true),
+    (false, true, None, true),
+    (false, false, Some((0, "_head")), true),
+    (false, false, Some((1, "_head")), true),
+    (false, false, Some((2, "_head")), false),
+    (false, false, Some((1, "_rotate")), false),
+    (false, false, None, false),
 ];
 
 #[cfg(test)]
@@ -368,6 +600,128 @@ mod tests {
             carried_members(&contract),
             BTreeMap::from([(0, "_head".to_owned())])
         );
+    }
+
+    fn entry_record(code: u8) -> Option<CarriedLink> {
+        match code {
+            1 => Some(CarriedLink::Ready("_head".to_owned())),
+            2 => Some(CarriedLink::Owed("_head".to_owned())),
+            _ => None,
+        }
+    }
+
+    #[test]
+    fn the_precondition_vectors_hold() {
+        for (entry, spec, released, observed_released) in PRE_OBSERVE_VECTORS {
+            let disposition = if *released {
+                SiteDisposition::Released
+            } else {
+                SiteDisposition::Live
+            };
+            assert_eq!(
+                observed_for(
+                    entry_record(*entry).as_ref(),
+                    record(*spec).as_ref(),
+                    disposition
+                ) == SiteDisposition::Released,
+                *observed_released,
+                "{entry} {spec:?} {released}"
+            );
+        }
+        for (published, initialised, spec, admitted) in PRE_DISCHARGE_VECTORS {
+            let record = spec.map(|(kind, member)| match kind {
+                0 => CarriedLink::Ready(member.to_owned()),
+                1 => CarriedLink::Owed(member.to_owned()),
+                _ => CarriedLink::Spent(member.to_owned()),
+            });
+            assert_eq!(
+                pre_decides("_head", *published, *initialised, record.as_ref()),
+                *admitted,
+                "{published} {initialised} {spec:?}"
+            );
+        }
+    }
+
+    #[test]
+    fn an_owed_record_admits_spends_and_dies_as_a_ready_one() {
+        let owed = CarriedLink::Owed("_head".to_owned());
+        assert!(decides(Some("_head"), Some(&owed)));
+        assert!(!decides(Some("_rotate"), Some(&owed)));
+        assert!(!decides(None, Some(&owed)));
+        let mut state = AbstractState::default();
+        state.carried_links.insert(3, owed);
+        spend(&mut state, 3);
+        assert_eq!(
+            state.carried_links.get(&3),
+            Some(&CarriedLink::Spent("_head".to_owned()))
+        );
+        state
+            .carried_links
+            .insert(4, CarriedLink::Owed("_head".to_owned()));
+        forget_ready(&mut state);
+        assert_eq!(state.carried_links.len(), 1);
+    }
+
+    #[test]
+    fn preconditions_attach_where_the_formal_is_kept_and_classes_must_agree() {
+        use qcore_schemas::relational_post::{ExitClass, RelationOp, ReturnRelation};
+        let candidates = BTreeMap::from([(1, "_head".to_owned())]);
+        let modes = |mode| {
+            ResourceFunctionContract::new(
+                [ResourceParameterMode::Borrowed, mode],
+                qcore_schemas::contract::ResourceReturnMode::None,
+            )
+        };
+        // Consumed or kept: the precondition attaches; released or not bound:
+        // nothing to attach.
+        for (mode, attached) in [
+            (ResourceParameterMode::Consumed { nullable: false }, true),
+            (ResourceParameterMode::Owned { nullable: true }, true),
+            (ResourceParameterMode::Released { nullable: false }, false),
+            (ResourceParameterMode::Borrowed, false),
+        ] {
+            let widened = attach_preconditions(&modes(mode), &candidates);
+            assert_eq!(widened.is_some(), attached, "{mode:?}");
+            if let Some(widened) = widened {
+                assert_eq!(widened.link_preconditions, candidates);
+                assert!(widened.container_effects.is_empty());
+            }
+        }
+        // A position stating another container effect publishes nothing.
+        let mut published = modes(ResourceParameterMode::Owned { nullable: false });
+        published
+            .container_effects
+            .insert(1, ContainerEffect::ElementsReleased);
+        assert!(attach_preconditions(&published, &candidates).is_none());
+        // The enqueue's classes agree: the destroyer clause and the
+        // precondition carry the same entry obligation.
+        let mut destroy = modes(ResourceParameterMode::Released { nullable: false });
+        destroy
+            .container_effects
+            .insert(1, ContainerEffect::Unpublished);
+        destroy.link_members.insert(1, "_head".to_owned());
+        let store = attach_preconditions(
+            &modes(ResourceParameterMode::Consumed { nullable: false }),
+            &candidates,
+        )
+        .unwrap();
+        let class = |value, contract| ExitClass {
+            relation: ReturnRelation::new(RelationOp::Eq, value),
+            contract,
+        };
+        assert_eq!(entry_obligations(&destroy), entry_obligations(&store));
+        assert!(classes_agree(&[
+            class(-1, destroy.clone()),
+            class(0, store.clone())
+        ]));
+        let bare = modes(ResourceParameterMode::Consumed { nullable: false });
+        assert!(!classes_agree(&[class(-1, destroy), class(0, bare)]));
+        let mut other = store;
+        other.link_preconditions.insert(1, "_rotate".to_owned());
+        assert!(!classes_agree(&[
+            class(0, other),
+            class(1, modes(ResourceParameterMode::Owned { nullable: false }))
+        ]));
     }
 
     #[test]

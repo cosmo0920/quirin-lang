@@ -179,6 +179,11 @@ pub(super) fn infer_exit_specific(
         });
         unwritten.push(quiet);
     }
+    // Card LERI-HELD-FORMAL-LINK-OBLIGATION (gateway rule 91 (5)): every
+    // class states the same entry link obligations.
+    if !crate::legacy_c::container_publication::carried_link::classes_agree(&classes) {
+        return None;
+    }
     // Rule 11r(6): a slot a class leaves unwritten is a relation only where
     // another class writes it; it is then exactly the slot the consumer reads
     // as unwritten (`Borrowed` here, `Out` there), and nothing else is.

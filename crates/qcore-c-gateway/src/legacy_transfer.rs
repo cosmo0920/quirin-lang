@@ -4675,6 +4675,17 @@ pub(super) fn transfer_base(
                 Some((before, after)) => (Some(before), Some(after)),
                 None => (None, None),
             };
+            // Card LERI-HELD-FORMAL-LINK-OBLIGATION (rule 91 (5)): the
+            // call's entry link preconditions, against the state before it.
+            container_publication::carried_link::check_preconditions(
+                function,
+                node.line,
+                called,
+                arguments,
+                contract,
+                &mut state,
+                diagnostics,
+            );
             if let Some(operands) = destroyers
                 .as_ref()
                 .filter(|operands| !operands.0.is_empty())

@@ -1,0 +1,8 @@
+41e42aba476873d5d5b564da0738e4189087b278ca80fee0c1f4659b4ae94fed  private/m/sys-base/resource-diagnostics.json
+da5ac3b6116d98e0a56d19aad1062186fb3a4d5317c9f0cfeabebf1655c1d9c7  private/m/sys-tip/resource-diagnostics.json
+7138d891017e19fcf77e4c7e2df6c4d0d3d0ed9e89ce5d06ac93800bea002c40  private/m/census-base/resource-diagnostics.json
+0032d405046a2783b650c77325ef00f4c58e962a4a2dd4b0ae9200c8b9b67f6c  private/m/census-tip/resource-diagnostics.json
+6e136e1ac6ecac5fd21f85a44155752cb73ba0e7fdeca4ce3029b6e9f0228001  private/m/sys-base/system-null.jsonl
+1c744e3bbe6b84419fd14fde474b36abd1d27c17e7b86051522ac550a6f1a7b0  private/m/sys-tip/system-null.jsonl
+0d3904d3e9f9bea07e26b17d1a2fc4969b59ba200c0973cd7fe339853ce290ba  private/m/side-base/target/release/quirin-audit
+a4569940ea757489ebbb088671a8dbe6fd4c12fb0b1f6165d956de0fcd896edf  private/m/side-tip/target/release/quirin-audit

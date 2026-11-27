@@ -629,7 +629,10 @@ pub fn operands(
     arguments: Option<&[&[&str]]>,
     formals: &CallerFormals,
 ) -> Option<Box<Operands>> {
-    if !contract.has_container_effect() {
+    // Card LERI-HELD-FORMAL-LINK-OBLIGATION (rule 91 (5)): a link
+    // precondition alone lowers no operand; the transfer checks it
+    // (`carried_link::check_preconditions`).
+    if contract.container_effects.is_empty() {
         return None;
     }
     let argument = |index: usize| -> &[&str] {

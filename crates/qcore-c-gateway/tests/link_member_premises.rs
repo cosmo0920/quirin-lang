@@ -259,6 +259,61 @@ fn every_fixture_has_its_verdict_and_refusal() {
     }
 }
 
+/// Card LERI-HELD-FORMAL-LINK-OBLIGATION (gateway rule 91 (5)): the declared
+/// link precondition, `requires resource_links_valid(p, MEMBER)`, and where it
+/// may stand.
+#[test]
+fn the_loader_reads_the_link_precondition() {
+    let load = |clauses: &str| {
+        load_resource_contract_sources(
+            &[(
+                "d.qcore".to_owned(),
+                format!(
+                    "module contract;\nextern fn d(e: ptr<mut, u8>, q: ptr<mut, u8>) -> i32\ncontract {{ requires resource_contract_v1; {clauses} }};\n"
+                ),
+            )]
+            .into_iter()
+            .collect(),
+        )
+    };
+    let consumed = load(
+        "requires resource_links_valid(e, _head); ensures normal resource_consumed(e, nonnull); ensures normal resource_borrowed(q); ensures normal resource_return_none();",
+    )
+    .expect("a consumed position states its link precondition");
+    let contract = consumed.contract("d").expect("declared");
+    assert_eq!(
+        contract.link_preconditions.get(&0).map(String::as_str),
+        Some("_head")
+    );
+    // Not a custody clause, and every consumer that does not check it
+    // refuses the call.
+    assert!(contract.custody_projection().link_preconditions.is_empty());
+    assert!(contract.has_container_effect());
+    assert!(contract.container_effects.is_empty());
+    for clauses in [
+        "requires resource_links_valid(e, _head); ensures normal resource_owned(e, nonnull); ensures normal resource_borrowed(q); ensures normal resource_return_none();",
+        "requires resource_links_valid(e, _head); ensures normal resource_released(e, nullable); ensures normal resource_borrowed(q); ensures normal resource_return_none();",
+    ] {
+        assert!(load(clauses).is_ok(), "{clauses}");
+    }
+    for clauses in [
+        // A position the caller does not hand over live.
+        "requires resource_links_valid(e, _head); ensures normal resource_borrowed(e); ensures normal resource_borrowed(q); ensures normal resource_return_none();",
+        // Beside an element destroyer's unlink, which already carries it.
+        "requires resource_links_valid(e, _head); ensures normal resource_unpublished(e, _head); ensures normal resource_released(e, nonnull); ensures normal resource_borrowed(q); ensures normal resource_return_none();",
+        // Twice, or malformed.
+        "requires resource_links_valid(e, _head); requires resource_links_valid(e, _rotate); ensures normal resource_consumed(e, nonnull); ensures normal resource_borrowed(q); ensures normal resource_return_none();",
+        "requires resource_links_valid(e); ensures normal resource_consumed(e, nonnull); ensures normal resource_borrowed(q); ensures normal resource_return_none();",
+        "requires resource_links_valid(e, _head, q); ensures normal resource_consumed(e, nonnull); ensures normal resource_borrowed(q); ensures normal resource_return_none();",
+        // An unknown parameter.
+        "requires resource_links_valid(x, _head); ensures normal resource_consumed(e, nonnull); ensures normal resource_borrowed(q); ensures normal resource_return_none();",
+        // Beside a return-code disposition (§C04.13's sibling restriction).
+        "requires resource_links_valid(e, _head); ensures normal resource_on_return(eq, 0, resource_consumed(e, nonnull)); ensures normal resource_on_return(ne, 0, resource_owned(e, nonnull)); ensures normal resource_borrowed(q); ensures normal resource_return_none();",
+    ] {
+        assert!(load(clauses).is_err(), "{clauses}");
+    }
+}
+
 #[test]
 fn the_loader_reads_the_link_member_of_a_destroyer_only() {
     let load = |clauses: &str| {
@@ -344,6 +399,9 @@ mod carried_link_obligation {
     struct holder { struct item *r; struct mk_list _head; };
     struct queue { struct mk_list items; struct mk_list rotated; struct mk_list pending; };
     int item_destroy(struct item *e);
+    int *q_errloc(void); int q_note(int e, const char *f, int l);
+    void enq_decl(struct item *e, struct queue *q);
+    int rel_decl(struct item *e);
     "#;
 
     const LIST: &str = "module contract;
@@ -357,6 +415,14 @@ mod carried_link_obligation {
     contract { requires resource_contract_v1; ensures normal resource_return_owned(nullable); };
     extern fn item_destroy(e: ptr<mut, u8>) -> i32
     contract { requires resource_contract_v1; ensures normal resource_unpublished(e, _head); ensures normal resource_released(e, nonnull); ensures normal resource_return_none(); };
+    extern fn q_errloc() -> ptr<mut, u8>
+    contract { requires resource_contract_v1; ensures normal resource_return_none(); };
+    extern fn q_note(e: i32, f: ptr<const, u8>, l: i32) -> i32
+    contract { requires resource_contract_v1; ensures normal resource_borrowed(e); ensures normal resource_borrowed(f); ensures normal resource_borrowed(l); ensures normal resource_return_none(); };
+    extern fn enq_decl(e: ptr<mut, u8>, q: ptr<mut, u8>) -> unit
+    contract { requires resource_contract_v1; requires resource_links_valid(e, _head); ensures normal resource_consumed(e, nonnull); ensures normal resource_borrowed(q); ensures normal resource_return_none(); };
+    extern fn rel_decl(e: ptr<mut, u8>) -> i32
+    contract { requires resource_contract_v1; requires resource_links_valid(e, _head); ensures normal resource_released(e, nonnull); ensures normal resource_return_none(); };
     ";
 
     fn contracts() -> ResourceContracts {
@@ -547,14 +613,146 @@ mod carried_link_obligation {
                 AnalysisStatus::Unknown,
                 None,
             ),
-            // The measured boundary: the obligation is needed on one exit class
-            // only, and no summary states a precondition without the unlink.
+        ]
+    }
+
+    /// Card **LERI-HELD-FORMAL-LINK-OBLIGATION** (gateway rule 91 (5)): a
+    /// formal destroyed on one exit class only. The enqueue shape, its
+    /// callers, and the bodies whose summary may not state the precondition.
+    /// Each: name, unit, the function whose row is read, its verdict, and a
+    /// refusal it must carry (if any).
+    fn exit_class_fixtures() -> Vec<(
+        &'static str,
+        String,
+        &'static str,
+        AnalysisStatus,
+        Option<&'static str>,
+    )> {
+        const ENQ_HELD: &str =
+            "unlink by `item_destroy` of `r`, which this function has not published";
+        const ENQ_OWED: &str = "call to `enq`, which requires `e`'s `_head` links valid on entry, which this function does not show";
+        const DECL_OWED: &str = "call to `enq_decl`, which requires `e`'s `_head` links valid on entry, which this function does not show";
+        vec![
+            // The enqueue shape: destroyed on `return -1`, stored on `return 0`.
+            ("enqueue", ENQUEUE.to_owned(), "enq", AnalysisStatus::Safe, None),
+            // Kept (not stored) on `return 0`.
             (
-                "enqueue",
-                ENQUEUE.to_owned(),
+                "enqueue-keeps",
+                "static int enq(struct queue *q, struct item *r) { struct holder *h = q_try_alloc(); if (!h) { if (r) { item_destroy(r); } return -1; } q_free(h); return 0; }".to_owned(),
                 "enq",
+                AnalysisStatus::Safe,
+                None,
+            ),
+            // The destroy path never returns: the ordinary route.
+            (
+                "noreturn-destroy",
+                "void keep(struct queue *q, struct item *r) { struct holder *h = q_try_alloc(); if (!h) { item_destroy(r); for (;;); } h->r = r; mk_list_add(&h->_head, &q->pending); }".to_owned(),
+                "keep",
+                AnalysisStatus::Safe,
+                None,
+            ),
+            // Callers, each testing the returned value.
+            (
+                "caller-initialised",
+                format!("{ENQUEUE}\nvoid subject(struct queue *q) {{ struct item *e = q_alloc(); mk_list_init(&e->_head); if (enq(q, e) != 0) {{ return; }} }}"),
+                "subject",
+                AnalysisStatus::Safe,
+                None,
+            ),
+            (
+                "caller-formal-carried-again",
+                format!("{ENQUEUE}\nint subject(struct queue *q, struct item *e) {{ if (enq(q, e) != 0) {{ return -1; }} return 0; }}"),
+                "subject",
+                AnalysisStatus::Safe,
+                None,
+            ),
+            (
+                "caller-not-initialised",
+                format!("{ENQUEUE}\nvoid subject(struct queue *q) {{ struct item *e = q_alloc(); if (enq(q, e) != 0) {{ return; }} }}"),
+                "subject",
+                AnalysisStatus::Unknown,
+                Some(ENQ_OWED),
+            ),
+            (
+                "caller-initialises-another-member",
+                format!("{ENQUEUE}\nvoid subject(struct queue *q) {{ struct item *e = q_alloc(); mk_list_init(&e->_rotate); if (enq(q, e) != 0) {{ return; }} }}"),
+                "subject",
+                AnalysisStatus::Unknown,
+                Some(ENQ_OWED),
+            ),
+            (
+                "caller-foreign-element",
+                format!("{ENQUEUE}\nvoid subject(struct queue *q) {{ struct mk_list *c, *n; struct item *e; mk_list_foreach_safe(c, n, &q->items) {{ e = mk_list_entry(c, struct item, _head); if (enq(q, e) != 0) {{ return; }} }} }}"),
+                "subject",
+                AnalysisStatus::Unknown,
+                Some(ENQ_OWED),
+            ),
+            (
+                "caller-published",
+                format!("{ENQUEUE}\nvoid subject(struct queue *q) {{ struct item *e = q_alloc(); mk_list_add(&e->_head, &q->items); if (enq(q, e) != 0) {{ return; }} }}"),
+                "subject",
+                AnalysisStatus::Unknown,
+                Some("transfer of `e`, which a container holds after its publication"),
+            ),
+            (
+                "caller-untested",
+                format!("{ENQUEUE}\nvoid subject(struct queue *q) {{ struct item *e = q_alloc(); mk_list_init(&e->_head); enq(q, e); }}"),
+                "subject",
+                AnalysisStatus::Unknown,
+                Some(
+                    "call to `enq` whose return-code disposition needs its returned value tested against a constant where it stands (relational-untested)",
+                ),
+            ),
+            // A declared precondition, checked at each call.
+            (
+                "caller-of-declared-initialised",
+                "void subject(struct queue *q) { struct item *e = q_alloc(); mk_list_init(&e->_head); enq_decl(e, q); }".to_owned(),
+                "subject",
+                AnalysisStatus::Safe,
+                None,
+            ),
+            (
+                "caller-of-declared-not-initialised",
+                "void subject(struct queue *q) { struct item *e = q_alloc(); enq_decl(e, q); }".to_owned(),
+                "subject",
+                AnalysisStatus::Unknown,
+                Some(DECL_OWED),
+            ),
+            // A declared precondition states no unlink: a body releasing its
+            // formal through the carried destroyer does not validate it.
+            (
+                "declared-precondition-released-through-the-destroyer",
+                "int rel_decl(struct item *e) { item_destroy(e); return 0; }".to_owned(),
+                "rel_decl",
                 AnalysisStatus::Unknown,
                 None,
+            ),
+            // Bodies whose summary may not state the precondition.
+            // `flb_output_task_queue_enqueue`'s own failure path reports
+            // `flb_errno()` before the destroyer: a call with a nested call
+            // and a non-name actual (`*__errno_location()`), which rule 46's
+            // kill policy reads as reaching every object, so the carried
+            // record is gone at the destroyer (the measured row's leaf).
+            (
+                "errno-before-the-destroyer",
+                "static int enq(struct queue *q, struct item *r) { struct holder *h = q_try_alloc(); if (!h) { q_note(*q_errloc(), \"f.c\", 1); if (r) { item_destroy(r); } return -1; } h->r = r; mk_list_add(&h->_head, &q->pending); return 0; }".to_owned(),
+                "enq",
+                AnalysisStatus::Unknown,
+                Some(ENQ_HELD),
+            ),
+            (
+                "frees-on-the-other-class",
+                "static int enq(struct queue *q, struct item *r) { struct holder *h = q_try_alloc(); if (!h) { item_destroy(r); return -1; } q_free(h); q_free(r); return 0; }".to_owned(),
+                "enq",
+                AnalysisStatus::Unknown,
+                Some(ENQ_HELD),
+            ),
+            (
+                "writes-before",
+                "static int enq(struct queue *q, struct item *r) { struct holder *h; q_use(r); h = q_try_alloc(); if (!h) { item_destroy(r); return -1; } h->r = r; mk_list_add(&h->_head, &q->pending); return 0; }".to_owned(),
+                "enq",
+                AnalysisStatus::Unknown,
+                Some(ENQ_HELD),
             ),
         ]
     }
@@ -565,6 +763,21 @@ mod carried_link_obligation {
             return;
         }
         for (name, body, entry, status, refusal) in fixtures() {
+            let (got, diagnostics) = analyze(&body, entry);
+            assert_eq!(got, status, "{name}\n{diagnostics:?}");
+            if let Some(refusal) = refusal {
+                assert!(has(&diagnostics, refusal), "{name}\n{diagnostics:?}");
+            }
+            assert_eq!(accusations(&diagnostics), 0, "{name}\n{diagnostics:?}");
+        }
+    }
+
+    #[test]
+    fn every_exit_class_fixture_has_its_verdict_and_accuses_nothing() {
+        if qcore_c_gateway::clang_command().is_err() {
+            return;
+        }
+        for (name, body, entry, status, refusal) in exit_class_fixtures() {
             let (got, diagnostics) = analyze(&body, entry);
             assert_eq!(got, status, "{name}\n{diagnostics:?}");
             if let Some(refusal) = refusal {
