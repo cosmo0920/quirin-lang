@@ -1,0 +1,1014 @@
+{
+ "schema": "fb-retry-lifecycle-classification/1",
+ "note": "One entry per callee a lifecycle row calls uncontracted. Classes: a statable now from the callee's source; b needs vocabulary or a rule the schema lacks; c the callee's own body is the blocker; d out of scope. `written`: the card wrote the contract. Rule-drafted entries (c by the callee's own non-Safe row in a lifecycle unit; d by location) and hand-written entries (every a and b, and every retry-specific c) were reviewed against the 046accf6 source.",
+ "callees": {
+  "backoff_full_jitter": {
+   "class": "c",
+   "reason": "its own row is Unknown in `src/flb_scheduler.c` (leaves below): no summary is derived, and a declaration would be checked against the same body and not established",
+   "owner": "FB-RETRY-LIFECYCLE-BODY-BLOCKERS"
+  },
+  "cfl_list_add": {
+   "class": "d",
+   "reason": "upstream library (cfl) bundled under `lib/`",
+   "owner": "hand-off: an upstream-library provider (none loaded for it)"
+  },
+  "cfl_list_del": {
+   "class": "d",
+   "reason": "upstream library (cfl) bundled under `lib/`",
+   "owner": "hand-off: an upstream-library provider (none loaded for it)"
+  },
+  "cmt_counter_add": {
+   "class": "d",
+   "reason": "upstream library (cmetrics) bundled under `lib/`",
+   "owner": "hand-off: an upstream-library provider (none loaded for it)"
+  },
+  "cmt_histogram_buckets_create_size": {
+   "class": "d",
+   "reason": "upstream library (cmetrics) bundled under `lib/`",
+   "owner": "hand-off: an upstream-library provider (none loaded for it)"
+  },
+  "cmt_initialize": {
+   "class": "d",
+   "reason": "upstream library (cmetrics) bundled under `lib/`",
+   "owner": "hand-off: an upstream-library provider (none loaded for it)"
+  },
+  "flb_bucket_queue_create": {
+   "class": "d",
+   "reason": "body outside the system selection (include/fluent-bit/flb_bucket_queue.h) and outside the retry lifecycle (engine start-up/shutdown, configuration, plugin set-up, TLS, networking, HTTP, metrics/exporters); not read by this card",
+   "owner": "hand-off: FB-SYSTEM-EXTENSIONS candidate inventory"
+  },
+  "flb_callback_destroy": {
+   "class": "d",
+   "reason": "body outside the system selection (src/flb_callback.c) and outside the retry lifecycle (engine start-up/shutdown, configuration, plugin set-up, TLS, networking, HTTP, metrics/exporters); not read by this card",
+   "owner": "hand-off: FB-SYSTEM-EXTENSIONS candidate inventory"
+  },
+  "flb_chunk_route_plugin_matches": {
+   "class": "d",
+   "reason": "body in `src/flb_input_chunk.c` (its row: Safe), the chunk/backlog units",
+   "owner": "hand-off: FB-CHUNK-LIFECYCLE-CONTRACTS"
+  },
+  "flb_config_map_create": {
+   "class": "d",
+   "reason": "body outside the system selection (src/flb_config_map.c include/fluent-bit/flb_config_map.h) and outside the retry lifecycle (engine start-up/shutdown, configuration, plugin set-up, TLS, networking, HTTP, metrics/exporters); not read by this card",
+   "owner": "hand-off: FB-SYSTEM-EXTENSIONS candidate inventory"
+  },
+  "flb_config_map_destroy": {
+   "class": "d",
+   "reason": "body outside the system selection (src/flb_config_map.c) and outside the retry lifecycle (engine start-up/shutdown, configuration, plugin set-up, TLS, networking, HTTP, metrics/exporters); not read by this card",
+   "owner": "hand-off: FB-SYSTEM-EXTENSIONS candidate inventory"
+  },
+  "flb_config_map_properties_check": {
+   "class": "d",
+   "reason": "body outside the system selection (src/flb_config_map.c include/fluent-bit/flb_config_map.h) and outside the retry lifecycle (engine start-up/shutdown, configuration, plugin set-up, TLS, networking, HTTP, metrics/exporters); not read by this card",
+   "owner": "hand-off: FB-SYSTEM-EXTENSIONS candidate inventory"
+  },
+  "flb_config_prop_get": {
+   "class": "d",
+   "reason": "body outside the system selection (src/flb_config.c) and outside the retry lifecycle (engine start-up/shutdown, configuration, plugin set-up, TLS, networking, HTTP, metrics/exporters); not read by this card",
+   "owner": "hand-off: FB-SYSTEM-EXTENSIONS candidate inventory"
+  },
+  "flb_config_task_map_grow": {
+   "class": "b",
+   "reason": "`src/flb_config.c:1681-1689`: resizes `config->task_map` (`flb_config_task_map_resize`, a reallocation stored back through the borrowed formal)",
+   "owner": "SLOT-MOVE-FIELD-SLOT"
+  },
+  "flb_coro_create": {
+   "class": "c",
+   "reason": "`include/fluent-bit/flb_coro.h` (static inline): allocates the coroutine and its stack through `co_create`, which no contract states",
+   "owner": "FB-RETRY-LIFECYCLE-BODY-BLOCKERS"
+  },
+  "flb_coro_resume": {
+   "class": "c",
+   "reason": "`include/fluent-bit/flb_coro.h` (static inline): `co_switch` to a coroutine, a control transfer no route models",
+   "owner": "FB-RETRY-LIFECYCLE-BODY-BLOCKERS"
+  },
+  "flb_custom_exit": {
+   "class": "d",
+   "reason": "body outside the system selection (src/flb_custom.c) and outside the retry lifecycle (engine start-up/shutdown, configuration, plugin set-up, TLS, networking, HTTP, metrics/exporters); not read by this card",
+   "owner": "hand-off: FB-SYSTEM-EXTENSIONS candidate inventory"
+  },
+  "flb_custom_init_all": {
+   "class": "d",
+   "reason": "body outside the system selection (src/flb_custom.c) and outside the retry lifecycle (engine start-up/shutdown, configuration, plugin set-up, TLS, networking, HTTP, metrics/exporters); not read by this card",
+   "owner": "hand-off: FB-SYSTEM-EXTENSIONS candidate inventory"
+  },
+  "flb_downstream_conn_event_resume": {
+   "class": "d",
+   "reason": "body outside the system selection (src/flb_downstream.c) and outside the retry lifecycle (engine start-up/shutdown, configuration, plugin set-up, TLS, networking, HTTP, metrics/exporters); not read by this card",
+   "owner": "hand-off: FB-SYSTEM-EXTENSIONS candidate inventory"
+  },
+  "flb_downstream_conn_pending_destroy_list": {
+   "class": "d",
+   "reason": "body outside the system selection (src/flb_downstream.c) and outside the retry lifecycle (engine start-up/shutdown, configuration, plugin set-up, TLS, networking, HTTP, metrics/exporters); not read by this card",
+   "owner": "hand-off: FB-SYSTEM-EXTENSIONS candidate inventory"
+  },
+  "flb_downstream_conn_timeouts": {
+   "class": "d",
+   "reason": "body outside the system selection (src/flb_downstream.c) and outside the retry lifecycle (engine start-up/shutdown, configuration, plugin set-up, TLS, networking, HTTP, metrics/exporters); not read by this card",
+   "owner": "hand-off: FB-SYSTEM-EXTENSIONS candidate inventory"
+  },
+  "flb_engine_adaptive_flush_update": {
+   "class": "c",
+   "reason": "its own row is Unknown in `src/flb_engine.c` (leaves below): no summary is derived, and a declaration would be checked against the same body and not established",
+   "owner": "FB-RETRY-LIFECYCLE-BODY-BLOCKERS"
+  },
+  "flb_engine_dispatch": {
+   "class": "c",
+   "reason": "its own row is Unknown in `src/flb_engine_dispatch.c` (leaves below): no summary is derived, and a declaration would be checked against the same body and not established",
+   "owner": "FB-RETRY-LIFECYCLE-BODY-BLOCKERS"
+  },
+  "flb_engine_dispatch_retry": {
+   "class": "c",
+   "reason": "its own row is Unknown in `src/flb_engine_dispatch.c` (leaves below): no summary is derived, and a declaration would be checked against the same body and not established",
+   "owner": "FB-RETRY-LIFECYCLE-BODY-BLOCKERS"
+  },
+  "flb_engine_evl_init": {
+   "class": "c",
+   "reason": "its own row is Unknown in `src/flb_engine.c` (leaves below): no summary is derived, and a declaration would be checked against the same body and not established",
+   "owner": "FB-RETRY-LIFECYCLE-BODY-BLOCKERS"
+  },
+  "flb_engine_evl_set": {
+   "class": "c",
+   "reason": "its own row is Unknown in `src/flb_engine.c` (leaves below): no summary is derived, and a declaration would be checked against the same body and not established",
+   "owner": "FB-RETRY-LIFECYCLE-BODY-BLOCKERS"
+  },
+  "flb_engine_failed": {
+   "class": "c",
+   "reason": "its own row is Unknown in `src/flb_engine.c` (leaves below): no summary is derived, and a declaration would be checked against the same body and not established",
+   "owner": "FB-RETRY-LIFECYCLE-BODY-BLOCKERS"
+  },
+  "flb_engine_flush": {
+   "class": "c",
+   "reason": "its own row is Unknown in `src/flb_engine.c` (leaves below): no summary is derived, and a declaration would be checked against the same body and not established",
+   "owner": "FB-RETRY-LIFECYCLE-BODY-BLOCKERS"
+  },
+  "flb_engine_flush_timer_reset": {
+   "class": "c",
+   "reason": "its own row is Unknown in `src/flb_engine.c` (leaves below): no summary is derived, and a declaration would be checked against the same body and not established",
+   "owner": "FB-RETRY-LIFECYCLE-BODY-BLOCKERS"
+  },
+  "flb_engine_handle_event": {
+   "class": "c",
+   "reason": "its own row is Unknown in `src/flb_engine.c` (leaves below): no summary is derived, and a declaration would be checked against the same body and not established",
+   "owner": "FB-RETRY-LIFECYCLE-BODY-BLOCKERS"
+  },
+  "flb_engine_log_start": {
+   "class": "c",
+   "reason": "its own row is Unknown in `src/flb_engine.c` (leaves below): no summary is derived, and a declaration would be checked against the same body and not established",
+   "owner": "FB-RETRY-LIFECYCLE-BODY-BLOCKERS"
+  },
+  "flb_engine_manager": {
+   "class": "c",
+   "reason": "its own row is Unknown in `src/flb_engine.c` (leaves below): no summary is derived, and a declaration would be checked against the same body and not established",
+   "owner": "FB-RETRY-LIFECYCLE-BODY-BLOCKERS"
+  },
+  "flb_engine_reschedule_retries": {
+   "class": "c",
+   "reason": "its own row is Unknown in `src/flb_engine.c` (leaves below): no summary is derived, and a declaration would be checked against the same body and not established",
+   "owner": "FB-RETRY-LIFECYCLE-BODY-BLOCKERS"
+  },
+  "flb_engine_shutdown": {
+   "class": "c",
+   "reason": "its own row is Unknown in `src/flb_engine.c` (leaves below): no summary is derived, and a declaration would be checked against the same body and not established",
+   "owner": "FB-RETRY-LIFECYCLE-BODY-BLOCKERS"
+  },
+  "flb_engine_stop_ingestion": {
+   "class": "c",
+   "reason": "its own row is Unknown in `src/flb_engine.c` (leaves below): no summary is derived, and a declaration would be checked against the same body and not established",
+   "owner": "FB-RETRY-LIFECYCLE-BODY-BLOCKERS"
+  },
+  "flb_env_var_translate": {
+   "class": "d",
+   "reason": "body outside the system selection (src/flb_env.c) and outside the retry lifecycle (engine start-up/shutdown, configuration, plugin set-up, TLS, networking, HTTP, metrics/exporters); not read by this card",
+   "owner": "hand-off: FB-SYSTEM-EXTENSIONS candidate inventory"
+  },
+  "flb_event_chunk_create": {
+   "class": "d",
+   "reason": "`src/flb_event.c` (task creation, not the retry lifecycle): allocates the chunk and duplicates the tag into it; not read further by this card",
+   "owner": "hand-off: FB-SYSTEM-EXTENSIONS candidate inventory"
+  },
+  "flb_event_chunk_update": {
+   "class": "b",
+   "reason": "`src/flb_event.c:60-67`: stores the caller's buffer into `evc->data` (a custody-carrying store into a member of a borrowed formal)",
+   "owner": "MEMBER-EFFECT-STORES"
+  },
+  "flb_filter_exit": {
+   "class": "d",
+   "reason": "body outside the system selection (src/flb_filter.c) and outside the retry lifecycle (engine start-up/shutdown, configuration, plugin set-up, TLS, networking, HTTP, metrics/exporters); not read by this card",
+   "owner": "hand-off: FB-SYSTEM-EXTENSIONS candidate inventory"
+  },
+  "flb_filter_init_all": {
+   "class": "d",
+   "reason": "body outside the system selection (src/flb_filter.c) and outside the retry lifecycle (engine start-up/shutdown, configuration, plugin set-up, TLS, networking, HTTP, metrics/exporters); not read by this card",
+   "owner": "hand-off: FB-SYSTEM-EXTENSIONS candidate inventory"
+  },
+  "flb_fips_init": {
+   "class": "d",
+   "reason": "body outside the system selection (src/flb_fips.c) and outside the retry lifecycle (engine start-up/shutdown, configuration, plugin set-up, TLS, networking, HTTP, metrics/exporters); not read by this card",
+   "owner": "hand-off: FB-SYSTEM-EXTENSIONS candidate inventory"
+  },
+  "flb_hs_destroy": {
+   "class": "d",
+   "reason": "body outside the system selection (src/http_server/flb_hs.c) and outside the retry lifecycle (engine start-up/shutdown, configuration, plugin set-up, TLS, networking, HTTP, metrics/exporters); not read by this card",
+   "owner": "hand-off: FB-SYSTEM-EXTENSIONS candidate inventory"
+  },
+  "flb_hs_start": {
+   "class": "d",
+   "reason": "body outside the system selection (src/http_server/flb_hs.c) and outside the retry lifecycle (engine start-up/shutdown, configuration, plugin set-up, TLS, networking, HTTP, metrics/exporters); not read by this card",
+   "owner": "hand-off: FB-SYSTEM-EXTENSIONS candidate inventory"
+  },
+  "flb_http_client_debug_property_is_valid": {
+   "class": "d",
+   "reason": "body outside the system selection (src/flb_http_client_debug.c) and outside the retry lifecycle (engine start-up/shutdown, configuration, plugin set-up, TLS, networking, HTTP, metrics/exporters); not read by this card",
+   "owner": "hand-off: FB-SYSTEM-EXTENSIONS candidate inventory"
+  },
+  "flb_http_client_debug_setup": {
+   "class": "d",
+   "reason": "body outside the system selection (src/flb_http_client_debug.c include/fluent-bit/flb_http_client_debug.h) and outside the retry lifecycle (engine start-up/shutdown, configuration, plugin set-up, TLS, networking, HTTP, metrics/exporters); not read by this card",
+   "owner": "hand-off: FB-SYSTEM-EXTENSIONS candidate inventory"
+  },
+  "flb_http_server_config_init": {
+   "class": "d",
+   "reason": "body outside the system selection (src/http_server/flb_http_server.c) and outside the retry lifecycle (engine start-up/shutdown, configuration, plugin set-up, TLS, networking, HTTP, metrics/exporters); not read by this card",
+   "owner": "hand-off: FB-SYSTEM-EXTENSIONS candidate inventory"
+  },
+  "flb_http_server_property_is_allowed": {
+   "class": "d",
+   "reason": "body outside the system selection (src/http_server/flb_http_server_config_map.c) and outside the retry lifecycle (engine start-up/shutdown, configuration, plugin set-up, TLS, networking, HTTP, metrics/exporters); not read by this card",
+   "owner": "hand-off: FB-SYSTEM-EXTENSIONS candidate inventory"
+  },
+  "flb_input_chunk_down": {
+   "class": "d",
+   "reason": "body in `src/flb_input_chunk.c` (its row: Safe), the chunk/backlog units",
+   "owner": "hand-off: FB-CHUNK-LIFECYCLE-CONTRACTS"
+  },
+  "flb_input_chunk_flush": {
+   "class": "d",
+   "reason": "body in `src/flb_input_chunk.c` (its row: Unknown), the chunk/backlog units",
+   "owner": "hand-off: FB-CHUNK-LIFECYCLE-CONTRACTS"
+  },
+  "flb_input_chunk_get_direct_routes": {
+   "class": "d",
+   "reason": "body in `src/flb_input_chunk.c` (its row: Unknown), the chunk/backlog units",
+   "owner": "hand-off: FB-CHUNK-LIFECYCLE-CONTRACTS"
+  },
+  "flb_input_chunk_get_tag": {
+   "class": "d",
+   "reason": "body in `src/flb_input_chunk.c` (its row: Unknown), the chunk/backlog units",
+   "owner": "hand-off: FB-CHUNK-LIFECYCLE-CONTRACTS"
+  },
+  "flb_input_chunk_has_direct_routes": {
+   "class": "d",
+   "reason": "body in `src/flb_input_chunk.c` (its row: Unknown), the chunk/backlog units",
+   "owner": "hand-off: FB-CHUNK-LIFECYCLE-CONTRACTS"
+  },
+  "flb_input_chunk_release_lock": {
+   "class": "d",
+   "reason": "body in `src/flb_input_chunk.c` (its row: Safe), the chunk/backlog units",
+   "owner": "hand-off: FB-CHUNK-LIFECYCLE-CONTRACTS"
+  },
+  "flb_input_chunk_ring_buffer_collector": {
+   "class": "d",
+   "reason": "body in `src/flb_input_chunk.c` (its row: Unknown), the chunk/backlog units",
+   "owner": "hand-off: FB-CHUNK-LIFECYCLE-CONTRACTS"
+  },
+  "flb_input_chunk_set_limits": {
+   "class": "d",
+   "reason": "body in `src/flb_input_chunk.c` (its row: Unknown), the chunk/backlog units",
+   "owner": "hand-off: FB-CHUNK-LIFECYCLE-CONTRACTS"
+  },
+  "flb_input_chunk_set_up": {
+   "class": "d",
+   "reason": "body in `src/flb_input_chunk.c` (its row: Unknown), the chunk/backlog units",
+   "owner": "hand-off: FB-CHUNK-LIFECYCLE-CONTRACTS"
+  },
+  "flb_input_chunk_set_up_down": {
+   "class": "d",
+   "reason": "body in `src/flb_input_chunk.c` (its row: Safe), the chunk/backlog units",
+   "owner": "hand-off: FB-CHUNK-LIFECYCLE-CONTRACTS"
+  },
+  "flb_input_collector_fd": {
+   "class": "d",
+   "reason": "body outside the system selection (src/flb_input.c) and outside the retry lifecycle (engine start-up/shutdown, configuration, plugin set-up, TLS, networking, HTTP, metrics/exporters); not read by this card",
+   "owner": "hand-off: FB-SYSTEM-EXTENSIONS candidate inventory"
+  },
+  "flb_input_collectors_start": {
+   "class": "d",
+   "reason": "body outside the system selection (src/flb_input.c) and outside the retry lifecycle (engine start-up/shutdown, configuration, plugin set-up, TLS, networking, HTTP, metrics/exporters); not read by this card",
+   "owner": "hand-off: FB-SYSTEM-EXTENSIONS candidate inventory"
+  },
+  "flb_input_coro_finished": {
+   "class": "d",
+   "reason": "body outside the system selection (src/flb_input.c) and outside the retry lifecycle (engine start-up/shutdown, configuration, plugin set-up, TLS, networking, HTTP, metrics/exporters); not read by this card",
+   "owner": "hand-off: FB-SYSTEM-EXTENSIONS candidate inventory"
+  },
+  "flb_input_exit_all": {
+   "class": "b",
+   "reason": "`src/flb_input.c`: destroys every input instance of `config`'s list (teardown_destroy.qv: deliberately not declared)",
+   "owner": "W45-FB-BACKLOG-REACHABLE-RELEASE"
+  },
+  "flb_input_init_all": {
+   "class": "d",
+   "reason": "body outside the system selection (src/flb_input.c) and outside the retry lifecycle (engine start-up/shutdown, configuration, plugin set-up, TLS, networking, HTTP, metrics/exporters); not read by this card",
+   "owner": "hand-off: FB-SYSTEM-EXTENSIONS candidate inventory"
+  },
+  "flb_input_name": {
+   "class": "a",
+   "clause": "resource_borrowed(ins); resource_return_borrowed_from(ins, nullable)",
+   "reason": "`src/flb_input.c:1143-1150`: the same shape as `flb_output_name` over `struct flb_input_instance`. Body outside the system selection: a declared assumption",
+   "owner": "-"
+  },
+  "flb_input_pause_all": {
+   "class": "d",
+   "reason": "body outside the system selection (src/flb_input.c) and outside the retry lifecycle (engine start-up/shutdown, configuration, plugin set-up, TLS, networking, HTTP, metrics/exporters); not read by this card",
+   "owner": "hand-off: FB-SYSTEM-EXTENSIONS candidate inventory"
+  },
+  "flb_input_pre_run_all": {
+   "class": "d",
+   "reason": "body outside the system selection (src/flb_input.c) and outside the retry lifecycle (engine start-up/shutdown, configuration, plugin set-up, TLS, networking, HTTP, metrics/exporters); not read by this card",
+   "owner": "hand-off: FB-SYSTEM-EXTENSIONS candidate inventory"
+  },
+  "flb_kv_init": {
+   "class": "d",
+   "reason": "body outside the system selection (src/flb_kv.c) and outside the retry lifecycle (engine start-up/shutdown, configuration, plugin set-up, TLS, networking, HTTP, metrics/exporters); not read by this card",
+   "owner": "hand-off: FB-SYSTEM-EXTENSIONS candidate inventory"
+  },
+  "flb_kv_item_create": {
+   "class": "d",
+   "reason": "body outside the system selection (src/flb_kv.c include/fluent-bit/flb_kv.h) and outside the retry lifecycle (engine start-up/shutdown, configuration, plugin set-up, TLS, networking, HTTP, metrics/exporters); not read by this card",
+   "owner": "hand-off: FB-SYSTEM-EXTENSIONS candidate inventory"
+  },
+  "flb_kv_item_destroy": {
+   "class": "d",
+   "reason": "body outside the system selection (src/flb_kv.c) and outside the retry lifecycle (engine start-up/shutdown, configuration, plugin set-up, TLS, networking, HTTP, metrics/exporters); not read by this card",
+   "owner": "hand-off: FB-SYSTEM-EXTENSIONS candidate inventory"
+  },
+  "flb_kv_release": {
+   "class": "d",
+   "reason": "body outside the system selection (src/flb_kv.c) and outside the retry lifecycle (engine start-up/shutdown, configuration, plugin set-up, TLS, networking, HTTP, metrics/exporters); not read by this card",
+   "owner": "hand-off: FB-SYSTEM-EXTENSIONS candidate inventory"
+  },
+  "flb_log_get_level_str": {
+   "class": "d",
+   "reason": "body outside the system selection (src/flb_log.c) and outside the retry lifecycle (engine start-up/shutdown, configuration, plugin set-up, TLS, networking, HTTP, metrics/exporters); not read by this card",
+   "owner": "hand-off: FB-SYSTEM-EXTENSIONS candidate inventory"
+  },
+  "flb_log_pipeline_enable": {
+   "class": "d",
+   "reason": "body outside the system selection (src/flb_log.c) and outside the retry lifecycle (engine start-up/shutdown, configuration, plugin set-up, TLS, networking, HTTP, metrics/exporters); not read by this card",
+   "owner": "hand-off: FB-SYSTEM-EXTENSIONS candidate inventory"
+  },
+  "flb_me_destroy": {
+   "class": "d",
+   "reason": "body outside the system selection (src/flb_metrics_exporter.c) and outside the retry lifecycle (engine start-up/shutdown, configuration, plugin set-up, TLS, networking, HTTP, metrics/exporters); not read by this card",
+   "owner": "hand-off: FB-SYSTEM-EXTENSIONS candidate inventory"
+  },
+  "flb_me_fd_event": {
+   "class": "d",
+   "reason": "body outside the system selection (src/flb_metrics_exporter.c) and outside the retry lifecycle (engine start-up/shutdown, configuration, plugin set-up, TLS, networking, HTTP, metrics/exporters); not read by this card",
+   "owner": "hand-off: FB-SYSTEM-EXTENSIONS candidate inventory"
+  },
+  "flb_metrics_add": {
+   "class": "d",
+   "reason": "body outside the system selection (src/flb_metrics.c) and outside the retry lifecycle (engine start-up/shutdown, configuration, plugin set-up, TLS, networking, HTTP, metrics/exporters); not read by this card",
+   "owner": "hand-off: FB-SYSTEM-EXTENSIONS candidate inventory"
+  },
+  "flb_metrics_destroy": {
+   "class": "d",
+   "reason": "body outside the system selection (src/flb_metrics.c) and outside the retry lifecycle (engine start-up/shutdown, configuration, plugin set-up, TLS, networking, HTTP, metrics/exporters); not read by this card",
+   "owner": "hand-off: FB-SYSTEM-EXTENSIONS candidate inventory"
+  },
+  "flb_metrics_sum": {
+   "class": "a",
+   "clause": "resource_borrowed(id); resource_borrowed(val); resource_borrowed(metrics); resource_return_none()",
+   "reason": "`src/flb_metrics.c:175-186`: `m = flb_metrics_get_id(id, metrics)` (a list lookup), `-1` when absent, else `m->val += val; return 0`. An integer add into a metric the list owns; no custody moves. Body outside the system selection: a declared assumption",
+   "owner": "-"
+  },
+  "flb_net_ctx_init": {
+   "class": "d",
+   "reason": "body outside the system selection (src/flb_network.c) and outside the retry lifecycle (engine start-up/shutdown, configuration, plugin set-up, TLS, networking, HTTP, metrics/exporters); not read by this card",
+   "owner": "hand-off: FB-SYSTEM-EXTENSIONS candidate inventory"
+  },
+  "flb_net_dns_ctx_init": {
+   "class": "d",
+   "reason": "body outside the system selection (src/flb_network.c) and outside the retry lifecycle (engine start-up/shutdown, configuration, plugin set-up, TLS, networking, HTTP, metrics/exporters); not read by this card",
+   "owner": "hand-off: FB-SYSTEM-EXTENSIONS candidate inventory"
+  },
+  "flb_net_dns_ctx_set": {
+   "class": "d",
+   "reason": "body outside the system selection (src/flb_network.c) and outside the retry lifecycle (engine start-up/shutdown, configuration, plugin set-up, TLS, networking, HTTP, metrics/exporters); not read by this card",
+   "owner": "hand-off: FB-SYSTEM-EXTENSIONS candidate inventory"
+  },
+  "flb_net_dns_lookup_context_cleanup": {
+   "class": "d",
+   "reason": "body outside the system selection (src/flb_network.c) and outside the retry lifecycle (engine start-up/shutdown, configuration, plugin set-up, TLS, networking, HTTP, metrics/exporters); not read by this card",
+   "owner": "hand-off: FB-SYSTEM-EXTENSIONS candidate inventory"
+  },
+  "flb_net_host_set": {
+   "class": "d",
+   "reason": "body outside the system selection (src/flb_network.c) and outside the retry lifecycle (engine start-up/shutdown, configuration, plugin set-up, TLS, networking, HTTP, metrics/exporters); not read by this card",
+   "owner": "hand-off: FB-SYSTEM-EXTENSIONS candidate inventory"
+  },
+  "flb_net_lib_init": {
+   "class": "d",
+   "reason": "body outside the system selection (src/flb_network.c) and outside the retry lifecycle (engine start-up/shutdown, configuration, plugin set-up, TLS, networking, HTTP, metrics/exporters); not read by this card",
+   "owner": "hand-off: FB-SYSTEM-EXTENSIONS candidate inventory"
+  },
+  "flb_net_setup_init": {
+   "class": "d",
+   "reason": "body outside the system selection (src/flb_network.c) and outside the retry lifecycle (engine start-up/shutdown, configuration, plugin set-up, TLS, networking, HTTP, metrics/exporters); not read by this card",
+   "owner": "hand-off: FB-SYSTEM-EXTENSIONS candidate inventory"
+  },
+  "flb_notification_cleanup": {
+   "class": "d",
+   "reason": "body outside the system selection (src/flb_notification.c) and outside the retry lifecycle (engine start-up/shutdown, configuration, plugin set-up, TLS, networking, HTTP, metrics/exporters); not read by this card",
+   "owner": "hand-off: FB-SYSTEM-EXTENSIONS candidate inventory"
+  },
+  "flb_notification_deliver": {
+   "class": "d",
+   "reason": "body outside the system selection (src/flb_notification.c) and outside the retry lifecycle (engine start-up/shutdown, configuration, plugin set-up, TLS, networking, HTTP, metrics/exporters); not read by this card",
+   "owner": "hand-off: FB-SYSTEM-EXTENSIONS candidate inventory"
+  },
+  "flb_notification_receive": {
+   "class": "d",
+   "reason": "body outside the system selection (src/flb_notification.c include/fluent-bit/flb_notification.h) and outside the retry lifecycle (engine start-up/shutdown, configuration, plugin set-up, TLS, networking, HTTP, metrics/exporters); not read by this card",
+   "owner": "hand-off: FB-SYSTEM-EXTENSIONS candidate inventory"
+  },
+  "flb_output_enable_multi_threading": {
+   "class": "c",
+   "reason": "its own row is Unknown in `src/flb_output.c` (leaves below): no summary is derived, and a declaration would be checked against the same body and not established",
+   "owner": "FB-RETRY-LIFECYCLE-BODY-BLOCKERS"
+  },
+  "flb_output_exit": {
+   "class": "b",
+   "reason": "destroys every output instance of `config`'s list (teardown_destroy.qv: deliberately not declared). Its row is also Unknown",
+   "owner": "W45-FB-BACKLOG-REACHABLE-RELEASE"
+  },
+  "flb_output_flush_create": {
+   "class": "c",
+   "reason": "`include/fluent-bit/flb_output.h` (static inline): its own derivation does not settle (it reaches `flb_output_thread_instance_get`, coroutine creation and allocation stored into members)",
+   "owner": "W45-FB-OR7-FLUSH-CREATE-OPAQUE"
+  },
+  "flb_output_flush_finished": {
+   "class": "c",
+   "reason": "its own row is Unknown in `src/flb_output.c` (leaves below): no summary is derived, and a declaration would be checked against the same body and not established",
+   "owner": "FB-RETRY-LIFECYCLE-BODY-BLOCKERS"
+  },
+  "flb_output_free_properties": {
+   "class": "c",
+   "reason": "its own row is Unknown in `src/flb_output.c` (leaves below): no summary is derived, and a declaration would be checked against the same body and not established",
+   "owner": "FB-RETRY-LIFECYCLE-BODY-BLOCKERS"
+  },
+  "flb_output_get_instance": {
+   "class": "c",
+   "reason": "its own row is Unknown in `src/flb_output.c` (leaves below): no summary is derived, and a declaration would be checked against the same body and not established",
+   "owner": "FB-RETRY-LIFECYCLE-BODY-BLOCKERS"
+  },
+  "flb_output_http_server_property_check": {
+   "class": "c",
+   "reason": "its own row is Unknown in `src/flb_output.c` (leaves below): no summary is derived, and a declaration would be checked against the same body and not established",
+   "owner": "FB-RETRY-LIFECYCLE-BODY-BLOCKERS"
+  },
+  "flb_output_init_all": {
+   "class": "c",
+   "reason": "its own row is Unknown in `src/flb_output.c` (leaves below): no summary is derived, and a declaration would be checked against the same body and not established",
+   "owner": "FB-RETRY-LIFECYCLE-BODY-BLOCKERS"
+  },
+  "flb_output_name": {
+   "class": "a",
+   "clause": "resource_borrowed(ins); resource_return_borrowed_from(ins, nullable)",
+   "reason": "`src/flb_output.c:1321-1328`: returns `ins->alias` when set, else `ins->name`: a pointer read from a member of `ins`, owned by it. Rule 13a validates the clause structurally in `flb_output.c` (every return is a member read of the base); its row there is Unknown only for the return-expression access, which the declaration does not rest on",
+   "owner": "-"
+  },
+  "flb_output_net_property_check": {
+   "class": "c",
+   "reason": "its own row is Unknown in `src/flb_output.c` (leaves below): no summary is derived, and a declaration would be checked against the same body and not established",
+   "owner": "FB-RETRY-LIFECYCLE-BODY-BLOCKERS"
+  },
+  "flb_output_oauth2_property_check": {
+   "class": "c",
+   "reason": "its own row is Unknown in `src/flb_output.c` (leaves below): no summary is derived, and a declaration would be checked against the same body and not established",
+   "owner": "FB-RETRY-LIFECYCLE-BODY-BLOCKERS"
+  },
+  "flb_output_plugin_property_check": {
+   "class": "c",
+   "reason": "its own row is Unknown in `src/flb_output.c` (leaves below): no summary is derived, and a declaration would be checked against the same body and not established",
+   "owner": "FB-RETRY-LIFECYCLE-BODY-BLOCKERS"
+  },
+  "flb_output_pre_run": {
+   "class": "c",
+   "reason": "its own row is Unknown in `src/flb_output.c` (leaves below): no summary is derived, and a declaration would be checked against the same body and not established",
+   "owner": "FB-RETRY-LIFECYCLE-BODY-BLOCKERS"
+  },
+  "flb_output_proxy_tls_ca_check": {
+   "class": "c",
+   "reason": "its own row is Unknown in `src/flb_output.c` (leaves below): no summary is derived, and a declaration would be checked against the same body and not established",
+   "owner": "FB-RETRY-LIFECYCLE-BODY-BLOCKERS"
+  },
+  "flb_output_task_flush_error": {
+   "class": "c",
+   "reason": "its own row is Unknown in `src/flb_output.c` (leaves below): no summary is derived, and a declaration would be checked against the same body and not established",
+   "owner": "FB-RETRY-LIFECYCLE-BODY-BLOCKERS"
+  },
+  "flb_output_task_queue_enqueue": {
+   "class": "b",
+   "reason": "`src/flb_output.c:283-305`: destroys `retry` on the allocation failure (`return -1`), stores it on `return 0`; no clause states the link precondition without the unlink",
+   "owner": "LERI-HELD-FORMAL-LINK-OBLIGATION"
+  },
+  "flb_output_task_queue_flush_one": {
+   "class": "c",
+   "reason": "mutually recursive with `flb_output_task_singleplex_flush_next`; the recursive component publishes no summary (OR-6)",
+   "owner": "W45-FB-OR6-ELEMENT-IDENTITY"
+  },
+  "flb_output_task_singleplex_flush_next": {
+   "class": "c",
+   "reason": "mutually recursive with `flb_output_task_queue_flush_one`; the recursive component publishes no summary (OR-6)",
+   "owner": "W45-FB-OR6-ELEMENT-IDENTITY"
+  },
+  "flb_output_thread_instance_get": {
+   "class": "a",
+   "clause": "resource_return_none()",
+   "reason": "`src/flb_output_thread.c:38-44`: `return FLB_TLS_GET(local_thread_instance);` (a thread-local pointer the output thread owns). No parameter; the result is no fresh, detached or derived custody of the caller (as `dlerror`'s pointer result in libc/dlfcn.qv). Body outside the system selection: a declared assumption at every call",
+   "owner": "-"
+  },
+  "flb_output_thread_pool_create": {
+   "class": "d",
+   "reason": "body outside the system selection (src/flb_output_thread.c include/fluent-bit/flb_output_thread.h) and outside the retry lifecycle (engine start-up/shutdown, configuration, plugin set-up, TLS, networking, HTTP, metrics/exporters); not read by this card",
+   "owner": "hand-off: FB-SYSTEM-EXTENSIONS candidate inventory"
+  },
+  "flb_output_thread_pool_start": {
+   "class": "d",
+   "reason": "body outside the system selection (src/flb_output_thread.c) and outside the retry lifecycle (engine start-up/shutdown, configuration, plugin set-up, TLS, networking, HTTP, metrics/exporters); not read by this card",
+   "owner": "hand-off: FB-SYSTEM-EXTENSIONS candidate inventory"
+  },
+  "flb_output_upstream_set": {
+   "class": "c",
+   "reason": "its own row is Unknown in `src/flb_output.c` (leaves below): no summary is derived, and a declaration would be checked against the same body and not established",
+   "owner": "FB-RETRY-LIFECYCLE-BODY-BLOCKERS"
+  },
+  "flb_pack_init": {
+   "class": "d",
+   "reason": "body outside the system selection (src/flb_pack.c) and outside the retry lifecycle (engine start-up/shutdown, configuration, plugin set-up, TLS, networking, HTTP, metrics/exporters); not read by this card",
+   "owner": "hand-off: FB-SYSTEM-EXTENSIONS candidate inventory"
+  },
+  "flb_plugin_alias_get": {
+   "class": "d",
+   "reason": "body outside the system selection (src/flb_plugin_alias.c include/fluent-bit/flb_plugin_alias.h) and outside the retry lifecycle (engine start-up/shutdown, configuration, plugin set-up, TLS, networking, HTTP, metrics/exporters); not read by this card",
+   "owner": "hand-off: FB-SYSTEM-EXTENSIONS candidate inventory"
+  },
+  "flb_processor_destroy": {
+   "class": "d",
+   "reason": "body outside the system selection (src/flb_processor.c) and outside the retry lifecycle (engine start-up/shutdown, configuration, plugin set-up, TLS, networking, HTTP, metrics/exporters); not read by this card",
+   "owner": "hand-off: FB-SYSTEM-EXTENSIONS candidate inventory"
+  },
+  "flb_processor_init": {
+   "class": "d",
+   "reason": "body outside the system selection (src/flb_processor.c) and outside the retry lifecycle (engine start-up/shutdown, configuration, plugin set-up, TLS, networking, HTTP, metrics/exporters); not read by this card",
+   "owner": "hand-off: FB-SYSTEM-EXTENSIONS candidate inventory"
+  },
+  "flb_random_bytes": {
+   "class": "d",
+   "reason": "body outside the system selection (src/flb_random.c) and outside the retry lifecycle (engine start-up/shutdown, configuration, plugin set-up, TLS, networking, HTTP, metrics/exporters); not read by this card",
+   "owner": "hand-off: FB-SYSTEM-EXTENSIONS candidate inventory"
+  },
+  "flb_regex_destroy": {
+   "class": "d",
+   "reason": "body outside the system selection (src/flb_regex.c) and outside the retry lifecycle (engine start-up/shutdown, configuration, plugin set-up, TLS, networking, HTTP, metrics/exporters); not read by this card",
+   "owner": "hand-off: FB-SYSTEM-EXTENSIONS candidate inventory"
+  },
+  "flb_router_chunk_context_destroy": {
+   "class": "d",
+   "reason": "body outside the system selection (src/flb_router_condition.c) and outside the retry lifecycle (engine start-up/shutdown, configuration, plugin set-up, TLS, networking, HTTP, metrics/exporters); not read by this card",
+   "owner": "hand-off: FB-SYSTEM-EXTENSIONS candidate inventory"
+  },
+  "flb_router_chunk_context_init": {
+   "class": "d",
+   "reason": "body outside the system selection (src/flb_router_condition.c) and outside the retry lifecycle (engine start-up/shutdown, configuration, plugin set-up, TLS, networking, HTTP, metrics/exporters); not read by this card",
+   "owner": "hand-off: FB-SYSTEM-EXTENSIONS candidate inventory"
+  },
+  "flb_router_exit": {
+   "class": "d",
+   "reason": "body outside the system selection (src/flb_router.c) and outside the retry lifecycle (engine start-up/shutdown, configuration, plugin set-up, TLS, networking, HTTP, metrics/exporters); not read by this card",
+   "owner": "hand-off: FB-SYSTEM-EXTENSIONS candidate inventory"
+  },
+  "flb_router_io_set": {
+   "class": "d",
+   "reason": "body outside the system selection (src/flb_router.c) and outside the retry lifecycle (engine start-up/shutdown, configuration, plugin set-up, TLS, networking, HTTP, metrics/exporters); not read by this card",
+   "owner": "hand-off: FB-SYSTEM-EXTENSIONS candidate inventory"
+  },
+  "flb_sched_create": {
+   "class": "c",
+   "reason": "its own row is Unknown in `src/flb_scheduler.c` (leaves below): no summary is derived, and a declaration would be checked against the same body and not established",
+   "owner": "FB-RETRY-LIFECYCLE-BODY-BLOCKERS"
+  },
+  "flb_sched_ctx_init": {
+   "class": "a",
+   "clause": "resource_return_none()",
+   "reason": "`src/flb_scheduler.c:36-40`: two `FLB_TLS_INIT` (with C11 TLS `do {} while (0)`; otherwise a `pthread_once` key initialisation of a static key). No parameter, no allocation the caller owns, no result. Its own row is Safe",
+   "owner": "-"
+  },
+  "flb_sched_ctx_set": {
+   "class": "c",
+   "reason": "its own row is Unknown in `src/flb_scheduler.c` (leaves below): no summary is derived, and a declaration would be checked against the same body and not established",
+   "owner": "FB-RETRY-LIFECYCLE-BODY-BLOCKERS"
+  },
+  "flb_sched_destroy": {
+   "class": "c",
+   "reason": "its own row is Unknown in `src/flb_scheduler.c` (leaves below): no summary is derived, and a declaration would be checked against the same body and not established",
+   "owner": "FB-RETRY-LIFECYCLE-BODY-BLOCKERS"
+  },
+  "flb_sched_event_handler": {
+   "class": "c",
+   "reason": "its own row is Unknown in `src/flb_scheduler.c` (leaves below): no summary is derived, and a declaration would be checked against the same body and not established",
+   "owner": "FB-RETRY-LIFECYCLE-BODY-BLOCKERS"
+  },
+  "flb_sched_request_create": {
+   "class": "c",
+   "reason": "its own row is Unknown in `src/flb_scheduler.c` (leaves below): no summary is derived, and a declaration would be checked against the same body and not established",
+   "owner": "FB-RETRY-LIFECYCLE-BODY-BLOCKERS"
+  },
+  "flb_sched_request_invalidate": {
+   "class": "b",
+   "reason": "`src/flb_scheduler.c:354-396`: destroys the request of `config->sched`'s lists whose `data` matches; a release of a list element reachable from a borrowed formal (teardown_destroy.qv: deliberately not declared). Its row is also Unknown",
+   "owner": "W45-FB-BACKLOG-REACHABLE-RELEASE"
+  },
+  "flb_sched_retry_now": {
+   "class": "c",
+   "reason": "its own row is Unknown in `src/flb_scheduler.c` (leaves below): no summary is derived, and a declaration would be checked against the same body and not established",
+   "owner": "FB-RETRY-LIFECYCLE-BODY-BLOCKERS"
+  },
+  "flb_sched_timer_cb_create": {
+   "class": "c",
+   "reason": "its own row is Unknown in `src/flb_scheduler.c` (leaves below): no summary is derived, and a declaration would be checked against the same body and not established",
+   "owner": "FB-RETRY-LIFECYCLE-BODY-BLOCKERS"
+  },
+  "flb_sched_timer_cb_disable": {
+   "class": "a",
+   "clause": "resource_borrowed(timer); resource_return_none(); quant live #timer: flb_sched_timer.event.fd |-> {#stale(descriptor), #kept}",
+   "reason": "`src/flb_scheduler.c:720-728`: when `timer->timer_fd != -1` it calls `mk_event_timeout_destroy(timer->sched->evl, &timer->event)` (declared: borrows both, the event's `fd` stale) and stores -1 in `timer->timer_fd`; returns 0. Nothing is allocated, freed, stored or returned; the event's descriptor is staled on one branch and kept on the other. Its own row is Safe in this unit, so the declaration is checked against a body that validates; no W4 summary reaches the callers today",
+   "owner": "-"
+  },
+  "flb_sched_timer_cleanup": {
+   "class": "c",
+   "reason": "its own row is Unknown in `src/flb_scheduler.c` (leaves below): no summary is derived, and a declaration would be checked against the same body and not established",
+   "owner": "FB-RETRY-LIFECYCLE-BODY-BLOCKERS"
+  },
+  "flb_sched_timer_coro_cleanup": {
+   "class": "c",
+   "reason": "its own row is Unknown in `src/flb_scheduler.c` (leaves below): no summary is derived, and a declaration would be checked against the same body and not established",
+   "owner": "FB-RETRY-LIFECYCLE-BODY-BLOCKERS"
+  },
+  "flb_sched_timer_coro_create": {
+   "class": "c",
+   "reason": "its own row is Unknown in `src/flb_scheduler.c` (leaves below): no summary is derived, and a declaration would be checked against the same body and not established",
+   "owner": "FB-RETRY-LIFECYCLE-BODY-BLOCKERS"
+  },
+  "flb_sched_timer_coro_destroy": {
+   "class": "c",
+   "reason": "its own row is Unknown in `src/flb_scheduler.c` (leaves below): no summary is derived, and a declaration would be checked against the same body and not established",
+   "owner": "FB-RETRY-LIFECYCLE-BODY-BLOCKERS"
+  },
+  "flb_sched_timer_create": {
+   "class": "b",
+   "reason": "`src/flb_scheduler.c:869-892`: `flb_calloc`s a timer, links it into `sched->timers` (`mk_list_add(&timer->_head, &sched->timers)`) and returns it; callers later destroy it with the `_head` element destroyer. No result mode states a returned object already published into a container its formal reaches (`return_owned` loses the link, `return_borrowed_from` forbids the destroyer). Its row is also Unknown",
+   "owner": "FB-RETURN-LINKED-ELEMENT (new)"
+  },
+  "flb_sched_timer_invalidate": {
+   "class": "c",
+   "reason": "its own row is Unknown in `src/flb_scheduler.c` (leaves below): no summary is derived, and a declaration would be checked against the same body and not established",
+   "owner": "FB-RETRY-LIFECYCLE-BODY-BLOCKERS"
+  },
+  "flb_sds_create": {
+   "class": "d",
+   "reason": "body outside the system selection (src/flb_sds.c) and outside the retry lifecycle (engine start-up/shutdown, configuration, plugin set-up, TLS, networking, HTTP, metrics/exporters); not read by this card",
+   "owner": "hand-off: FB-SYSTEM-EXTENSIONS candidate inventory"
+  },
+  "flb_sds_create_size": {
+   "class": "d",
+   "reason": "body outside the system selection (src/flb_sds.c) and outside the retry lifecycle (engine start-up/shutdown, configuration, plugin set-up, TLS, networking, HTTP, metrics/exporters); not read by this card",
+   "owner": "hand-off: FB-SYSTEM-EXTENSIONS candidate inventory"
+  },
+  "flb_sds_len_set": {
+   "class": "d",
+   "reason": "body outside the system selection (include/fluent-bit/flb_sds.h) and outside the retry lifecycle (engine start-up/shutdown, configuration, plugin set-up, TLS, networking, HTTP, metrics/exporters); not read by this card",
+   "owner": "hand-off: FB-SYSTEM-EXTENSIONS candidate inventory"
+  },
+  "flb_sosreport": {
+   "class": "d",
+   "reason": "body outside the system selection (src/flb_sosreport.c) and outside the retry lifecycle (engine start-up/shutdown, configuration, plugin set-up, TLS, networking, HTTP, metrics/exporters); not read by this card",
+   "owner": "hand-off: FB-SYSTEM-EXTENSIONS candidate inventory"
+  },
+  "flb_sp_destroy": {
+   "class": "d",
+   "reason": "body outside the system selection (src/stream_processor/flb_sp.c) and outside the retry lifecycle (engine start-up/shutdown, configuration, plugin set-up, TLS, networking, HTTP, metrics/exporters); not read by this card",
+   "owner": "hand-off: FB-SYSTEM-EXTENSIONS candidate inventory"
+  },
+  "flb_sp_fd_event": {
+   "class": "d",
+   "reason": "body outside the system selection (src/stream_processor/flb_sp.c) and outside the retry lifecycle (engine start-up/shutdown, configuration, plugin set-up, TLS, networking, HTTP, metrics/exporters); not read by this card",
+   "owner": "hand-off: FB-SYSTEM-EXTENSIONS candidate inventory"
+  },
+  "flb_storage_chunk_count": {
+   "class": "d",
+   "reason": "body in `src/flb_storage.c` (its row: Unknown), the chunk/backlog units",
+   "owner": "hand-off: FB-CHUNK-LIFECYCLE-CONTRACTS"
+  },
+  "flb_storage_create": {
+   "class": "d",
+   "reason": "body in `src/flb_storage.c` (its row: Unknown), the chunk/backlog units",
+   "owner": "hand-off: FB-CHUNK-LIFECYCLE-CONTRACTS"
+  },
+  "flb_storage_destroy": {
+   "class": "d",
+   "reason": "body in `src/flb_storage.c` (its row: Unknown), the chunk/backlog units",
+   "owner": "hand-off: FB-CHUNK-LIFECYCLE-CONTRACTS"
+  },
+  "flb_storage_quarantine_chunk": {
+   "class": "d",
+   "reason": "body in `src/flb_storage.c` (its row: Unknown), the chunk/backlog units",
+   "owner": "hand-off: FB-CHUNK-LIFECYCLE-CONTRACTS"
+  },
+  "flb_stream_enable_thread_safety": {
+   "class": "d",
+   "reason": "body outside the system selection (include/fluent-bit/flb_stream.h) and outside the retry lifecycle (engine start-up/shutdown, configuration, plugin set-up, TLS, networking, HTTP, metrics/exporters); not read by this card",
+   "owner": "hand-off: FB-SYSTEM-EXTENSIONS candidate inventory"
+  },
+  "flb_task_clear_route_retry_context": {
+   "class": "b",
+   "reason": "`flb_task.h:370-375` via `flb_task_set_route_retry_context`: calls `route->retry_context_destroy(route->retry_context)` through a function pointer read from the task's route list, releasing an object reachable from the borrowed task; v1 states neither the indirect callee nor a release through what an argument reaches",
+   "owner": "W45-FB-BACKLOG-REACHABLE-RELEASE"
+  },
+  "flb_task_create": {
+   "class": "c",
+   "reason": "its own row is Unknown in `src/flb_task.c` (leaves below): no summary is derived, and a declaration would be checked against the same body and not established",
+   "owner": "FB-RETRY-LIFECYCLE-BODY-BLOCKERS"
+  },
+  "flb_task_from_fs_storage": {
+   "class": "a",
+   "clause": "resource_borrowed(task); resource_user_neutral(); resource_return_none()",
+   "reason": "`src/flb_task.c:391-397`: `ic = task->ic; return ic->fs_backlog;` two member reads and an integer result; no custody, no `users` write. Its own row is Safe in this unit (its caller is `handle_output_event`, in `flb_engine.c`)",
+   "owner": "-"
+  },
+  "flb_task_map_get_task_id": {
+   "class": "c",
+   "reason": "its own row is Unknown in `src/flb_task.c` (leaves below): no summary is derived, and a declaration would be checked against the same body and not established",
+   "owner": "FB-RETRY-LIFECYCLE-BODY-BLOCKERS"
+  },
+  "flb_task_retry_clean": {
+   "class": "b",
+   "reason": "`src/flb_task.c:419-437`: destroys the retry of `task->retries` for `ins`; a release reachable from a borrowed formal (teardown_destroy.qv: deliberately not declared). Its row is also Unknown",
+   "owner": "W45-FB-BACKLOG-REACHABLE-RELEASE"
+  },
+  "flb_task_retry_create": {
+   "class": "c",
+   "reason": "its own row is Unknown in `src/flb_task.c` (leaves below): no summary is derived, and a declaration would be checked against the same body and not established",
+   "owner": "FB-RETRY-LIFECYCLE-BODY-BLOCKERS"
+  },
+  "flb_task_retry_reschedule": {
+   "class": "c",
+   "reason": "its own row is Unknown in `src/flb_task.c` (leaves below): no summary is derived, and a declaration would be checked against the same body and not established",
+   "owner": "FB-RETRY-LIFECYCLE-BODY-BLOCKERS"
+  },
+  "flb_task_running_print": {
+   "class": "c",
+   "reason": "its own row is Unknown in `src/flb_task.c` (leaves below): no summary is derived, and a declaration would be checked against the same body and not established",
+   "owner": "FB-RETRY-LIFECYCLE-BODY-BLOCKERS"
+  },
+  "flb_task_users_release": {
+   "class": "b",
+   "reason": "`include/fluent-bit/flb_task.h:171-176`: destroys its borrowed task when `users == 0` and no retry remains; no custody mode states 'may release the borrowed object'",
+   "owner": "W45-FB-USERS-RELEASE-CHECK"
+  },
+  "flb_tls_create": {
+   "class": "d",
+   "reason": "body outside the system selection (src/tls/flb_tls.c include/fluent-bit/tls/flb_tls.h) and outside the retry lifecycle (engine start-up/shutdown, configuration, plugin set-up, TLS, networking, HTTP, metrics/exporters); not read by this card",
+   "owner": "hand-off: FB-SYSTEM-EXTENSIONS candidate inventory"
+  },
+  "flb_tls_destroy": {
+   "class": "d",
+   "reason": "body outside the system selection (src/tls/flb_tls.c) and outside the retry lifecycle (engine start-up/shutdown, configuration, plugin set-up, TLS, networking, HTTP, metrics/exporters); not read by this card",
+   "owner": "hand-off: FB-SYSTEM-EXTENSIONS candidate inventory"
+  },
+  "flb_tls_set_ciphers": {
+   "class": "d",
+   "reason": "body outside the system selection (src/tls/flb_tls.c) and outside the retry lifecycle (engine start-up/shutdown, configuration, plugin set-up, TLS, networking, HTTP, metrics/exporters); not read by this card",
+   "owner": "hand-off: FB-SYSTEM-EXTENSIONS candidate inventory"
+  },
+  "flb_tls_set_crl_file": {
+   "class": "d",
+   "reason": "body outside the system selection (src/tls/flb_tls.c) and outside the retry lifecycle (engine start-up/shutdown, configuration, plugin set-up, TLS, networking, HTTP, metrics/exporters); not read by this card",
+   "owner": "hand-off: FB-SYSTEM-EXTENSIONS candidate inventory"
+  },
+  "flb_tls_set_minmax_proto": {
+   "class": "d",
+   "reason": "body outside the system selection (src/tls/flb_tls.c include/fluent-bit/tls/flb_tls.h) and outside the retry lifecycle (engine start-up/shutdown, configuration, plugin set-up, TLS, networking, HTTP, metrics/exporters); not read by this card",
+   "owner": "hand-off: FB-SYSTEM-EXTENSIONS candidate inventory"
+  },
+  "flb_tls_set_verify_hostname": {
+   "class": "d",
+   "reason": "body outside the system selection (src/tls/flb_tls.c) and outside the retry lifecycle (engine start-up/shutdown, configuration, plugin set-up, TLS, networking, HTTP, metrics/exporters); not read by this card",
+   "owner": "hand-off: FB-SYSTEM-EXTENSIONS candidate inventory"
+  },
+  "flb_upstream_conn_pending_destroy_list": {
+   "class": "d",
+   "reason": "body outside the system selection (src/flb_upstream.c) and outside the retry lifecycle (engine start-up/shutdown, configuration, plugin set-up, TLS, networking, HTTP, metrics/exporters); not read by this card",
+   "owner": "hand-off: FB-SYSTEM-EXTENSIONS candidate inventory"
+  },
+  "flb_upstream_conn_timeouts": {
+   "class": "d",
+   "reason": "body outside the system selection (src/flb_upstream.c) and outside the retry lifecycle (engine start-up/shutdown, configuration, plugin set-up, TLS, networking, HTTP, metrics/exporters); not read by this card",
+   "owner": "hand-off: FB-SYSTEM-EXTENSIONS candidate inventory"
+  },
+  "flb_upstream_proxy_tls_setup": {
+   "class": "d",
+   "reason": "body outside the system selection (src/flb_upstream.c include/fluent-bit/flb_upstream.h) and outside the retry lifecycle (engine start-up/shutdown, configuration, plugin set-up, TLS, networking, HTTP, metrics/exporters); not read by this card",
+   "owner": "hand-off: FB-SYSTEM-EXTENSIONS candidate inventory"
+  },
+  "flb_upstream_set_busy_connections_gauge": {
+   "class": "d",
+   "reason": "body outside the system selection (src/flb_upstream.c include/fluent-bit/flb_upstream.h) and outside the retry lifecycle (engine start-up/shutdown, configuration, plugin set-up, TLS, networking, HTTP, metrics/exporters); not read by this card",
+   "owner": "hand-off: FB-SYSTEM-EXTENSIONS candidate inventory"
+  },
+  "flb_upstream_set_busy_connections_label": {
+   "class": "d",
+   "reason": "body outside the system selection (src/flb_upstream.c include/fluent-bit/flb_upstream.h) and outside the retry lifecycle (engine start-up/shutdown, configuration, plugin set-up, TLS, networking, HTTP, metrics/exporters); not read by this card",
+   "owner": "hand-off: FB-SYSTEM-EXTENSIONS candidate inventory"
+  },
+  "flb_upstream_set_total_connections_gauge": {
+   "class": "d",
+   "reason": "body outside the system selection (src/flb_upstream.c include/fluent-bit/flb_upstream.h) and outside the retry lifecycle (engine start-up/shutdown, configuration, plugin set-up, TLS, networking, HTTP, metrics/exporters); not read by this card",
+   "owner": "hand-off: FB-SYSTEM-EXTENSIONS candidate inventory"
+  },
+  "flb_upstream_set_total_connections_label": {
+   "class": "d",
+   "reason": "body outside the system selection (src/flb_upstream.c include/fluent-bit/flb_upstream.h) and outside the retry lifecycle (engine start-up/shutdown, configuration, plugin set-up, TLS, networking, HTTP, metrics/exporters); not read by this card",
+   "owner": "hand-off: FB-SYSTEM-EXTENSIONS candidate inventory"
+  },
+  "flb_uri_destroy": {
+   "class": "d",
+   "reason": "body outside the system selection (src/flb_uri.c) and outside the retry lifecycle (engine start-up/shutdown, configuration, plugin set-up, TLS, networking, HTTP, metrics/exporters); not read by this card",
+   "owner": "hand-off: FB-SYSTEM-EXTENSIONS candidate inventory"
+  },
+  "flb_utils_bool": {
+   "class": "d",
+   "reason": "body outside the system selection (src/flb_utils.c) and outside the retry lifecycle (engine start-up/shutdown, configuration, plugin set-up, TLS, networking, HTTP, metrics/exporters); not read by this card",
+   "owner": "hand-off: FB-SYSTEM-EXTENSIONS candidate inventory"
+  },
+  "flb_utils_bytes_to_human_readable_size": {
+   "class": "d",
+   "reason": "body outside the system selection (src/flb_utils.c include/fluent-bit/flb_utils.h) and outside the retry lifecycle (engine start-up/shutdown, configuration, plugin set-up, TLS, networking, HTTP, metrics/exporters); not read by this card",
+   "owner": "hand-off: FB-SYSTEM-EXTENSIONS candidate inventory"
+  },
+  "flb_utils_error": {
+   "class": "d",
+   "reason": "body outside the system selection (src/flb_utils.c) and outside the retry lifecycle (engine start-up/shutdown, configuration, plugin set-up, TLS, networking, HTTP, metrics/exporters); not read by this card",
+   "owner": "hand-off: FB-SYSTEM-EXTENSIONS candidate inventory"
+  },
+  "flb_utils_size_to_bytes": {
+   "class": "d",
+   "reason": "body outside the system selection (src/flb_utils.c) and outside the retry lifecycle (engine start-up/shutdown, configuration, plugin set-up, TLS, networking, HTTP, metrics/exporters); not read by this card",
+   "owner": "hand-off: FB-SYSTEM-EXTENSIONS candidate inventory"
+  },
+  "flb_utils_time_to_seconds": {
+   "class": "d",
+   "reason": "body outside the system selection (src/flb_utils.c) and outside the retry lifecycle (engine start-up/shutdown, configuration, plugin set-up, TLS, networking, HTTP, metrics/exporters); not read by this card",
+   "owner": "hand-off: FB-SYSTEM-EXTENSIONS candidate inventory"
+  },
+  "flb_utils_timer_consume": {
+   "class": "d",
+   "reason": "body outside the system selection (src/flb_utils.c) and outside the retry lifecycle (engine start-up/shutdown, configuration, plugin set-up, TLS, networking, HTTP, metrics/exporters); not read by this card",
+   "owner": "hand-off: FB-SYSTEM-EXTENSIONS candidate inventory"
+  },
+  "getenv": {
+   "class": "d",
+   "reason": "C library function",
+   "owner": "hand-off: quirin-provider-libc"
+  },
+  "handle_dlq_if_available": {
+   "class": "c",
+   "reason": "its own row is Unknown in `src/flb_engine.c` (leaves below): no summary is derived, and a declaration would be checked against the same body and not established",
+   "owner": "FB-RETRY-LIFECYCLE-BODY-BLOCKERS"
+  },
+  "handle_input_event": {
+   "class": "c",
+   "reason": "its own row is Unknown in `src/flb_engine.c` (leaves below): no summary is derived, and a declaration would be checked against the same body and not established",
+   "owner": "FB-RETRY-LIFECYCLE-BODY-BLOCKERS"
+  },
+  "handle_output_event": {
+   "class": "c",
+   "reason": "its own row is Unknown in `src/flb_engine.c` (leaves below): no summary is derived, and a declaration would be checked against the same body and not established",
+   "owner": "FB-RETRY-LIFECYCLE-BODY-BLOCKERS"
+  },
+  "handle_output_events": {
+   "class": "c",
+   "reason": "its own row is Unknown in `src/flb_engine.c` (leaves below): no summary is derived, and a declaration would be checked against the same body and not established",
+   "owner": "FB-RETRY-LIFECYCLE-BODY-BLOCKERS"
+  },
+  "labs": {
+   "class": "d",
+   "reason": "C library function",
+   "owner": "hand-off: quirin-provider-libc"
+  },
+  "map_free_task_id": {
+   "class": "a",
+   "clause": "resource_borrowed(id); resource_borrowed(config); resource_user_neutral(); resource_return_none()",
+   "reason": "`src/flb_task.c:75-78` (static inline): `config->task_map[id].task = NULL;`. Clears a non-owning map slot; allocates, frees and transfers nothing, writes no `users`. Its own row is Safe, so the declaration is checked against a validating body",
+   "owner": "-"
+  },
+  "map_get_task_id": {
+   "class": "c",
+   "reason": "its own row is Unknown in `src/flb_task.c` (leaves below): no summary is derived, and a declaration would be checked against the same body and not established",
+   "owner": "FB-RETRY-LIFECYCLE-BODY-BLOCKERS"
+  },
+  "map_set_task_id": {
+   "class": "c",
+   "reason": "its own row is Unknown in `src/flb_task.c` (leaves below): no summary is derived, and a declaration would be checked against the same body and not established",
+   "owner": "FB-RETRY-LIFECYCLE-BODY-BLOCKERS"
+  },
+  "mk_list_init": {
+   "class": "d",
+   "reason": "Monkey intrusive-list header (`lib/monkey`)",
+   "owner": "hand-off: qcore-provider-libevent monkey modules"
+  },
+  "mk_list_size": {
+   "class": "d",
+   "reason": "Monkey intrusive-list header (`lib/monkey`)",
+   "owner": "hand-off: qcore-provider-libevent monkey modules"
+  },
+  "prop_key_check": {
+   "class": "c",
+   "reason": "its own row is Unknown in `src/flb_output.c` (leaves below): no summary is derived, and a declaration would be checked against the same body and not established",
+   "owner": "FB-RETRY-LIFECYCLE-BODY-BLOCKERS"
+  },
+  "pthread_mutex_init": {
+   "class": "d",
+   "reason": "C library function",
+   "owner": "hand-off: quirin-provider-libc"
+  },
+  "rand": {
+   "class": "d",
+   "reason": "C library function",
+   "owner": "hand-off: quirin-provider-libc"
+  },
+  "random_uniform": {
+   "class": "c",
+   "reason": "its own row is Unknown in `src/flb_scheduler.c` (leaves below): no summary is derived, and a declaration would be checked against the same body and not established",
+   "owner": "FB-RETRY-LIFECYCLE-BODY-BLOCKERS"
+  },
+  "record_retry_failure_metrics": {
+   "class": "c",
+   "reason": "its own row is Unknown in `src/flb_engine_dispatch.c` (leaves below): no summary is derived, and a declaration would be checked against the same body and not established",
+   "owner": "FB-RETRY-LIFECYCLE-BODY-BLOCKERS"
+  },
+  "record_unmatched_route_drop_metrics": {
+   "class": "c",
+   "reason": "its own row is Unknown in `src/flb_task.c` (leaves below): no summary is derived, and a declaration would be checked against the same body and not established",
+   "owner": "FB-RETRY-LIFECYCLE-BODY-BLOCKERS"
+  },
+  "sb_segregate_chunks": {
+   "class": "d",
+   "reason": "body in `plugins/in_storage_backlog/sb.c` (its row: Unknown), the chunk/backlog units",
+   "owner": "hand-off: FB-CHUNK-LIFECYCLE-CONTRACTS"
+  },
+  "sched_timer_cb_params_set": {
+   "class": "c",
+   "reason": "`include/fluent-bit/flb_scheduler.h:250-` (static inline): lazily `flb_calloc`s a thread-local parameter block and stores it with `FLB_TLS_SET`; an allocation retained by thread-local storage",
+   "owner": "FB-RETRY-LIFECYCLE-BODY-BLOCKERS"
+  },
+  "schedule_request_now": {
+   "class": "c",
+   "reason": "its own row is Unknown in `src/flb_scheduler.c` (leaves below): no summary is derived, and a declaration would be checked against the same body and not established",
+   "owner": "FB-RETRY-LIFECYCLE-BODY-BLOCKERS"
+  },
+  "schedule_request_promote": {
+   "class": "c",
+   "reason": "its own row is Unknown in `src/flb_scheduler.c` (leaves below): no summary is derived, and a declaration would be checked against the same body and not established",
+   "owner": "FB-RETRY-LIFECYCLE-BODY-BLOCKERS"
+  },
+  "strncasecmp": {
+   "class": "d",
+   "reason": "C library function",
+   "owner": "hand-off: quirin-provider-libc"
+  },
+  "task_alloc": {
+   "class": "c",
+   "reason": "its own row is Unknown in `src/flb_task.c` (leaves below): no summary is derived, and a declaration would be checked against the same body and not established",
+   "owner": "FB-RETRY-LIFECYCLE-BODY-BLOCKERS"
+  },
+  "tasks_start": {
+   "class": "c",
+   "reason": "its own row is Unknown in `src/flb_engine_dispatch.c` (leaves below): no summary is derived, and a declaration would be checked against the same body and not established",
+   "owner": "FB-RETRY-LIFECYCLE-BODY-BLOCKERS"
+  },
+  "test_run_formatter": {
+   "class": "c",
+   "reason": "its own row is Unknown in `src/flb_engine_dispatch.c` (leaves below): no summary is derived, and a declaration would be checked against the same body and not established",
+   "owner": "FB-RETRY-LIFECYCLE-BODY-BLOCKERS"
+  },
+  "timer_cb_coro_trampoline": {
+   "class": "c",
+   "reason": "its own row is Unknown in `src/flb_scheduler.c` (leaves below): no summary is derived, and a declaration would be checked against the same body and not established",
+   "owner": "FB-RETRY-LIFECYCLE-BODY-BLOCKERS"
+  }
+ }
+}
