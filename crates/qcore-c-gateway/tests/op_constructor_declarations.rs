@@ -436,3 +436,175 @@ void make_and_destroy(void) { struct op *o = c_op_new(2); c_op_destroy(o); }";
         unzeroed["make_and_destroy"]
     );
 }
+
+// ---------------------------------------------------------------------------
+// OUT-SLOT-MEMBER-THEN-FRESH (option a): what the vocabulary cannot state
+// ---------------------------------------------------------------------------
+//
+// `rd_kafka_assignment`/`rd_kafka_subscription` move an op's member into the
+// caller's slot (`*out = rko->M; rko->M = NULL; rd_kafka_op_destroy(rko);`)
+// and store a fresh list when that is null and `err` is 0. The custody claim
+// holds in the body (the member is nulled before the destroy whose arm would
+// free it), but nothing in the contract vocabulary or in route G gives the
+// moved member an identity. These pins keep the refusals until a decision adds
+// one (`docs/reports/out-slot-member-then-fresh/`).
+
+fn kinds(source: &str, function: &str) -> (AnalysisStatus, Vec<LegacyDiagnosticKind>) {
+    let text = format!("{PRELUDE}\n{source}\n");
+    let outcome = analyze_unrestricted_c11(
+        &C11TranslationUnit {
+            source: &text,
+            ..Default::default()
+        },
+        function,
+        &environment(),
+    )
+    .unwrap_or_else(|error| panic!("fixture rejected by Clang: {error:?}\n{text}"));
+    let summary = summary_of(&outcome).unwrap_or_else(|| panic!("no summary: {outcome:?}"));
+    let row = &summary.functions[function];
+    (
+        row.status,
+        row.diagnostics.iter().map(|d| d.kind.clone()).collect(),
+    )
+}
+
+fn unknown_alias(kinds: &[LegacyDiagnosticKind], name: &str) -> bool {
+    kinds.iter().any(
+        |kind| matches!(kind, LegacyDiagnosticKind::UnknownAlias { variable } if variable == name),
+    )
+}
+
+/// A member read out of an op the frame did not fill carries no custody: a
+/// release of the moved value is refused as an unknown alias (never `Safe`),
+/// and dropping it discharges nothing because nothing was owed.
+#[test]
+fn an_ops_member_read_carries_no_custody() {
+    if !clang_available() {
+        return;
+    }
+    let moved = "struct op *rko; struct item *p; rko = c_op_new(1); p = rko->payload; \
+                 rko->payload = 0; c_op_destroy(rko);";
+    let (status, found) = kinds(&format!("void take(void) {{ {moved} c_free(p); }}"), "take");
+    assert!(
+        status == AnalysisStatus::Unknown && unknown_alias(&found, "p"),
+        "{status:?} {found:?}"
+    );
+    // Without the null store, the destroy's arm frees the member that `p`
+    // still designates; route G sees no identity there either (`Unknown`,
+    // never a reported double release).
+    let unnulled = "void take(void) { struct op *rko; struct item *p; rko = c_op_new(1); \
+                    p = rko->payload; c_op_destroy(rko); c_free(p); }";
+    let (status, found) = kinds(unnulled, "take");
+    assert!(
+        status == AnalysisStatus::Unknown && unknown_alias(&found, "p"),
+        "{status:?} {found:?}"
+    );
+    let (status, found) = kinds(&format!("void take(void) {{ {moved} }}"), "take");
+    assert!(status == AnalysisStatus::Safe, "{status:?} {found:?}");
+}
+
+/// Reading back a member the frame itself linked gives no alias of the linked
+/// object: the release of the read value is refused, and dropping it leaves
+/// the unlinked object leaked (a true leak of the fixture).
+#[test]
+fn a_moved_out_linked_member_keeps_no_identity() {
+    if !clang_available() {
+        return;
+    }
+    let linked = "struct op *rko; struct item *it; struct item *p; it = c_item_new(n); \
+                  if (!it) { return; } rko = c_op_new(1); rko->payload = it; p = rko->payload; \
+                  rko->payload = 0; c_op_destroy(rko);";
+    let (status, found) = kinds(
+        &format!("void take(int n) {{ {linked} c_free(p); }}"),
+        "take",
+    );
+    assert!(
+        status == AnalysisStatus::Unknown && unknown_alias(&found, "p"),
+        "{status:?} {found:?}"
+    );
+    let (status, found) = kinds(&format!("void take(int n) {{ {linked} }}"), "take");
+    assert!(
+        status == AnalysisStatus::Unsafe
+            && found
+                .iter()
+                .any(|kind| matches!(kind, LegacyDiagnosticKind::Leak { .. })),
+        "{status:?} {found:?}"
+    );
+}
+
+/// The shape itself over the `c_*` op: an early unwritten exit, the member
+/// moved into the slot, a fresh object when that is null and `err` is 0. The
+/// fresh store keeps rule 74l's refusal, and the caller keeps `call to
+/// uncontracted function` (rule 85(4)).
+#[test]
+fn the_member_then_fresh_shape_stays_refused() {
+    if !clang_available() {
+        return;
+    }
+    const FILL: &str = "int fill(int c, struct item **out) { struct op *rko; int err; \
+        if (c) return -1; rko = c_op_new(1); err = rko->u.a; *out = rko->payload; \
+        rko->payload = 0; c_op_destroy(rko); if (!*out && !err) { *out = c_item_new(0); } \
+        return err; }";
+    let callee = rows(FILL);
+    assert!(
+        callee["fill"].refused_with(
+            "owned result of resource API `c_item_new` stored through `*out` without an \
+             out-parameter contract"
+        ),
+        "{:?}",
+        callee["fill"]
+    );
+    let caller = rows(&format!(
+        "{FILL}\nvoid subject(void) {{ struct item *p = 0; int e; e = fill(0, &p); c_free(p); }}"
+    ));
+    assert!(
+        caller["subject"].refused_with("call to uncontracted function `fill`"),
+        "{:?}",
+        caller["subject"]
+    );
+}
+
+/// The existing vocabulary refuses each statement option (a) would need: a
+/// result state on a nullable result (`rd_kafka_op_req2` returns
+/// `resource_return_owned(nullable)`), a member of a result holding an object
+/// (only `#absent` or a function designator), and a disposition whose
+/// classes leave a returned value without a mode.
+#[test]
+fn the_vocabulary_cannot_state_the_members_custody() {
+    let refusal = |clauses: &str, ret: &str| {
+        load_resource_contract_sources(&BTreeMap::from([(
+            "member_then_fresh.qv".to_owned(),
+            format!(
+                "module contract;\nextern fn c_op_req(type: i32) -> ptr<mut, u8>\ncontract {{\n    \
+                 requires resource_contract_v1;\n    ensures normal resource_borrowed(type);\n    \
+                 {clauses}\n    ensures normal {ret};\n}};\n"
+            ),
+        )]))
+        .expect_err("the statement is refused")
+    };
+    let nullable = refusal(
+        "ensures normal resource_discriminant_set(result, op.type, type, 0);",
+        "resource_return_owned(nullable)",
+    );
+    assert!(nullable.contains("quant-live-unbacked"), "{nullable}");
+    for value in ["#moved", "#kept", "#released"] {
+        let member = refusal(
+            &format!("quant live #result: op.payload |-> {value};"),
+            "resource_return_owned(nonnull)",
+        );
+        assert!(member.contains("quant-live-value"), "{value}: {member}");
+    }
+    let partial = load_resource_contract_sources(&BTreeMap::from([(
+        "member_then_fresh.qv".to_owned(),
+        "module contract;\nextern fn c_fill(out: ptr<mut, ptr<mut, u8>>) -> i32\ncontract {\n    \
+         requires resource_contract_v1;\n    \
+         ensures normal resource_on_return(eq, 0, resource_out(out, nonnull));\n    \
+         ensures normal resource_return_none();\n};\n"
+            .to_owned(),
+    )]))
+    .expect_err("an uncovered class is refused");
+    assert!(
+        partial.contains("do not cover every returned value"),
+        "{partial}"
+    );
+}
