@@ -40,7 +40,7 @@ use std::collections::BTreeMap;
 use qcore_frontend::lexer::{MAPS_TO, Symbol, TokenKind, lex};
 use qcore_schemas::callback::CallbackMember;
 use qcore_schemas::constructed_state::{
-    ABSENT, ABSENT_WORD, ConstructedState, DiscriminantSet, MemberState, MemberValue,
+    ABSENT, ABSENT_WORD, ConstructedState, DiscriminantSet, MemberState, MemberValue, OwnedMember,
 };
 use qcore_schemas::contract::{
     ResourceFunctionContract, ResourceParameterMode, ResourceReturnMode,
@@ -48,6 +48,9 @@ use qcore_schemas::contract::{
 
 pub(super) const DISCRIMINANT_SET: &str = "resource_discriminant_set";
 pub(super) const MEMBER_REGISTERED: &str = "resource_callback_member_registered";
+/// Card **OUT-SLOT-MEMBER-THEN-FRESH** ((a1)): a member holding an object the
+/// result owns, possibly null, under a decided discriminant value.
+pub(super) const MEMBER_OWNED: &str = "resource_member_owned";
 /// The holder word: the object the call returns.
 const RESULT: &str = "result";
 
@@ -80,6 +83,15 @@ pub(super) enum Written {
         /// Written as the `quant live` shorthand, whose value is `absent` or
         /// a function, never a parameter.
         shorthand: bool,
+    },
+    /// `resource_member_owned(result, TAG.PATH) when FIELD == VALUE`.
+    Owned {
+        member: CallbackMember,
+        /// The guard's `FIELD`, the discriminant's member path.
+        field: String,
+        value: i64,
+        /// The clause, for diagnostics.
+        text: String,
     },
 }
 
@@ -118,8 +130,55 @@ fn arguments<'a>(expression: &'a str, keyword: &str) -> Option<Vec<&'a str>> {
     Some(inner.split(',').map(str::trim).collect())
 }
 
+/// Card OUT-SLOT-MEMBER-THEN-FRESH ((a1)): `resource_member_owned(result,
+/// TAG.PATH) when FIELD == VALUE`, `None` for any other clause.
+fn owned_clause(expression: &str) -> Result<Option<Written>, String> {
+    let Some(rest) = expression.trim().strip_prefix(MEMBER_OWNED) else {
+        return Ok(None);
+    };
+    let malformed = || {
+        format!(
+            "malformed `{MEMBER_OWNED}` clause `{expression}`: write `ensures normal \
+             {MEMBER_OWNED}(result, TAG.PATH) when FIELD == VALUE;` with `FIELD` the \
+             discriminant's member and `VALUE` a canonical decimal"
+        )
+    };
+    let rest = rest.trim_start().strip_prefix('(').ok_or_else(malformed)?;
+    let close = rest.find(')').ok_or_else(malformed)?;
+    let words = rest[..close].split(',').map(str::trim).collect::<Vec<_>>();
+    let [object, path] = words.as_slice() else {
+        return Err(malformed());
+    };
+    if *object != RESULT {
+        return Err(malformed());
+    }
+    let member = member(path).ok_or_else(malformed)?;
+    let guard = rest[close + 1..].trim();
+    let guard = guard
+        .strip_prefix("when")
+        .filter(|guard| guard.starts_with(char::is_whitespace))
+        .ok_or_else(malformed)?;
+    let (field, value) = guard.split_once("==").ok_or_else(malformed)?;
+    let (field, value) = (field.trim(), value.trim());
+    if !field.split('.').all(is_identifier) {
+        return Err(malformed());
+    }
+    let value = canonical(value)
+        .and_then(|value| i64::try_from(value).ok())
+        .ok_or_else(malformed)?;
+    Ok(Some(Written::Owned {
+        member,
+        field: field.to_owned(),
+        value,
+        text: expression.trim().to_owned(),
+    }))
+}
+
 /// Read an `ensures normal` clause of this card, `None` for any other.
 pub(super) fn ensures_clause(expression: &str) -> Result<Option<Written>, String> {
+    if let Some(written) = owned_clause(expression)? {
+        return Ok(Some(written));
+    }
     if let Some(words) = arguments(expression, DISCRIMINANT_SET) {
         let malformed = || {
             format!(
@@ -329,7 +388,21 @@ pub(super) fn declaration(
             "`#{name}` is reserved in a `#` form: rename the parameter `{name}`"
         ));
     }
-    if contract.result != (ResourceReturnMode::Owned { nullable: false }) {
+    // Card OUT-SLOT-MEMBER-THEN-FRESH ((a1)): a declaration stating an owned
+    // member may return a nullable object; its states then describe the
+    // object on the non-null branch. The liveness part (`quant live
+    // #result`, the shorthand's first level) and every declaration without
+    // an owned member still need a non-null result.
+    let states_owned = written
+        .iter()
+        .any(|clause| matches!(clause, Written::Owned { .. }));
+    let states_live = written.iter().any(|clause| matches!(clause, Written::Live));
+    let backed = match contract.result {
+        ResourceReturnMode::Owned { nullable: false } => true,
+        ResourceReturnMode::Owned { nullable: true } => states_owned && !states_live,
+        _ => false,
+    };
+    if !backed {
         return Err(
             "quant-live-unbacked: a result state needs `resource_return_owned(nonnull)`: the \
              caller owns the live object the state describes"
@@ -344,6 +417,8 @@ pub(super) fn declaration(
     };
     for clause in written {
         match clause {
+            // Read after the discriminant, below.
+            Written::Owned { .. } => {}
             Written::Live => state.live = true,
             Written::Discriminant {
                 member,
@@ -424,6 +499,55 @@ pub(super) fn declaration(
                     None => state.members.push(stated),
                 }
             }
+        }
+    }
+    for clause in written {
+        let Written::Owned {
+            member,
+            field,
+            value,
+            text,
+        } = clause
+        else {
+            continue;
+        };
+        let Some(set) = &state.discriminant else {
+            return Err(format!(
+                "`{text}`: an owned member is stated under the result's decided discriminant, \
+                 which needs `{DISCRIMINANT_SET}`"
+            ));
+        };
+        if set.member.path != *field {
+            return Err(format!(
+                "`{text}`: the guard names the discriminant's member `{}`",
+                set.member.path
+            ));
+        }
+        if *member == set.member
+            || set.member.tag != member.tag
+            || state.members.iter().any(|stated| stated.member == *member)
+        {
+            return Err(format!(
+                "`{text}`: an owned member is a member of the discriminant's record other than \
+                 the discriminant and every callback member"
+            ));
+        }
+        let stated = OwnedMember {
+            member: member.clone(),
+            when: *value,
+        };
+        if state
+            .owned_members
+            .iter()
+            .any(|earlier| earlier.member == *member && *earlier != stated)
+        {
+            return Err(format!(
+                "`{text}`: the member `{}` is given two owned states",
+                member.spelling()
+            ));
+        }
+        if !state.owned_members.contains(&stated) {
+            state.owned_members.push(stated);
         }
     }
     Ok(state)

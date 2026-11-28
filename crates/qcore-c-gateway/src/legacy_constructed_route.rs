@@ -58,6 +58,10 @@ pub enum ObjectState {
     Discriminant(i64),
     /// The member's callbacks (empty: `absent`).
     Member(Registration),
+    /// Card **OUT-SLOT-MEMBER-THEN-FRESH** (gateway rule 96): the member
+    /// holds an object this object owns, possibly null, not yet moved out
+    /// (`resource_member_owned` under the decided discriminant).
+    OwnedMember,
 }
 
 /// What a constructor call states of its result.
@@ -237,6 +241,20 @@ impl Parser<'_> {
                 set.member.spelling(),
                 ObjectState::Discriminant(value | set.flags as i64),
             ));
+        }
+        // Card OUT-SLOT-MEMBER-THEN-FRESH (rule 96): an owned member whose
+        // guard is exactly the decided value. Its key is cleared at the site
+        // whatever the value, so a reconstruction never keeps a stale state.
+        let decided = out.states.iter().find_map(|(_, state)| match state {
+            ObjectState::Discriminant(value) => Some(*value),
+            _ => None,
+        });
+        for owned in &state.owned_members {
+            out.keys.insert(owned.member.spelling());
+            if decided == Some(owned.when) {
+                out.states
+                    .push((owned.member.spelling(), ObjectState::OwnedMember));
+            }
         }
         for member in &state.members {
             let names = match &member.value {

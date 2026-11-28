@@ -333,6 +333,12 @@ fn instruction(instruction: &LegacyInstruction) -> String {
             true_is_null,
             ..
         } => format!("BranchOnElementNull {base}[{index:?}] true_is_null={true_is_null}"),
+        LegacyInstruction::MoveOut {
+            destination,
+            base,
+            member,
+            ..
+        } => format!("MoveOut {destination} = {base}->{member}"),
         LegacyInstruction::CountedLoopHeader { index, bound } => {
             format!("CountedLoopHeader {index} < {bound:?}")
         }

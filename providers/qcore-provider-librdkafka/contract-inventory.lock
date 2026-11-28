@@ -159,7 +159,7 @@
       "sha256": "f890b04a53f975bce7e884b41889b31438dd7fc8b84ad21fe09eb8a061d45209"
     },
     "librdkafka/client.qv": {
-      "clause_count": 2474,
+      "clause_count": 2477,
       "declaration_count": 128,
       "declarations": [
         {
@@ -974,7 +974,7 @@
           "resource_table": "retaining"
         },
         {
-          "clauses": 23,
+          "clauses": 26,
           "name": "rd_kafka_op_req2",
           "resource_mode": null,
           "resource_table": "retaining"
@@ -2617,7 +2617,7 @@
           }
         ]
       },
-      "sha256": "ff825ecbf45f332b7da2c2417efdd36194ce223bb086d5a085fd00d3af4c4b4d"
+      "sha256": "05945fbe9d19343ca6526636fe02ba7e091680b92a8fc6a8218c9459d15e8fc4"
     },
     "librdkafka/compress_out.qv": {
       "clause_count": 24,

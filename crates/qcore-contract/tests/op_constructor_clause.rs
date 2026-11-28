@@ -93,6 +93,7 @@ fn expected_new0() -> ConstructedState {
             member: op_cb(),
             value: MemberValue::Absent,
         }],
+        owned_members: Vec::new(),
     }
 }
 
@@ -120,6 +121,7 @@ fn the_clauses_load_withheld_with_their_state() {
                 member: op_cb(),
                 value: MemberValue::Callback { callback: 2 },
             }],
+            owned_members: Vec::new(),
         }
     );
 }

@@ -2464,6 +2464,21 @@ contract {
 };
 
 // `rd_kafka_op_req2` (`rdkafka_op.c:892-897`).
+// Card OUT-SLOT-MEMBER-THEN-FRESH (USER DECISION 2026-11-28, (a1); contract
+// spec C04.19.4's owned member, gateway rule 96): `rd_kafka_op_req2(destq,
+// type)` makes `rd_kafka_op_new(type)` and waits for the reply
+// (`rd_kafka_op_req0`, `rdkafka_op.c:850-866`), which is that same op
+// re-enqueued by `rd_kafka_op_reply` with `rko_type |= RD_KAFKA_OP_REPLY`
+// (`1 << 30 = 1073741824`, no `rko_op_cb` on an `rd_kafka_op_new` op;
+// `rdkafka_op.c:804-816`), or a new op of type `type | RD_KAFKA_OP_REPLY` from
+// `rd_kafka_op_new_reply` (`:768-782`), or NULL: the discriminant is
+// `type | 1073741824`. For `RD_KAFKA_OP_GET_SUBSCRIPTION` (23) and
+// `RD_KAFKA_OP_GET_ASSIGNMENT` (24) the reply holds in
+// `rko_u.subscribe.topics` / `rko_u.assign.partitions` a list the op owns or
+// NULL (the cgrp handler stores a `rd_kafka_topic_partition_list_copy`,
+// `rdkafka_cgrp.c:7519-7541`; a new reply's members are zero) and that
+// `rd_kafka_op_destroy`'s arm 23/24 frees (`rdkafka_op.c:380-390`). Both
+// facts are declared assumptions about the replier, not checked.
 // LIBRDKAFKA-PLUGIN-PREMISE-UNSTATED: `rd_kafka_op_req2` may run an rk_conf
 // callback (rd_kafka_op_req2 -> rd_kafka_op_req -> rd_kafka_op_req0 ->
 // rd_kafka_q_pop -> rd_kafka_q_pop_serve -> rd_kafka_q_pop_serve0 ->
@@ -2495,6 +2510,9 @@ contract {
     ensures normal resource_borrowed(type);
     ensures normal resource_callback_member_invoked(supplied_owned, rd_kafka_op_s.rko_serve, _, _, supplied_owned, _, _);
     ensures normal resource_callback_member_invoked(supplied_owned, rd_kafka_op_s.rko_op_cb, _, _, _);
+    ensures normal resource_discriminant_set(result, rd_kafka_op_s.rko_type, type, 1073741824);
+    ensures normal resource_member_owned(result, rd_kafka_op_s.rko_u.subscribe.topics) when rko_type == 1073741847;
+    ensures normal resource_member_owned(result, rd_kafka_op_s.rko_u.assign.partitions) when rko_type == 1073741848;
     ensures normal resource_return_owned(nullable);
 };
 

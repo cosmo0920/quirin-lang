@@ -1970,6 +1970,14 @@ pub(super) fn apply(
         && let Some(RegistryKey::Site(site)) = key_of(state, &RegistryHolder::Result, destination)
     {
         super::constructed_route::record(state, site, constructed);
+    } else if let Some(constructed) = &operands.constructed
+        && let Some(site) =
+            super::member_move_out::nullable_result_site(state, destination, constructed)
+    {
+        // Card OUT-SLOT-MEMBER-THEN-FRESH (rule 96): a declaration with an
+        // owned member may return null; its states describe the object on
+        // the non-null branch, so they go onto the possibly-null result.
+        super::constructed_route::record(state, site, constructed);
     }
     // The registration a use reads: the one in force before this call (an
     // unregistration does not hide it from the self-release that follows).

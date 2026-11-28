@@ -38,6 +38,8 @@ void c_free(void *p);
 void *calloc(unsigned long n, unsigned long size);
 void *malloc(unsigned long size);
 struct op *c_op_new(int type);
+struct op *c_op_req(int type);
+struct item *c_item_make(int n);
 struct op *c_op_new_cb(int type, op_cb_t cb);
 void c_op_destroy(struct op *rko);
 ";
@@ -434,5 +436,349 @@ void make_and_destroy(void) { struct op *o = c_op_new(2); c_op_destroy(o); }";
         unzeroed["make_and_destroy"].refused_with("callback-member-open"),
         "{:?}",
         unzeroed["make_and_destroy"]
+    );
+}
+
+// ---------------------------------------------------------------------------
+// OUT-SLOT-MEMBER-THEN-FRESH ((a1)+(b)): the owned member, rule 96's move-out
+// and rule 74l's delivers-or-leaves-unwritten mode
+// ---------------------------------------------------------------------------
+//
+// `rd_kafka_assignment`/`rd_kafka_subscription` move an op's member into the
+// caller's slot (`*out = rko->M; rko->M = NULL; rd_kafka_op_destroy(rko);`)
+// and store a fresh list when that is null. `c_op_req` is the synthetic
+// counterpart of `rd_kafka_op_req2`: a nullable result whose decided type 1
+// leaves an owned payload (`resource_member_owned`). CHANGE PINS failed at the
+// base (`docs/reports/out-slot-member-then-fresh/`).
+
+fn kinds(source: &str, function: &str) -> (AnalysisStatus, Vec<LegacyDiagnosticKind>) {
+    let text = format!("{PRELUDE}\n{source}\n");
+    let outcome = analyze_unrestricted_c11(
+        &C11TranslationUnit {
+            source: &text,
+            ..Default::default()
+        },
+        function,
+        &environment(),
+    )
+    .unwrap_or_else(|error| panic!("fixture rejected by Clang: {error:?}\n{text}"));
+    if let UnrestrictedLegacyResult::Safe(certificate) = &outcome {
+        check_legacy_safety_certificate(certificate).expect("a Safe result rechecks");
+    }
+    let summary = summary_of(&outcome).unwrap_or_else(|| panic!("no summary: {outcome:?}"));
+    let row = &summary.functions[function];
+    (
+        row.status,
+        row.diagnostics.iter().map(|d| d.kind.clone()).collect(),
+    )
+}
+
+fn unknown_alias(kinds: &[LegacyDiagnosticKind], name: &str) -> bool {
+    kinds.iter().any(
+        |kind| matches!(kind, LegacyDiagnosticKind::UnknownAlias { variable } if variable == name),
+    )
+}
+
+fn leaks(kinds: &[LegacyDiagnosticKind]) -> bool {
+    kinds
+        .iter()
+        .any(|kind| matches!(kind, LegacyDiagnosticKind::Leak { .. }))
+}
+
+/// `c_op_req(type)` with its null test, then `BODY`.
+fn requested(kind: i32, body: &str) -> String {
+    format!(
+        "void take(void) {{ struct op *rko; struct item *p; struct item *q; rko = c_op_req({kind}); \
+         if (!rko) return; {body} }}"
+    )
+}
+
+/// CHANGE PIN (rule 96, stated). The read the next statement nulls takes the
+/// owned payload: releasing it is `Safe`, dropping it leaks.
+#[test]
+fn a_stated_owned_member_moves_out_to_the_reader() {
+    if !clang_available() {
+        return;
+    }
+    let moved = "p = rko->payload; rko->payload = 0; c_op_destroy(rko);";
+    let (status, found) = kinds(&requested(1, &format!("{moved} c_free(p);")), "take");
+    assert!(status == AnalysisStatus::Safe, "{status:?} {found:?}");
+    let (status, found) = kinds(&requested(1, moved), "take");
+    assert!(
+        status == AnalysisStatus::Unsafe && leaks(&found),
+        "{status:?} {found:?}"
+    );
+}
+
+/// Rule 96's fallbacks: another decided type (no owned member), a second
+/// move-out on the path (the state is spent), a read the next statement does
+/// not null, an object handed to a call before the read, and a body that
+/// stores into the member otherwise. Each keeps the read's own lowering, so
+/// the release of the read value is never `Safe`.
+#[test]
+fn every_other_read_keeps_its_own_lowering() {
+    if !clang_available() {
+        return;
+    }
+    let moved = "p = rko->payload; rko->payload = 0;";
+    for (kind, body, alias) in [
+        (2, format!("{moved} c_op_destroy(rko); c_free(p);"), "p"),
+        (
+            1,
+            format!(
+                "{moved} q = rko->payload; rko->payload = 0; c_op_destroy(rko); c_free(p); c_free(q);"
+            ),
+            "q",
+        ),
+        (
+            1,
+            "p = rko->payload; c_op_destroy(rko); c_free(p);".to_owned(),
+            "p",
+        ),
+        (
+            1,
+            format!("c_op_destroy2(rko); {moved} c_op_destroy(rko); c_free(p);"),
+            "p",
+        ),
+        (
+            1,
+            format!("rko->payload = c_item_make(1); {moved} c_op_destroy(rko); c_free(p);"),
+            "p",
+        ),
+    ] {
+        let source = requested(kind, &body).replace(
+            "void take(void)",
+            "void c_op_destroy2(struct op *rko);\nvoid take(void)",
+        );
+        let (status, found) = kinds(&source, "take");
+        assert!(
+            status != AnalysisStatus::Safe && unknown_alias(&found, alias),
+            "{body}: {status:?} {found:?}"
+        );
+    }
+}
+
+/// A member read out of an op whose declaration states no owned member
+/// carries no custody, as at the base: a release of it is refused, and
+/// dropping it discharges nothing because nothing was owed.
+#[test]
+fn an_ops_member_read_carries_no_custody() {
+    if !clang_available() {
+        return;
+    }
+    let moved = "struct op *rko; struct item *p; rko = c_op_new(1); p = rko->payload; \
+                 rko->payload = 0; c_op_destroy(rko);";
+    let (status, found) = kinds(&format!("void take(void) {{ {moved} c_free(p); }}"), "take");
+    assert!(
+        status == AnalysisStatus::Unknown && unknown_alias(&found, "p"),
+        "{status:?} {found:?}"
+    );
+    let (status, found) = kinds(&format!("void take(void) {{ {moved} }}"), "take");
+    assert!(status == AnalysisStatus::Safe, "{status:?} {found:?}");
+}
+
+/// CHANGE PIN (rule 96, linked). Reading back a member the frame itself
+/// linked, then nulling it, hands the child to the reader: releasing it is
+/// `Safe`, dropping it leaks (as at the base, a true leak of the fixture).
+#[test]
+fn a_moved_out_linked_member_goes_to_the_reader() {
+    if !clang_available() {
+        return;
+    }
+    let linked = "struct op *rko; struct item *it; struct item *p; it = c_item_new(n); \
+                  if (!it) { return; } rko = c_op_new(1); rko->payload = it; p = rko->payload; \
+                  rko->payload = 0; c_op_destroy(rko);";
+    let (status, found) = kinds(
+        &format!("void take(int n) {{ {linked} c_free(p); }}"),
+        "take",
+    );
+    assert!(status == AnalysisStatus::Safe, "{status:?} {found:?}");
+    let (status, found) = kinds(&format!("void take(int n) {{ {linked} }}"), "take");
+    assert!(
+        status == AnalysisStatus::Unsafe && leaks(&found),
+        "{status:?} {found:?}"
+    );
+    // Without the null store the destroy's arm frees the child the reader
+    // holds: no move-out, and the release is never `Safe`.
+    let unnulled = "void take(int n) { struct op *rko; struct item *it; struct item *p; \
+                    it = c_item_new(n); if (!it) { return; } rko = c_op_new(1); \
+                    rko->payload = it; p = rko->payload; c_op_destroy(rko); c_free(p); }";
+    let (status, found) = kinds(unnulled, "take");
+    assert!(status != AnalysisStatus::Safe, "{status:?} {found:?}");
+}
+
+/// The callee of rule 74l's mode (b): early exits that leave the slot as the
+/// caller had it, a status (`err`) that does not partition them, and the
+/// moved member or a fresh object stored into the slot after the destroy.
+const FILL: &str = "int fill(int c, struct item **out) { struct op *rko; struct item *p; int err;
+ if (c) return -1;
+ rko = c_op_req(1);
+ if (!rko) return -2;
+ err = rko->type;
+ p = rko->payload;
+ rko->payload = 0;
+ c_op_destroy(rko);
+ if (p) { *out = p; return err; }
+ *out = c_item_make(0);
+ return err; }";
+
+fn subject(declaration: &str) -> String {
+    format!("{FILL}\nvoid subject(void) {{ {declaration} int e; e = fill(0, &p); c_free(p); }}")
+}
+
+/// CHANGE PIN (rule 74l (b)). A caller whose slot is known null takes the
+/// delivery, the moved member or the fresh object: releasing it is `Safe`,
+/// dropping it leaks.
+#[test]
+fn a_known_null_slot_takes_the_delivery() {
+    if !clang_available() {
+        return;
+    }
+    let (status, found) = kinds(&subject("struct item *p = 0;"), "subject");
+    assert!(status == AnalysisStatus::Safe, "{status:?} {found:?}");
+    let dropped =
+        format!("{FILL}\nvoid subject(void) {{ struct item *p = 0; int e; e = fill(0, &p); }}");
+    let (status, found) = kinds(&dropped, "subject");
+    assert!(
+        status == AnalysisStatus::Unsafe && leaks(&found),
+        "{status:?} {found:?}"
+    );
+}
+
+/// CHANGE PIN (text). Every other caller is refused by name: a slot holding
+/// the caller's live object (the callee would overwrite it), an
+/// uninitialised one, a possibly-null one.
+#[test]
+fn a_slot_not_known_null_is_refused() {
+    if !clang_available() {
+        return;
+    }
+    for declaration in [
+        "struct item *p = c_item_make(1);",
+        "struct item *p;",
+        "struct item *p = c_item_new(1);",
+    ] {
+        let (status, found) = kinds(&subject(declaration), "subject");
+        assert!(
+            status == AnalysisStatus::Unknown,
+            "{declaration}: {status:?} {found:?}"
+        );
+        assert!(
+            found.iter().any(|kind| matches!(
+                kind,
+                LegacyDiagnosticKind::Unsupported { description } if description
+                    == "call to `fill`, whose summary delivers its slot or leaves it unwritten, \
+                        with a slot actual not known null"
+            )),
+            "{declaration}: {found:?}"
+        );
+    }
+}
+
+/// The callee's own row keeps rule 74l's refusal: the summary is what its
+/// callers read, not a certificate of the body (KEEP-OR-DELIVER-OWN-ROW).
+#[test]
+fn the_null_only_callees_own_row_keeps_its_refusal() {
+    if !clang_available() {
+        return;
+    }
+    let (status, found) = kinds(FILL, "fill");
+    assert!(status == AnalysisStatus::Unknown, "{status:?} {found:?}");
+}
+
+/// The upstream order: the member stored into the slot *before* the destroy,
+/// which takes the op and so may write caller memory: rule 11r(8) poisons
+/// the bound slot there, no summary validates, and the caller keeps the
+/// uncontracted call. So does the `!*out && !err` test.
+#[test]
+fn a_slot_bound_before_the_destroy_stays_refused() {
+    if !clang_available() {
+        return;
+    }
+    const UPSTREAM: &str = "int fill(int c, struct item **out) { struct op *rko; int err;
+ if (c) return -1;
+ rko = c_op_req(1);
+ if (!rko) return -2;
+ err = rko->type;
+ *out = rko->payload;
+ rko->payload = 0;
+ c_op_destroy(rko);
+ if (!*out && !err) { *out = c_item_make(0); }
+ return err; }";
+    let caller = format!(
+        "{UPSTREAM}\nvoid subject(void) {{ struct item *p = 0; int e; e = fill(0, &p); c_free(p); }}"
+    );
+    let (status, found) = kinds(&caller, "subject");
+    assert!(status == AnalysisStatus::Unknown, "{status:?} {found:?}");
+    assert!(
+        found.iter().any(|kind| matches!(
+            kind,
+            LegacyDiagnosticKind::Unsupported { description }
+                if description == "call to uncontracted function `fill`"
+        )),
+        "{found:?}"
+    );
+}
+
+/// What the vocabulary still refuses: a result state on a nullable result
+/// with no owned member, the liveness part on a nullable result, a member of
+/// a result mapped to anything but `#absent` or a function, an owned member
+/// with no discriminant or under another field, and a disposition whose
+/// classes leave a returned value without a mode.
+#[test]
+fn the_vocabulary_refuses_every_other_statement() {
+    let refusal = |clauses: &str, ret: &str| {
+        load_resource_contract_sources(&BTreeMap::from([(
+            "member_then_fresh.qv".to_owned(),
+            format!(
+                "module contract;\nextern fn c_op_req(type: i32) -> ptr<mut, u8>\ncontract {{\n    \
+                 requires resource_contract_v1;\n    ensures normal resource_borrowed(type);\n    \
+                 {clauses}\n    ensures normal {ret};\n}};\n"
+            ),
+        )]))
+        .expect_err("the statement is refused")
+    };
+    let nullable = refusal(
+        "ensures normal resource_discriminant_set(result, op.type, type, 0);",
+        "resource_return_owned(nullable)",
+    );
+    assert!(nullable.contains("quant-live-unbacked"), "{nullable}");
+    let live = refusal(
+        "ensures normal resource_discriminant_set(result, op.type, type, 0);\n    \
+         ensures normal resource_member_owned(result, op.payload) when type == 1;\n    \
+         quant live #result;",
+        "resource_return_owned(nullable)",
+    );
+    assert!(live.contains("quant-live-unbacked"), "{live}");
+    for value in ["#moved", "#kept", "#released"] {
+        let member = refusal(
+            &format!("quant live #result: op.payload |-> {value};"),
+            "resource_return_owned(nonnull)",
+        );
+        assert!(member.contains("quant-live-value"), "{value}: {member}");
+    }
+    let undecided = refusal(
+        "ensures normal resource_member_owned(result, op.payload) when type == 1;",
+        "resource_return_owned(nullable)",
+    );
+    assert!(undecided.contains("decided discriminant"), "{undecided}");
+    let other_field = refusal(
+        "ensures normal resource_discriminant_set(result, op.type, type, 0);\n    \
+         ensures normal resource_member_owned(result, op.payload) when kind == 1;",
+        "resource_return_owned(nullable)",
+    );
+    assert!(other_field.contains("guard names"), "{other_field}");
+    let partial = load_resource_contract_sources(&BTreeMap::from([(
+        "member_then_fresh.qv".to_owned(),
+        "module contract;\nextern fn c_fill(out: ptr<mut, ptr<mut, u8>>) -> i32\ncontract {\n    \
+         requires resource_contract_v1;\n    \
+         ensures normal resource_on_return(eq, 0, resource_out(out, nonnull));\n    \
+         ensures normal resource_return_none();\n};\n"
+            .to_owned(),
+    )]))
+    .expect_err("an uncovered class is refused");
+    assert!(
+        partial.contains("do not cover every returned value"),
+        "{partial}"
     );
 }

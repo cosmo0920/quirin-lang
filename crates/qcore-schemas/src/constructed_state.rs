@@ -101,13 +101,34 @@ pub struct ConstructedState {
     /// At most one per member, in clause order.
     #[serde(default, skip_serializing_if = "Vec::is_empty")]
     pub members: Vec<MemberState>,
+    /// Card **OUT-SLOT-MEMBER-THEN-FRESH** (USER DECISION 2026-11-28, (a1)):
+    /// `ensures normal resource_member_owned(result, TAG.PATH) when FIELD ==
+    /// VALUE;`: where the decided discriminant is `VALUE`, the member holds
+    /// an object the result owns, possibly null (gateway rule 96 reads its
+    /// move-out). At most one per member, in clause order.
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    pub owned_members: Vec<OwnedMember>,
+}
+
+/// One `resource_member_owned` clause: the member and the decided
+/// discriminant value under which it holds an owned, possibly null object.
+#[derive(Clone, Debug, PartialEq, Eq, PartialOrd, Ord, Hash, Serialize, Deserialize)]
+pub struct OwnedMember {
+    /// The member, `TAG.PATH`.
+    pub member: CallbackMember,
+    /// The decided discriminant value the clause's guard names (compared
+    /// exactly, the stated flags included).
+    pub when: i64,
 }
 
 impl ConstructedState {
     /// Whether nothing is stated.
     #[must_use]
     pub fn is_empty(&self) -> bool {
-        !self.live && self.discriminant.is_none() && self.members.is_empty()
+        !self.live
+            && self.discriminant.is_none()
+            && self.members.is_empty()
+            && self.owned_members.is_empty()
     }
 
     /// Whether some member is stated `absent` (the clause rule 14e checks

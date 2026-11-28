@@ -3126,7 +3126,47 @@ pub(super) fn transfer_dispatch(
             diagnostics,
         )
     };
+    // Card OUT-SLOT-MEMBER-THEN-FRESH (rule 96): an object handed to a call
+    // spends its owned-member states.
+    let mut state = state;
+    super::member_move_out::spend_at_call(&mut state, &node.instruction);
+    super::member_move_out::guard_owned_overwrite(
+        function,
+        node.line,
+        &mut state,
+        &node.instruction,
+        diagnostics,
+    );
     match &node.instruction {
+        // Card OUT-SLOT-MEMBER-THEN-FRESH (rule 96): the move-out, else the
+        // read's own lowering.
+        LegacyInstruction::MoveOut {
+            destination,
+            base: owner,
+            member,
+            site,
+            stated,
+            fallback,
+        } => match super::member_move_out::decide(
+            &state,
+            destination,
+            owner,
+            member,
+            *stated,
+            context,
+        ) {
+            Some(taken) => super::member_move_out::apply(state, destination, taken, *site),
+            // The read's own lowering, dispatched in full.
+            None => transfer_dispatch(
+                function,
+                &with_instruction(node, fallback),
+                state,
+                acquisition_lines,
+                context,
+                alias,
+                diagnostics,
+            ),
+        },
         // Card W45-SUB-OBJECT-STORES.
         LegacyInstruction::SelfInitCall {
             base: actual,
@@ -3376,6 +3416,10 @@ pub(super) fn with_instruction(
 pub(crate) fn instruction_produced_sites(instruction: &LegacyInstruction) -> Vec<usize> {
     match instruction {
         LegacyInstruction::Acquire { site, .. } => vec![*site],
+        // Card OUT-SLOT-MEMBER-THEN-FRESH: a stated move-out's site.
+        LegacyInstruction::MoveOut { site, fallback, .. } => std::iter::once(*site)
+            .chain(instruction_produced_sites(fallback))
+            .collect(),
         // Card W45-CONTAINER-ROOT-REACH: a foreign unlink's element site.
         LegacyInstruction::ContractCall {
             produced_sites,
@@ -3405,6 +3449,10 @@ pub(crate) fn instruction_produced_sites(instruction: &LegacyInstruction) -> Vec
 pub(crate) fn offset_produced_sites(instruction: &mut LegacyInstruction, offset: usize) {
     match instruction {
         LegacyInstruction::Acquire { site, .. } => *site += offset,
+        LegacyInstruction::MoveOut { site, fallback, .. } => {
+            *site += offset;
+            offset_produced_sites(fallback, offset);
+        }
         LegacyInstruction::ContractCall {
             produced_sites,
             container,
@@ -4962,6 +5010,10 @@ pub(super) fn transfer_base(
         // Card CG11-POINTER-VALUED-STORES: decided by [`transfer`].
         LegacyInstruction::PointerStore { .. } => {
             unreachable!("pointer stores are transferred by `transfer`")
+        }
+        // Card OUT-SLOT-MEMBER-THEN-FRESH: decided by [`transfer_dispatch`].
+        LegacyInstruction::MoveOut { .. } => {
+            unreachable!("move-outs are transferred by `transfer_dispatch`")
         }
         LegacyInstruction::SelfInitCall { .. } | LegacyInstruction::TrackedSelfInit { .. } => {
             unreachable!("checked initializer calls are transferred by dispatch")

@@ -65,6 +65,42 @@ fn keep_or_deliver_vectors_hold() {
     }
 }
 
+/// Card OUT-SLOT-MEMBER-THEN-FRESH: the slot-mode vectors against [`mode`]
+/// over `out_mode` (`QCore.MemberMoveOut.slotModeVectors`).
+#[test]
+fn slot_mode_vectors_hold() {
+    for (null_run, held, expected) in SLOT_MODE_VECTORS {
+        let observations = null_run
+            .iter()
+            .map(|spelling| exit(slot(spelling)))
+            .collect::<Vec<_>>();
+        let read = mode(crate::legacy_summary::out_mode(0, &observations), held).map(
+            |(null_only, nullable)| match (null_only, nullable) {
+                (false, false) => "keep-out",
+                (false, true) => "keep-out-nullable",
+                (true, false) => "null-only-out",
+                (true, true) => "null-only-out-nullable",
+            },
+        );
+        assert_eq!(read, *expected, "{null_run:?} {held:?}");
+    }
+}
+
+/// A null-only summary installs no kept reading: a slot not known null is
+/// refused, never read as the caller's object.
+#[test]
+fn a_null_only_summary_has_no_kept_reading() {
+    let summary = KeepOrDeliverSummary {
+        slot: 0,
+        delivered: ResourceFunctionContract::new(
+            [ResourceParameterMode::Out { nullable: true }],
+            ResourceReturnMode::None,
+        ),
+        null_only: true,
+    };
+    assert!(summary.kept().is_none());
+}
+
 /// Only an `Out` reading of the null run is a delivery: a slot the null run
 /// reads as anything else publishes nothing, whatever the owned run held.
 #[test]
@@ -92,6 +128,7 @@ fn the_kept_reading_is_the_delivered_one_with_the_slot_owned() {
             ],
             ResourceReturnMode::None,
         ),
+        null_only: false,
     };
     let kept = summary.kept().expect("an out slot");
     assert_eq!(

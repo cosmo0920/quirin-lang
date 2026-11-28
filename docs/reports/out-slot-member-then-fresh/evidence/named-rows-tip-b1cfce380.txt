@@ -1,0 +1,25 @@
+lib/librdkafka-2.15.0/src/rdkafka_subscription.c::rd_kafka_assignment Unknown
+    unresolved resource identity `rkcg`
+    indirect memory access is outside the resource projection
+    unresolved resource identity `rko`
+    indirect memory access is outside the resource projection
+    indirect memory access is outside the resource projection
+    unresolved resource identity `rko`
+    unresolved resource identity `partitions`
+    owned result of resource API `rd_kafka_topic_partition_list_new` stored through `*partitions` without an out-parameter contract
+lib/librdkafka-2.15.0/src/rdkafka_subscription.c::rd_kafka_share_subscription Unknown
+    call to uncontracted function `rd_kafka_share_acquire` in branch condition
+    call to uncontracted function `rd_kafka_error_code`
+    call to uncontracted function `rd_kafka_error_destroy`
+    call to uncontracted function `rd_kafka_share_consumer_closed_err` in branch condition
+    call to uncontracted function `rd_kafka_subscription`
+    call to uncontracted function `rd_kafka_share_release`
+lib/librdkafka-2.15.0/src/rdkafka_subscription.c::rd_kafka_subscription Unknown
+    unresolved resource identity `rkcg`
+    indirect memory access is outside the resource projection
+    unresolved resource identity `rko`
+    indirect memory access is outside the resource projection
+    indirect memory access is outside the resource projection
+    unresolved resource identity `rko`
+    unresolved resource identity `topics`
+    owned result of resource API `rd_kafka_topic_partition_list_new` stored through `*topics` without an out-parameter contract

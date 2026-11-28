@@ -71,6 +71,11 @@ const SP10_EDITS: &str =
 
 const LINKAGE_EDITS: &str =
     include_str!("../../docs/reports/connect-adopt-declared-dependencies/migration.json");
+/// Card **OUT-SLOT-MEMBER-THEN-FRESH**: `rd_kafka_op_req2`'s discriminant and
+/// owned members in `client.qv`
+/// (`docs/reports/out-slot-member-then-fresh/migration.json`, `files`).
+const MEMBER_OWNED_EDITS: &str =
+    include_str!("../../docs/reports/out-slot-member-then-fresh/migration.json");
 
 fn record() -> serde_json::Value {
     serde_json::from_str(RECORD).expect("the SP2 migration record is JSON")
@@ -88,7 +93,10 @@ pub fn unedit_comments(text: &str) -> String {
             SP6_EDITS,
             &unedit_with(
                 SP7_EDITS,
-                &unedit_with(SP10_EDITS, &unedit_with(LINKAGE_EDITS, text)),
+                &unedit_with(
+                    SP10_EDITS,
+                    &unedit_with(LINKAGE_EDITS, &unedit_with(MEMBER_OWNED_EDITS, text)),
+                ),
             ),
         ),
     )
@@ -110,11 +118,18 @@ fn unedit_with(edits: &str, text: &str) -> String {
     out
 }
 
-/// The bytes of the module at `path` before cards
+/// The bytes of the module at `path` before cards OUT-SLOT-MEMBER-THEN-FRESH,
 /// CONNECT-ADOPT-DECLARED-DEPENDENCIES, SP10-FORMAL-BINDING-DESCRIPTIONS, SP6-GUARDED-SYMBOL-PROSE,
 /// SP6-SYMBOLIC-HYPOTHESIS-ATOMS and SP5-GLOBAL-PROSE-PREMISE-BAN edited it, every digest checked; any
 /// other module unchanged.
 pub fn unedited_file(path: &str, current: &str, sha256: fn(&[u8]) -> String) -> String {
+    let current = &unedited_with(
+        MEMBER_OWNED_EDITS,
+        "OUT-SLOT-MEMBER-THEN-FRESH",
+        path,
+        current,
+        sha256,
+    );
     let current = &unedited_with(
         LINKAGE_EDITS,
         "CONNECT-ADOPT-DECLARED-DEPENDENCIES",

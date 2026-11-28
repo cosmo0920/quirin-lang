@@ -82,7 +82,8 @@ pub(super) fn called(instruction: &LegacyInstruction, out: &mut Vec<String>) {
             out.push(callee.clone());
             called(fallback, out);
         }
-        LegacyInstruction::BranchOnElementNull { fallback, .. } => called(fallback, out),
+        LegacyInstruction::BranchOnElementNull { fallback, .. }
+        | LegacyInstruction::MoveOut { fallback, .. } => called(fallback, out),
         LegacyInstruction::SubObjectStore {
             value, fallback, ..
         } => {

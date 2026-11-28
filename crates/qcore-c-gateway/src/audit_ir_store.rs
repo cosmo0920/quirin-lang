@@ -353,7 +353,8 @@ fn check_instruction_depth(cfg: &LegacyCfg) -> Result<(), String> {
                 ElementRelease { fallback, .. }
                 | SelfInitCall { fallback, .. }
                 | BranchOnElementNull { fallback, .. }
-                | SubObjectStore { fallback, .. } => push(fallback.as_ref()),
+                | SubObjectStore { fallback, .. }
+                | MoveOut { fallback, .. } => push(fallback.as_ref()),
                 PointerStore {
                     access, fallback, ..
                 }
