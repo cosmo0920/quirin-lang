@@ -13796,6 +13796,30 @@ through `ampersand_runs`.
     `tests/owned_out_formal_delivery.rs`;
     [report](../reports/archive/language-and-tooling/owned-constructor-out-delivery/README.md).
 
+    **Amendment (OUT-SLOT-MEMBER-THEN-FRESH, USER DECISION 2026-11-28,
+    mode (b)): a slot that delivers or is left unwritten is read only into a
+    known-null slot.** Where rule 85's keep-or-deliver validation finds the
+    null entry reading W4's `Out { nullable }` (every exit a fresh live
+    non-null site or, an exit that left the null-seeded slot unwritten, the
+    null constant) and the owned entry failing (an exit overwrites the
+    caller's object), the summary is still published in rule 85's table,
+    marked `null_only` (`QCore.MemberMoveOut.slotMode`, `mode`,
+    `SLOT_MODE_VECTORS`). On a non-zero or any other return the slot then
+    holds the delivery or what the caller left there, so the reading is
+    status-independent and sound only for a caller whose slot it knows null:
+    rule 85's lowering branches on `NAME`, the null arm reads the delivered
+    contract, and the other arm is refused as `call to `F`, whose summary
+    delivers its slot or leaves it unwritten, with a slot actual not known
+    null` (a held object, an uninitialised or possibly-null slot). This
+    amends (1)'s "do not read a partial-path store as a delivery" for that
+    caller only; the callee's own row keeps (2)'s refusal, and a return-code
+    disposition (C04.13) whose classes leave a value without a mode is still
+    refused. `QCore.MemberMoveOut`
+    (`a_null_only_mode_delivers_only_into_a_known_null_slot`,
+    `a_held_object_is_refused`, `the_null_only_reading_is_the_effect`,
+    `a_null_run_refusal_publishes_nothing`,
+    `an_unseeded_partial_store_reads_nothing`).
+
 <a id="constraint-74m"></a>
 
 74m. **A starred may-bind root counts through cast groups too.** Card
@@ -15426,5 +15450,57 @@ an unrelated held call (both `Unknown`, no leak, both holds kept).
     `missing_discharge_breaks`, `doubled_discharge_breaks_or_clamps`,
     `wouldExceed_iff`, `batch_overshoot_bound`, `negative_magnitude`);
     [report](../reports/fb-backlog-accounting/README.md).
+
+<a id="constraint-96"></a>
+
+96. **A member read the next statement nulls moves the member's object to
+    the reader, only where the flow decides what the member holds.** Card
+    OUT-SLOT-MEMBER-THEN-FRESH (`legacy_member_move_out.rs`, the
+    `MoveOut` instruction; contract specification C04.19.4's owned member).
+    USER DECISION 2026-11-28: option (a1)+(b) for `rd_kafka_assignment` /
+    `rd_kafka_subscription`. (1) **The lowering.** After a statement's own
+    lowering, a read `D = B->M;` (`D` a name or `*NAME`, `M` a dotted member
+    path) whose next statement in the block is `B->M = NULL;` (any null
+    constant spelling) becomes `MoveOut { D, B, M, site, stated, fallback }`
+    over that lowering, only where the case below can decide: an owned
+    member at `M` is declared in force, or the body stores a name into
+    `B->M` earlier. `stated` holds only when the body writes `M` nowhere but
+    in the null stores of such pairs and never takes its address. (2) **The
+    flow.** `B` must resolve to one live, non-null aggregate this body holds
+    (rule O04-B08's owner). *Linked*: the field link at a single-name `M`
+    holds exactly one live child on every arriving path and the place
+    binding `B->M` names exactly it: `D` aliases the child, and the null
+    store then drops the link and the binding. *Stated*: no link, `stated`,
+    and the object carries the owned-member state (recorded at the
+    constructor call where the decided discriminant equals the clause's
+    guard): `D` takes a fresh possibly-null site and the state is spent.
+    `D` `*NAME` needs a sanctioned slot. Anything else (a link on some
+    paths, several children, a nullable or caller-held owner, a spent state)
+    is the fallback, dispatched in full. (3) **The guards.** An object handed
+    to any call spends its owned-member states; a store (aggregate, alias,
+    clear, call result) into a member whose owned state is unspent is
+    refused as `store into `B->M`, which still holds an owned member the
+    store would lose (resource_member_owned)`, the state spent. (4)
+    **Relation to earlier work.** The linked case is a bound read of a link
+    that holds (O04-READ-BOUND's premise), taken at the read the clear
+    follows rather than at a release position (CARRIED-CHILD-TEARDOWN-AFTER-
+    UNLINK asks for the latter, after an unlink, and stays open). The stated
+    case is the declared counterpart of a type-switched destroy's arm (rule
+    12o): the member the arm would free is the object moved out, and the
+    clear leaves the arm nothing. **Do not** read a read without the next
+    statement's clear, a link not held alone, a member whose owned state
+    was spent or written, or a declaration's owned member without a decided
+    discriminant equal to its guard, as a move-out. Premises stated, not
+    proved: faithful token and Clang extraction (trust boundary 28); the
+    declared owned member is the object the owner's destroy frees (C04.19.4,
+    a declared assumption per declaration); no callee the object is not
+    handed to writes the member. `QCore.MemberMoveOut` (`reading`,
+    `move_out_vectors_hold`, `a_fresh_object_only_from_a_stated_member`,
+    `an_alias_only_of_a_link_held_alone`,
+    `a_partial_link_reads_the_fallback`,
+    `a_second_move_out_takes_nothing`, `one_holder_after_the_move`,
+    `an_uncleared_member_is_held_twice` and eleven more), bound to
+    `MOVE_OUT_VECTORS`; `crates/qcore-c-gateway/tests/op_constructor_declarations.rs`;
+    [report](../reports/out-slot-member-then-fresh/README.md).
 
 <!-- generated:rules:end -->

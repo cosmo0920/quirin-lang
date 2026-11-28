@@ -1371,6 +1371,7 @@ fn out_parameter_candidates(cfg: &LegacyCfg, parameters: &[Option<String>]) -> V
         let destination = match &node.instruction {
             LegacyInstruction::Alias { destination, .. }
             | LegacyInstruction::Clear { destination }
+            | LegacyInstruction::MoveOut { destination, .. }
             | LegacyInstruction::ContractCall {
                 destination: Some(destination),
                 ..

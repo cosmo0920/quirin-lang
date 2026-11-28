@@ -2677,6 +2677,23 @@ Contract authors may write the shorthand, the decomposed pair, or an agreeing co
 
 **Implementation & Provenance.** Gateway rules 12o, 13w, and 14e; grammars [G05](QCORE_IMPLEMENTED_GRAMMARS_r0_3.md#g05-resource-loader-v1) and [G05d](QCORE_IMPLEMENTED_GRAMMARS_r0_3.md#g05d-null-dereference-checks). Lean models: `QCore.OpCallbacks` and `QCore.AppRkCallbacks` (built over `QCore.DerefDecomposition`). Cards: `OP-CONSTRUCTOR-DECLARATIONS`, `OP-APP-RK-CALLBACKS-VIA-POLL-CB`, and `SUPPLIED-OWNED-RETURN-CODE-HANDOFF`.
 
+##### C04.19.4.1. An owned member of a result, and a nullable result
+
+Card OUT-SLOT-MEMBER-THEN-FRESH (USER DECISION 2026-11-28, option (a1)). A request that returns an operation record whose member holds a list the record owns (`rd_kafka_op_req2`'s reply of type `GET_ASSIGNMENT`, whose `rko_u.assign.partitions` `rd_kafka_op_destroy`'s arm frees) states that member:
+
+```qcore
+ensures normal resource_discriminant_set(result, rd_kafka_op_s.rko_type, type, 1073741824);
+ensures normal resource_member_owned(result, rd_kafka_op_s.rko_u.assign.partitions) when rko_type == 1073741848;
+ensures normal resource_return_owned(nullable);
+```
+
+* **Meaning.** Where the result's decided discriminant ([C04.19.4](#c04194-a-constructors-result-state), the folded actual OR-ed with the flags) is exactly `VALUE`, the member `TAG.PATH` holds an object the result owns, or null. It is a declared assumption about the callee (it should name what the record's type-switched destroyer frees, [C04.19.2](#c04192-a-release-chosen-by-a-discriminant)); no body check establishes it.
+* **Grammar (total-or-reject).** `ensures normal resource_member_owned(result, TAG.PATH) when FIELD == VALUE;`: the holder is `result`; `TAG.PATH` is a dotted member path of the discriminant's record other than the discriminant and every member a callback state names; `FIELD` is the discriminant's member path and the declaration MUST carry `resource_discriminant_set`; `VALUE` is a canonical non-negative decimal. One owned state per member (an identical repetition merges).
+* **A nullable result.** A declaration stating an owned member MAY return `resource_return_owned(nullable)`: its result states then describe the object on the non-null branch, and a consumer records them on the possibly-null result. The liveness part (`quant live #result`, so also the `|->` shorthand) still needs `resource_return_owned(nonnull)`, and a declaration with no owned member keeps `quant-live-unbacked` for a nullable result.
+* **Consumer.** Gateway [rule 96](agents/gateway.md#constraint-96) reads the move-out `D = B->PATH; B->PATH = NULL;` of such a member as handing the object to `D`; an object handed to a call spends its owned states, and a store into a member whose owned state is unspent is refused.
+
+> **Implementation & Provenance.** `qcore_schemas::constructed_state::OwnedMember`, `crates/qcore-contract/src/contract_constructed_state.rs`, `crates/qcore-c-gateway/src/legacy_member_move_out.rs`; Lean `QCore.MemberMoveOut` (`stateAdmitted`, `ownedAt`).
+
 <a id="c04195-a-hand-off-by-return-code"></a>
 ##### C04.19.5. A hand-off by return code
 

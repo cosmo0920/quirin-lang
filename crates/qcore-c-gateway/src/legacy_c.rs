@@ -421,6 +421,9 @@ mod pointer_store_flow;
 // Card OUT-SLOT-CONDITIONAL-DELIVERY (gateway rule 85).
 #[path = "legacy_keep_or_deliver.rs"]
 pub(crate) mod keep_or_deliver;
+// Card OUT-SLOT-MEMBER-THEN-FRESH (gateway rule 96).
+#[path = "legacy_member_move_out.rs"]
+pub(crate) mod member_move_out;
 #[path = "legacy_owned_out_member.rs"]
 mod owned_out_member_route;
 // Card MEMBER-EFFECT-STORES (rule 38k): the hand-off store's parser half and
@@ -712,6 +715,23 @@ pub enum LegacyInstruction {
     BranchOnNull {
         source: String,
         true_is_null: bool,
+    },
+    /// Card **OUT-SLOT-MEMBER-THEN-FRESH** (gateway rule 96): the read
+    /// `DESTINATION = BASE->MEMBER;` that the next statement follows with
+    /// `BASE->MEMBER = NULL;`, a move-out ([`crate::member_move_out`]). The
+    /// read takes the member's object when the flow decides one (a link this
+    /// body made, or a stated owned member of a decided object), and is
+    /// `fallback`, the statement's own lowering, everywhere else.
+    MoveOut {
+        destination: String,
+        base: String,
+        member: String,
+        /// The site a stated owned member's object takes.
+        site: usize,
+        /// Whether the body admits the stated case (it writes the member
+        /// only in its move-outs' null stores).
+        stated: bool,
+        fallback: Box<LegacyInstruction>,
     },
     /// Card **MK-EVENT-CELL-CROSS-FUNCTION** (rule 38c): a store to, or a
     /// close of, a member of a record with a declared cell protocol, read
@@ -6126,6 +6146,9 @@ impl Parser<'_> {
         // 38i: the gate's refusal of a list helper handed a formal's embedded
         // list names the container custody; the node and writes are unchanged.
         let statement = self.embedded_container_attribution(tokens, line, statement);
+        // Card OUT-SLOT-MEMBER-THEN-FRESH (rule 96), last: a member read the
+        // next statement nulls, over the read's own lowering.
+        let statement = self.move_out_statement(tokens, line, statement);
         match step {
             Some(step) => Statement::Block(vec![
                 statement,

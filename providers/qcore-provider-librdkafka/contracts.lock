@@ -4593,8 +4593,8 @@
     {
       "function": "rd_kafka_op_req2",
       "module": "librdkafka/client.qv",
-      "contract_sha256": "da8cac921b762bb4f2e79fd88c89979c720b9e76d23a69ed3eee2b62b2f4e2a9",
-      "pinned_at": "2026-11-20T19:21:53Z",
+      "contract_sha256": "f998f9f904a8d42600ff2657d60fcb9945d1ef715aa2ae0f996c299a4660a505",
+      "pinned_at": "2026-11-28T02:36:24Z",
       "identities": [
         {
           "reviewed_at": [

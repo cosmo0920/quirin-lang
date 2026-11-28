@@ -105,7 +105,15 @@ pub(super) fn infer(
             )
             .ok()
         })?;
-        validates(&parameters, &own, &summary).then_some(summary)
+        match validates(&parameters, &own, &summary) {
+            Validated::Both => Some(summary),
+            // Rule 74l's amendment (mode (b)): the null entry alone.
+            Validated::NullEntry => Some(KeepOrDeliverSummary {
+                null_only: true,
+                ..summary
+            }),
+            Validated::Neither => None,
+        }
     })
 }
 
@@ -149,13 +157,96 @@ fn propose(
         {
             return None;
         }
-        return Some(KeepOrDeliverSummary { slot, delivered });
+        return Some(KeepOrDeliverSummary {
+            slot,
+            delivered,
+            null_only: false,
+        });
     }
     None
 }
 
+/// Which entries validated.
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+enum Validated {
+    /// Both: rule 85's keep-or-deliver summary.
+    Both,
+    /// Only the null entry: rule 74l's delivers-or-leaves-unwritten mode,
+    /// read only by a caller whose slot is known null.
+    NullEntry,
+    Neither,
+}
+
 /// Step 2: the null entry and the owned entry, on `cfg`.
 fn validates(
+    parameters: &[Option<String>],
+    cfg: &LegacyCfg,
+    summary: &KeepOrDeliverSummary,
+) -> Validated {
+    let slot = summary.slot;
+    if summary.kept().is_none() {
+        return Validated::Neither;
+    }
+    // The null entry: W4's delivery.
+    let Some(mut entry) = EntryCustody::build(cfg, parameters, &summary.delivered) else {
+        return Validated::Neither;
+    };
+    if seed_null(&mut entry, slot).is_none() {
+        return Validated::Neither;
+    }
+    let (run, observations) = analyze_cfg_with_entry(cfg.clone(), &entry);
+    if !fully_safe(&run, &observations)
+        || !observations_match_contract(&summary.delivered, &entry, &run, &observations)
+    {
+        return Validated::Neither;
+    }
+    let null_mode = summary.delivered.parameters.get(slot).copied();
+    let held = owned_entry_holds(parameters, cfg, summary);
+    match mode(null_mode, &[held]) {
+        Some((false, _)) => Validated::Both,
+        Some((true, _)) => Validated::NullEntry,
+        None => Validated::Neither,
+    }
+}
+
+/// Card OUT-SLOT-MEMBER-THEN-FRESH (`QCore.MemberMoveOut.slotMode`): the
+/// summary the two runs read, `(null_only, nullable)`: rule 85's where the
+/// owned run held the caller's object at every exit ([`decide`]), rule 74l's
+/// mode (b) where only the null run read W4's `Out` mode, `None` otherwise.
+pub(crate) fn mode(
+    null_mode: Option<ResourceParameterMode>,
+    held: &[bool],
+) -> Option<(bool, bool)> {
+    if let Some(nullable) = decide(null_mode, held) {
+        return Some((false, nullable));
+    }
+    match null_mode? {
+        ResourceParameterMode::Out { nullable } => Some((true, nullable)),
+        _ => None,
+    }
+}
+
+/// The vectors shared with `proof/QCore/MemberMoveOut.lean`
+/// (`slotModeVectors`): the null run's exits, the owned run's exits, and the
+/// mode [`mode`] reads over `out_mode` (`"keep-out"`, `"null-only-out"`,
+/// `"null-only-out-nullable"`, or `None`).
+#[cfg(test)]
+pub(crate) const SLOT_MODE_VECTORS: &[(&[&str], &[bool], Option<&str>)] = &[
+    (&["site-live"], &[true], Some("keep-out")),
+    (
+        &["null", "null", "site-live", "site-live"],
+        &[true, true, false, false],
+        Some("null-only-out-nullable"),
+    ),
+    (&["site-live"], &[false], Some("null-only-out")),
+    (&["site-live-nullable"], &[false], None),
+    (&["ambiguous"], &[false], None),
+    (&["null"], &[true], None),
+    (&[], &[], None),
+];
+
+/// The owned entry: the caller's object stays, live, in the slot.
+fn owned_entry_holds(
     parameters: &[Option<String>],
     cfg: &LegacyCfg,
     summary: &KeepOrDeliverSummary,
@@ -164,20 +255,6 @@ fn validates(
     let Some(kept) = summary.kept() else {
         return false;
     };
-    // The null entry: W4's delivery.
-    let Some(mut entry) = EntryCustody::build(cfg, parameters, &summary.delivered) else {
-        return false;
-    };
-    if seed_null(&mut entry, slot).is_none() {
-        return false;
-    }
-    let (run, observations) = analyze_cfg_with_entry(cfg.clone(), &entry);
-    if !fully_safe(&run, &observations)
-        || !observations_match_contract(&summary.delivered, &entry, &run, &observations)
-    {
-        return false;
-    }
-    // The owned entry: the caller's object stays, live, in the slot.
     let Some(mut entry) = EntryCustody::build(cfg, parameters, &summary.delivered) else {
         return false;
     };

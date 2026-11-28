@@ -292,6 +292,7 @@ import QCore.MemberCustodyAttribution
 import QCore.MemberEffectSummary
 import QCore.MemberFormalType
 import QCore.MemberHandoff
+import QCore.MemberMoveOut
 import QCore.MemberNonCUnits
 import QCore.MemberPathDirectCall
 import QCore.MemberPathInvocationPremise

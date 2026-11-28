@@ -65,3 +65,25 @@ contract {
     ensures normal resource_arm_empty(rko) otherwise;
     ensures normal resource_return_none();
 };
+
+// Card OUT-SLOT-MEMBER-THEN-FRESH (gateway rule 96, contract spec C04.19.4):
+// a request whose result may be null; where its decided type is 1, the
+// payload holds an object the op owns (the object type 1's arm frees), so a
+// read the next statement nulls moves it out.
+extern fn c_op_req(type: i32) -> ptr<mut, u8>
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(type);
+    ensures normal resource_discriminant_set(result, op.type, type, 0);
+    ensures normal resource_callback_member_registered(result, op.op_cb, #absent);
+    ensures normal resource_member_owned(result, op.payload) when type == 1;
+    ensures normal resource_return_owned(nullable);
+};
+
+// Card OUT-SLOT-MEMBER-THEN-FRESH: a constructor that never returns null.
+extern fn c_item_make(n: i32) -> ptr<mut, u8>
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(n);
+    ensures normal resource_return_owned(nonnull);
+};

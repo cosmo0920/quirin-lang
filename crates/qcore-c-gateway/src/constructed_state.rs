@@ -1189,6 +1189,7 @@ mod tests {
                 },
                 value: MemberValue::Absent,
             }],
+            owned_members: Vec::new(),
         }
     }
 

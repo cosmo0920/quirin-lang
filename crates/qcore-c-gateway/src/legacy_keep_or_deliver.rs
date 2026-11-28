@@ -75,6 +75,16 @@ pub(crate) fn call_refused(callee: &str) -> String {
     )
 }
 
+/// Card OUT-SLOT-MEMBER-THEN-FRESH (rule 74l's amendment, mode (b)): the
+/// refusal of a call to a delivers-or-leaves-unwritten function whose slot
+/// actual the flow does not know null.
+pub(crate) fn unknown_slot_refused(callee: &str) -> String {
+    format!(
+        "call to `{callee}`, whose summary delivers its slot or leaves it unwritten, with a \
+         slot actual not known null"
+    )
+}
+
 /// Seed the slot of the `Out` formal at `slot` with the null constant.
 /// `None` when the entry names no slot there.
 pub(crate) fn seed_null(entry: &mut EntryCustody, slot: usize) -> Option<()> {
@@ -228,6 +238,11 @@ pub(super) fn minted_environment(
     }
     let mut environment = contracts.clone();
     for (name, summary) in summaries {
+        // Rule 74l's amendment (mode (b)): the delivered reading alone.
+        if summary.null_only {
+            environment.insert_contract(format!("{NULL_PREFIX}{name}"), summary.delivered.clone());
+            continue;
+        }
         let Some(kept) = summary.kept() else {
             continue;
         };
@@ -331,7 +346,16 @@ impl Parser<'_> {
                 }
             };
             let delivered = arm(&delivered, format!("{NULL_PREFIX}{callee}"))?;
-            let kept = arm(&kept, format!("{KEPT_PREFIX}{callee}"))?;
+            // Rule 74l's amendment (mode (b)): a slot not known null reaches
+            // the refusal, never a reading.
+            let kept = if summary.null_only {
+                LegacyInstruction::Unknown {
+                    description: unknown_slot_refused(&callee),
+                    writes: writes.clone(),
+                }
+            } else {
+                arm(&kept, format!("{KEPT_PREFIX}{callee}"))?
+            };
             Some((null_condition, delivered, kept))
         })();
         let Some((null_condition, delivered, kept)) = arms else {

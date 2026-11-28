@@ -47,6 +47,12 @@ pub struct KeepOrDeliverSummary {
     /// The call when the slot held null at entry: the slot position is
     /// `Out { nullable }`, every other position as validated.
     pub delivered: ResourceFunctionContract,
+    /// Card **OUT-SLOT-MEMBER-THEN-FRESH** (rule 74l's amendment, mode (b)):
+    /// the owned entry failed, so the slot delivers or is left unwritten and
+    /// only a caller whose slot is known null reads it. `false`: rule 85's
+    /// keep-or-deliver summary.
+    #[serde(default, skip_serializing_if = "std::ops::Not::not")]
+    pub null_only: bool,
 }
 
 impl KeepOrDeliverSummary {
@@ -56,6 +62,9 @@ impl KeepOrDeliverSummary {
     /// is not a keep-or-deliver contract at all (the slot is not `Out`).
     #[must_use]
     pub fn kept(&self) -> Option<ResourceFunctionContract> {
+        if self.null_only {
+            return None;
+        }
         if !matches!(
             self.delivered.parameters.get(self.slot),
             Some(ResourceParameterMode::Out { .. })
@@ -84,6 +93,7 @@ mod tests {
                 ],
                 ResourceReturnMode::None,
             ),
+            null_only: false,
         };
         let kept = summary.kept().expect("an out slot");
         assert_eq!(
@@ -94,6 +104,11 @@ mod tests {
             ]
         );
         assert_eq!(kept.result, ResourceReturnMode::None);
+        let null_only = KeepOrDeliverSummary {
+            null_only: true,
+            ..summary.clone()
+        };
+        assert!(null_only.kept().is_none());
         let not_out = KeepOrDeliverSummary { slot: 0, ..summary };
         assert!(not_out.kept().is_none());
     }

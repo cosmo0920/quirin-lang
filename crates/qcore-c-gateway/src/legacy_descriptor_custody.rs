@@ -431,6 +431,8 @@ pub(crate) fn admits_descriptor_read(
         | LegacyInstruction::Acquire { .. }
         | LegacyInstruction::BranchOnNull { .. }
         | LegacyInstruction::BranchOnDistinct { .. }
+        // Card OUT-SLOT-MEMBER-THEN-FRESH (rule 96): refused as a read.
+        | LegacyInstruction::MoveOut { .. }
         // Card MK-EVENT-CELL-CROSS-FUNCTION (rule 38c): refused as a read.
         | LegacyInstruction::CellProtocolStep { .. }
         | LegacyInstruction::OpaqueValue { .. }

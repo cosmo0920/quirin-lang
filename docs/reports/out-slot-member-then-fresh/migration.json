@@ -1,0 +1,22 @@
+{
+ "card": "OUT-SLOT-MEMBER-THEN-FRESH",
+ "base": "287dce8ed",
+ "note": "rd_kafka_op_req2's discriminant and owned members (contract spec C04.19.4.1, gateway rule 96) added to a module an earlier migration record pins (read by tests/support/sp2_premise_checkpoint.rs, files): writing each edit's after text back as its before restores the base bytes, both digests checked.",
+ "files": [
+  {
+   "file": "librdkafka/client.qv",
+   "before_sha256": "ff825ecbf45f332b7da2c2417efdd36194ce223bb086d5a085fd00d3af4c4b4d",
+   "after_sha256": "05945fbe9d19343ca6526636fe02ba7e091680b92a8fc6a8218c9459d15e8fc4",
+   "edits": [
+    {
+     "before": "// `rd_kafka_op_req2` (`rdkafka_op.c:892-897`).\n",
+     "after": "// `rd_kafka_op_req2` (`rdkafka_op.c:892-897`).\n// Card OUT-SLOT-MEMBER-THEN-FRESH (USER DECISION 2026-11-28, (a1); contract\n// spec C04.19.4's owned member, gateway rule 96): `rd_kafka_op_req2(destq,\n// type)` makes `rd_kafka_op_new(type)` and waits for the reply\n// (`rd_kafka_op_req0`, `rdkafka_op.c:850-866`), which is that same op\n// re-enqueued by `rd_kafka_op_reply` with `rko_type |= RD_KAFKA_OP_REPLY`\n// (`1 << 30 = 1073741824`, no `rko_op_cb` on an `rd_kafka_op_new` op;\n// `rdkafka_op.c:804-816`), or a new op of type `type | RD_KAFKA_OP_REPLY` from\n// `rd_kafka_op_new_reply` (`:768-782`), or NULL: the discriminant is\n// `type | 1073741824`. For `RD_KAFKA_OP_GET_SUBSCRIPTION` (23) and\n// `RD_KAFKA_OP_GET_ASSIGNMENT` (24) the reply holds in\n// `rko_u.subscribe.topics` / `rko_u.assign.partitions` a list the op owns or\n// NULL (the cgrp handler stores a `rd_kafka_topic_partition_list_copy`,\n// `rdkafka_cgrp.c:7519-7541`; a new reply's members are zero) and that\n// `rd_kafka_op_destroy`'s arm 23/24 frees (`rdkafka_op.c:380-390`). Both\n// facts are declared assumptions about the replier, not checked.\n"
+    },
+    {
+     "before": "",
+     "after": "    ensures normal resource_discriminant_set(result, rd_kafka_op_s.rko_type, type, 1073741824);\n    ensures normal resource_member_owned(result, rd_kafka_op_s.rko_u.subscribe.topics) when rko_type == 1073741847;\n    ensures normal resource_member_owned(result, rd_kafka_op_s.rko_u.assign.partitions) when rko_type == 1073741848;\n"
+    }
+   ]
+  }
+ ]
+}
