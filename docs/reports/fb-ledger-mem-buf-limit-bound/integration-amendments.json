@@ -1,0 +1,31 @@
+{
+ "schema": "quirin-amendments/2",
+ "card": "FB-LEDGER-MEM-BUF-LIMIT-BOUND",
+ "base": "287dce8ed",
+ "measured_tip": "748c0a6a7",
+ "profiles": [],
+ "increment_paragraph": "**FB-LEDGER-MEM-BUF-LIMIT-BOUND** (the mem_buf_limit part of FB-LEDGER-ADVISORY-LIMITS; user decision 2026-11-28: certify limit + one write only; Lean `QCore.MemBufLimitBound`; no gateway rule; [report](../../reports/fb-ledger-mem-buf-limit-bound/README.md)). A checked census (CENSUS.md; census.py with the SHA-256 of its 24 inputs, 93 rows, every grep hit classified) of Fluent Bit 046accf6 shows that mem_chunks_size is only a snapshot of cio_stream_size_chunks_up, that the append's one write (flb_input_chunk.c:3455, final_data_size bytes) is the only call growing a memory instance's content and sits after the paused gate (:3314-3320), that mem_buf_status is written only at creation, set_limits' resume (only below the limit) and protect's pause (after the write), and that mem_buf_limit is set only at configuration time. Lean proves mem_chunks_size <= L + W and resident bytes <= L + W for storage.type memory and memrb, where W bounds final_data_size (no site bounds it: premise P-MBL-WRITE-BOUND), under engine-thread serialisation (no lock), no re-entrant append, one stream per instance, no size_t wrap, a non-zero limit and destroy removing content, plus no shutdown-flush append and a quiet rate gate for memory and non-expanding filters for memrb; a running memory instance stays below L, and L - 1 + W is reached. Counterexamples, none a defect claim: protect's rate-gate return before the memory test (:3095-3098, compiled in the pinned build), the gate's shutdown-flush arm, filesystem storage (never paused by mem_buf_limit), expanding filters on memrb, and limit 0. Fixtures in qcore-c-gateway's ledger_transition unit tests read route T's paths through set_limits, protect and the append (three segments, as T reads at most 64 paths; log calls dropped) row for row against the Lean gate, protect and resume vectors, with seven mutation controls. max_chunks_up and storage.backlog.mem_limit stay uncertified by the user's choice. Opt-in current --monkey-linked, base 287dce8ed against tip 748c0a6a7: no moved row; 4,804 function rows and 181 unit statuses identical. Follow-up: FB-MBL-PINNED-BODIES.",
+ "status_edits": [
+  {
+   "section": "## Coverage by area",
+   "old": "which no route reports yet and whose pinned Fluent Bit bodies route T still refuses |",
+   "new": "which no route reports yet and whose pinned Fluent Bit bodies route T still refuses; Fluent Bit's mem_buf_limit is certified in Lean only as limit + one write for memory and memrb instances under named premises, with protect's rate-gate return and the shutdown-flush gate arm as counterexamples outside them (QCore.MemBufLimitBound) |"
+  }
+ ],
+ "ledger": [
+  {
+   "id": "FB-LEDGER-ADVISORY-LIMITS",
+   "operation": "amend",
+   "text": "AMENDED by FB-LEDGER-MEM-BUF-LIMIT-BOUND (user decision 2026-11-28: certify limit + one write only; Lean QCore.MemBufLimitBound; census docs/reports/fb-ledger-mem-buf-limit-bound/CENSUS.md; base 287dce8ed, measured tip 748c0a6a7): mem_buf_limit is certified as mem_chunks_size <= mem_buf_limit + W and resident stream bytes <= mem_buf_limit + W for storage.type memory and memrb, where W bounds final_data_size (flb_input_chunk.c:3455; no site bounds it, premise P-MBL-WRITE-BOUND), under P-MBL-ENGINE-THREAD (no lock), -NO-REENTRY, -OWN-STREAM, -PHYSICAL, -LIMIT-SET, -DESTROY, plus -NO-SHUTDOWN-FLUSH and -RATE-GATE-QUIET for memory and -FILTER-NONEXPANDING for memrb; tight (L - 1 + W reached). Outside the bound, each with a Lean counterexample and none a defect claim: protect's rate-gate return before the memory test (flb_input_chunk.c:3095-3098, compiled in the pinned build), the gate's shutdown-flush arm (:3314-3316), filesystem storage (never paused by mem_buf_limit, :3100-3102), expanding filters on memrb, and limit 0. REMAINING: max_chunks_up with cio_chunk_up_force (sb.c:412, 633) and storage.backlog.mem_limit's batch test (sb.c:605, 611) stay uncertified by the user's choice; the checked reading of the bodies runs on reproductions (FB-MBL-PINNED-BODIES).",
+   "source": "docs/reports/fb-ledger-mem-buf-limit-bound/README.md"
+  },
+  {
+   "id": "FB-MBL-PINNED-BODIES",
+   "operation": "register",
+   "title": "The mem_buf_limit bound's checked reading runs on segmented reproductions, not the pinned bodies",
+   "text": "Card FB-LEDGER-MEM-BUF-LIMIT-BOUND: route T reads at most 64 paths per function and refuses the flb_warn/flb_info argument lists (FB-LEDGER-LOG-ARGUMENT-ORDER), so the fixtures in crates/qcore-c-gateway/tests/unit/ledger_transition.rs (module mem_buf_limit) read flb_input_chunk_set_limits' memory half, flb_input_chunk_protect and input_chunk_append_raw as three consecutive segments, with the log calls, metrics, tag clean-up and filesystem-only branches dropped and the filter's out-parameters read through declared functions; census.py checks the pinned text's order separately. DISCHARGE: route T (or a region import) reads the pinned functions whole and the path tests run on them unchanged.",
+   "source": "docs/reports/fb-ledger-mem-buf-limit-bound/README.md",
+   "recorded_by": "FB-LEDGER-MEM-BUF-LIMIT-BOUND"
+  }
+ ]
+}

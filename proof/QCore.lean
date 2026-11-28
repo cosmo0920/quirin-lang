@@ -286,6 +286,7 @@ import QCore.LoopWindows
 import QCore.Lowering
 import QCore.MayAlias
 import QCore.MeasureConnect
+import QCore.MemBufLimitBound
 import QCore.MemberAddress
 import QCore.MemberAddressReader
 import QCore.MemberCustodyAttribution
@@ -511,6 +512,7 @@ import QCore.ScalarTypes
 import QCore.SchedulerLifetime
 import QCore.ScopedTasks
 import QCore.SettledLeakJoined
+import QCore.SettledLeakLeafless
 import QCore.ShortCircuit
 import QCore.SiblingBorrowedCalls
 import QCore.SingleEmissionRoute

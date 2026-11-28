@@ -614,6 +614,8 @@ Regenerate with `python3 scripts/build_docs_index.py`; validate with `--check`.
 
 | [fb-event-loop-retention](archive/contracts-and-premises/fb-event-loop-retention/README.md) | FB-EVENT-LOOP-RETENTION-AND-REGISTRATION |
 
+| [fb-ledger-mem-buf-limit-bound](fb-ledger-mem-buf-limit-bound/README.md) | FB-LEDGER-MEM-BUF-LIMIT-BOUND: mem_buf_limit + one write, certified under named premises |
+
 | [fb-loop-chain-blockers](archive/contracts-and-premises/fb-loop-chain-blockers/README.md) | FB-LOOP-CHAIN-ACCESS-IDENTITY-BLOCKERS: the access and identity blockers on the event-loop chains |
 
 | [fb-plugin-descriptor-nonnull](archive/contracts-and-premises/fb-plugin-descriptor-nonnull/README.md) | FB-PLUGIN-DESCRIPTOR-NONNULL-SCOPE |
@@ -1417,6 +1419,8 @@ Regenerate with `python3 scripts/build_docs_index.py`; validate with `--check`.
 | [serve-forwarded-callback-formals](archive/language-and-tooling/serve-forwarded-callback-formals/README.md) | SERVE-FORWARDED-CALLBACK-FORMALS: forwarded callback formals |
 
 | [settled-leak-joined-genuine-withdrawn](archive/language-and-tooling/settled-leak-joined-genuine-withdrawn/README.md) | SETTLED-LEAK-JOINED-GENUINE-WITHDRAWN: a withdrawn leak with an avoiding path is published |
+
+| [settled-leak-mark-leafless](settled-leak-mark-leafless/README.md) | SETTLED-LEAK-MARK-LEAFLESS: a leafless mark is decided from settled states, with an `Unknown` reason when unwitnessed |
 
 | [settled-leak-mark-without-unknown-leaf](settled-leak-mark-without-unknown-leaf/README.md) | SETTLED-LEAK-MARK-WITHOUT-UNKNOWN-LEAF: a leak marked beside a Pending hold is decided from settled states |
 

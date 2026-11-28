@@ -1,0 +1,537 @@
+{
+ "schema": "fb-ledger-mem-buf-limit-bound-census/1",
+ "source": "fluent-bit 046accf6",
+ "inputs": {
+  "include/fluent-bit/flb_input.h": "5210166b2afb198a4e294ae3ffaac4aa20c8a6de793fe857db094d528886d8d3",
+  "include/fluent-bit/flb_input_chunk.h": "fc456c464b52cdcb9e59d6b5782d34e928c47c052b42e08a3e56c1904ac01b64",
+  "lib/chunkio/src/cio_chunk.c": "8f6064c742b3fcc53d75b66dbd07d5c7f03d2f245ec7716f8605a2c3a6efd6c8",
+  "lib/chunkio/src/cio_memfs.c": "de82d7d9d78d310d40864c2b1d45e09d257f955404a9e7c1f5cf60b3863ac9b9",
+  "lib/chunkio/src/cio_stream.c": "5226efb40578e3fc78de3c57cdb9e9e6adfa17b5d3aa2252c9545a7b777a2634",
+  "plugins/custom_calyptia/calyptia.c": "c034b4795837ee679eb57506a86d99f35a6abe363990be051ea0c39fd9c07639",
+  "plugins/filter_log_to_metrics/log_to_metrics.c": "be9850fcd01197737bc9b29484f95d95c6fdc2564055a27d8d240be4040cf5fe",
+  "plugins/filter_multiline/ml.c": "9c84a44b8bea32285a8dba8beb259af8828f462b688a5945ed7e99eb8154d133",
+  "plugins/filter_rewrite_tag/rewrite_tag.c": "2795e45a1ba7ecdba750a38c7746947a4fa6913f683b3221a97556a0d180526e",
+  "plugins/in_emitter/emitter.c": "b1a0829d2e014bc12e2cfe6d614c750345d029e53dbb8e77c4957635b058882f",
+  "plugins/in_systemd/systemd.c": "b668140a170f878e8d5b0071c68dbaa831afe88b012254d2a32490e326a41b23",
+  "src/flb_dump.c": "e6c496f02dc4f78b1ca84af4aa524f8f24b97765919af98d590b681ac8d2297f",
+  "src/flb_fstore.c": "dfad6e7554598ad99dd98d1702d0b784619b17cb848279f2ded5a87437d2947a",
+  "src/flb_input.c": "92a0917b89dd61ff92d098dffcf56ddae1060d7588874a3fc0e8e27f45544122",
+  "src/flb_input_blob.c": "fb152fef57cc2b1d4e82e9d874ebd646c40cb17a1815b661851d3fc82cc10c90",
+  "src/flb_input_chunk.c": "0fdf7af3f6b976c7790fb6ded755e5f4cd20ea813cb7d868907a3c16eb10db8d",
+  "src/flb_input_ingest.c": "f9c5712829311ee99ee3165099c28f3816716060bf5701afa4a9fda8f8d469a6",
+  "src/flb_input_log.c": "e4c473077727ca29bb951e62c7088624435cb6506931c6a80a2b92df37d6edbc",
+  "src/flb_input_metric.c": "7357096b31d38fabacd3f3a34da41665f7b82ebb6b30e04900415df9d773d800",
+  "src/flb_input_profiles.c": "24720629c2cd2856e727381282691aa84d14125cdcd064c73b13fe77d241a106",
+  "src/flb_input_trace.c": "af78cf22753dd82dd3010a696b53881055bd809668ae563de0ffed01ab2f915b",
+  "src/flb_sosreport.c": "3523c0b3d9f4eb46fd992558aede4f292f56be7082db600f67375a585243347c",
+  "src/flb_storage.c": "740c66e2ee3a05394c77c738099a4a6b6e6cbb7307cc3c92f2d5099b2b1a608b",
+  "src/flb_task.c": "6105cc5dccd5d8eac71b804f363832c42d18eec2e2b2483d3177c756da4c8b6d"
+ },
+ "rows": [
+  {
+   "site": "src/flb_input.c:663",
+   "class": "counter-write",
+   "note": "instance creation"
+  },
+  {
+   "site": "src/flb_input_chunk.c:3017",
+   "class": "counter-write",
+   "note": "set_limits: total = cio_stream_size_chunks_up (:2993, :3014)"
+  },
+  {
+   "site": "src/flb_input_chunk.c:3151",
+   "class": "counter-write",
+   "note": "set_up_down snapshot (:3148)"
+  },
+  {
+   "site": "src/flb_input_chunk.c:3159",
+   "class": "counter-write",
+   "note": "set_up_down after cio_chunk_down (filesystem only; a no-op for memory)"
+  },
+  {
+   "site": "src/flb_input_chunk.c:2957",
+   "class": "decision",
+   "note": "limit 0 disables the test (P-MBL-LIMIT-SET)"
+  },
+  {
+   "site": "src/flb_input_chunk.c:2961",
+   "class": "decision",
+   "note": "overlimit: snapshot >= limit"
+  },
+  {
+   "site": "src/flb_input_chunk.c:3032",
+   "class": "decision",
+   "note": "resume test: not overlimit, running, ingestion active, paused (:3029-3032)"
+  },
+  {
+   "site": "src/flb_input_chunk.c:3033",
+   "class": "status-write",
+   "note": "resume, only below the limit"
+  },
+  {
+   "site": "src/flb_input_chunk.c:3054",
+   "class": "decision",
+   "note": "collector resume (flb_input_resume) reads the status; writes none"
+  },
+  {
+   "site": "src/flb_input_chunk.c:3126",
+   "class": "status-write",
+   "note": "pause after the write (protect)"
+  },
+  {
+   "site": "src/flb_input.c:661",
+   "class": "status-write",
+   "note": "instance creation"
+  },
+  {
+   "site": "src/flb_input.c:2704",
+   "class": "decision",
+   "note": "rate gate resume reads the status; writes none"
+  },
+  {
+   "site": "include/fluent-bit/flb_input.h:785",
+   "class": "decision",
+   "note": "flb_input_buf_paused, read by the append gate through flb_input_paused"
+  },
+  {
+   "site": "src/flb_input.c:662",
+   "class": "limit-write",
+   "note": "instance creation"
+  },
+  {
+   "site": "src/flb_input.c:859",
+   "class": "limit-write",
+   "note": "property mem_buf_limit"
+  },
+  {
+   "site": "plugins/filter_rewrite_tag/rewrite_tag.c:66",
+   "class": "limit-write",
+   "note": "emitter creation"
+  },
+  {
+   "site": "plugins/filter_log_to_metrics/log_to_metrics.c:914",
+   "class": "limit-write",
+   "note": "emitter creation"
+  },
+  {
+   "site": "plugins/filter_multiline/ml.c:138",
+   "class": "limit-write",
+   "note": "emitter creation"
+  },
+  {
+   "site": "src/flb_input_ingest.c:468",
+   "class": "neighbour",
+   "note": "ingress queue limit (bytes before the append, not in mem_chunks_size)"
+  },
+  {
+   "site": "src/flb_input_ingest.c:472",
+   "class": "neighbour",
+   "note": "ingress queue limit"
+  },
+  {
+   "site": "src/flb_input_ingest.c:474",
+   "class": "neighbour",
+   "note": "ingress queue limit"
+  },
+  {
+   "site": "src/flb_input_ingest.c:475",
+   "class": "neighbour",
+   "note": "ingress queue limit"
+  },
+  {
+   "site": "plugins/in_emitter/emitter.c:120",
+   "class": "neighbour",
+   "note": "emitter's own pre-append queue test"
+  },
+  {
+   "site": "plugins/in_emitter/emitter.c:124",
+   "class": "neighbour",
+   "note": "emitter's own pre-append queue test (stricter, emitter only)"
+  },
+  {
+   "site": "plugins/in_emitter/emitter.c:125",
+   "class": "neighbour",
+   "note": "emitter's own pre-append queue test"
+  },
+  {
+   "site": "plugins/in_emitter/emitter.c:136",
+   "class": "neighbour",
+   "note": "emitter owner queue test"
+  },
+  {
+   "site": "plugins/in_emitter/emitter.c:140",
+   "class": "neighbour",
+   "note": "emitter owner queue test"
+  },
+  {
+   "site": "src/flb_storage.c:202",
+   "class": "neighbour",
+   "note": "metrics"
+  },
+  {
+   "site": "src/flb_storage.c:203",
+   "class": "neighbour",
+   "note": "metrics"
+  },
+  {
+   "site": "src/flb_storage.c:225",
+   "class": "neighbour",
+   "note": "metrics"
+  },
+  {
+   "site": "src/flb_storage.c:233",
+   "class": "neighbour",
+   "note": "metrics"
+  },
+  {
+   "site": "src/flb_storage.c:243",
+   "class": "neighbour",
+   "note": "metrics"
+  },
+  {
+   "site": "src/flb_dump.c:81",
+   "class": "neighbour",
+   "note": "dump"
+  },
+  {
+   "site": "src/flb_dump.c:82",
+   "class": "neighbour",
+   "note": "dump"
+  },
+  {
+   "site": "src/flb_dump.c:90",
+   "class": "neighbour",
+   "note": "dump"
+  },
+  {
+   "site": "src/flb_dump.c:93",
+   "class": "neighbour",
+   "note": "dump"
+  },
+  {
+   "site": "src/flb_dump.c:96",
+   "class": "neighbour",
+   "note": "dump"
+  },
+  {
+   "site": "src/flb_dump.c:99",
+   "class": "neighbour",
+   "note": "dump"
+  },
+  {
+   "site": "src/flb_sosreport.c:260",
+   "class": "neighbour",
+   "note": "sosreport"
+  },
+  {
+   "site": "src/flb_sosreport.c:261",
+   "class": "neighbour",
+   "note": "sosreport"
+  },
+  {
+   "site": "plugins/custom_calyptia/calyptia.c:132",
+   "class": "neighbour",
+   "note": "configuration dump"
+  },
+  {
+   "site": "plugins/custom_calyptia/calyptia.c:133",
+   "class": "neighbour",
+   "note": "configuration dump"
+  },
+  {
+   "site": "plugins/custom_calyptia/calyptia.c:135",
+   "class": "neighbour",
+   "note": "configuration dump"
+  },
+  {
+   "site": "src/flb_input_chunk.c:3063",
+   "class": "neighbour",
+   "note": "log argument"
+  },
+  {
+   "site": "src/flb_input_chunk.c:3064",
+   "class": "neighbour",
+   "note": "log argument"
+  },
+  {
+   "site": "src/flb_input_chunk.c:3122",
+   "class": "neighbour",
+   "note": "log argument"
+  },
+  {
+   "site": "src/flb_input_chunk.c:3123",
+   "class": "neighbour",
+   "note": "log argument"
+  },
+  {
+   "site": "src/flb_input.c:171",
+   "class": "declaration",
+   "note": "config map"
+  },
+  {
+   "site": "src/flb_input.c:853",
+   "class": "declaration",
+   "note": "property key"
+  },
+  {
+   "site": "include/fluent-bit/flb_input.h:316",
+   "class": "declaration",
+   "note": "field"
+  },
+  {
+   "site": "include/fluent-bit/flb_input.h:331",
+   "class": "declaration",
+   "note": "field"
+  },
+  {
+   "site": "include/fluent-bit/flb_input.h:339",
+   "class": "declaration",
+   "note": "field"
+  },
+  {
+   "site": "plugins/in_emitter/emitter.c:250",
+   "class": "declaration",
+   "note": "comment"
+  },
+  {
+   "site": "plugins/in_systemd/systemd.c:278",
+   "class": "declaration",
+   "note": "comment"
+  },
+  {
+   "site": "src/flb_input_chunk.c:799",
+   "class": "content-write",
+   "note": "flb_input_chunk_write's body"
+  },
+  {
+   "site": "src/flb_input_chunk.c:811",
+   "class": "content-write",
+   "note": "flb_input_chunk_write_at's body; no caller"
+  },
+  {
+   "site": "src/flb_input_chunk.c:1540",
+   "class": "content-write",
+   "note": "flb_input_chunk_map truncation (filesystem backlog; shrinks)"
+  },
+  {
+   "site": "src/flb_input_chunk.c:1573",
+   "class": "content-write",
+   "note": "flb_input_chunk_map truncation (filesystem backlog; shrinks)"
+  },
+  {
+   "site": "src/flb_input_chunk.c:1613",
+   "class": "content-write",
+   "note": "flb_input_chunk_map truncation, offset < bytes (:1612; shrinks)"
+  },
+  {
+   "site": "src/flb_input_chunk.c:3455",
+   "class": "content-write",
+   "note": "THE append write: final_data_size bytes, after the gate"
+  },
+  {
+   "site": "src/flb_storage.c:956",
+   "class": "content-write",
+   "note": "DLQ copy into the 'rejected' filesystem stream, not an input stream"
+  },
+  {
+   "site": "src/flb_fstore.c:313",
+   "class": "content-write",
+   "note": "flb_fstore's own chunkio context (output plugins), not an input stream"
+  },
+  {
+   "site": "lib/chunkio/src/cio_chunk.c:208",
+   "class": "content-write",
+   "note": "cio_chunk_write_at's tail"
+  },
+  {
+   "site": "lib/chunkio/src/cio_chunk.c:220",
+   "class": "content-write",
+   "note": "cio_chunk_write, memory backend"
+  },
+  {
+   "site": "lib/chunkio/src/cio_chunk.c:196",
+   "class": "content-write",
+   "note": "write_at: content length set to offset"
+  },
+  {
+   "site": "lib/chunkio/src/cio_chunk.c:492",
+   "class": "content-write",
+   "note": "rollback restores the length at tx_begin"
+  },
+  {
+   "site": "lib/chunkio/src/cio_memfs.c:56",
+   "class": "content-write",
+   "note": "memfs open: an empty chunk"
+  },
+  {
+   "site": "lib/chunkio/src/cio_memfs.c:112",
+   "class": "content-write",
+   "note": "memfs write: +count after a successful realloc; unchanged on failure (:101-105)"
+  },
+  {
+   "site": "src/flb_input_chunk.c:3251",
+   "class": "entry",
+   "note": "the append (definition)"
+  },
+  {
+   "site": "src/flb_input_chunk.c:3616",
+   "class": "entry",
+   "note": "threaded inputs: enqueue only"
+  },
+  {
+   "site": "src/flb_input_chunk.c:3773",
+   "class": "entry",
+   "note": "engine-thread ring-buffer collector, after its own paused test (:3747)"
+  },
+  {
+   "site": "src/flb_input_chunk.c:3786",
+   "class": "entry",
+   "note": "public API (definition)"
+  },
+  {
+   "site": "src/flb_input_chunk.c:3799",
+   "class": "entry",
+   "note": "threaded instance: ring buffer"
+  },
+  {
+   "site": "src/flb_input_chunk.c:3804",
+   "class": "entry",
+   "note": "non-threaded instance: direct, engine thread"
+  },
+  {
+   "site": "src/flb_input_chunk.c:3811",
+   "class": "entry",
+   "note": "local append (definition)"
+  },
+  {
+   "site": "src/flb_input_chunk.c:3817",
+   "class": "entry",
+   "note": "local append: only from flb_input_log_append_processed (collector, :3768)"
+  },
+  {
+   "site": "src/flb_input_chunk.c:3821",
+   "class": "entry",
+   "note": "enqueue (definition)"
+  },
+  {
+   "site": "src/flb_input_chunk.c:3827",
+   "class": "entry",
+   "note": "enqueue"
+  },
+  {
+   "site": "src/flb_input_chunk.c:3832",
+   "class": "entry",
+   "note": "enqueue (definition)"
+  },
+  {
+   "site": "src/flb_input_chunk.c:3838",
+   "class": "entry",
+   "note": "enqueue"
+  },
+  {
+   "site": "src/flb_input_blob.c:208",
+   "class": "entry",
+   "note": "public API caller"
+  },
+  {
+   "site": "src/flb_input_profiles.c:71",
+   "class": "entry",
+   "note": "public API caller"
+  },
+  {
+   "site": "src/flb_input_trace.c:101",
+   "class": "entry",
+   "note": "public API caller"
+  },
+  {
+   "site": "src/flb_input_metric.c:122",
+   "class": "entry",
+   "note": "public API caller"
+  },
+  {
+   "site": "src/flb_input_log.c:1392",
+   "class": "entry",
+   "note": "local_append (collector path)"
+  },
+  {
+   "site": "src/flb_input_log.c:1401",
+   "class": "entry",
+   "note": "public API caller"
+  },
+  {
+   "site": "src/flb_input_log.c:1503",
+   "class": "entry",
+   "note": "local_append (collector path)"
+  },
+  {
+   "site": "src/flb_input_log.c:1507",
+   "class": "entry",
+   "note": "public API caller"
+  },
+  {
+   "site": "src/flb_input_log.c:1578",
+   "class": "entry",
+   "note": "threaded conditional routing: enqueue"
+  },
+  {
+   "site": "include/fluent-bit/flb_input_chunk.h:122",
+   "class": "declaration",
+   "note": "prototype"
+  },
+  {
+   "site": "include/fluent-bit/flb_input_chunk.h:127",
+   "class": "declaration",
+   "note": "prototype"
+  },
+  {
+   "site": "include/fluent-bit/flb_input_chunk.h:132",
+   "class": "declaration",
+   "note": "prototype"
+  },
+  {
+   "site": "include/fluent-bit/flb_input_chunk.h:137",
+   "class": "declaration",
+   "note": "prototype"
+  }
+ ],
+ "classes": {
+  "content-write": 14,
+  "counter-write": 4,
+  "decision": 6,
+  "declaration": 11,
+  "entry": 21,
+  "limit-write": 5,
+  "neighbour": 29,
+  "status-write": 3
+ },
+ "family_hits": {
+  "fields": 54,
+  "content writers": 15,
+  "memfs length": 4,
+  "append entry points": 26
+ },
+ "append_order": {
+  "memrb_release": [
+   3289
+  ],
+  "gate": [
+   3314
+  ],
+  "write": [
+   3455
+  ],
+  "set_limits": [
+   3512,
+   3547
+  ],
+  "protect": [
+   3599
+  ],
+  "return_0": [
+   3513,
+   3543,
+   3600
+  ]
+ },
+ "failures": []
+}

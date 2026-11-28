@@ -42,7 +42,9 @@
 //! **Not decided here:** a mark beside no blocking leaf at all (a modelled
 //! effect such as rule 43's `ElementsReleased` marks without a refusal).
 //! Withdrawing a held report there would leave a row with no non-`Safe` leaf,
-//! so rule 74c's held report keeps deciding it; the census measures it.
+//! so rule 74c's held report keeps deciding it; the census measures it. Card
+//! SETTLED-LEAK-MARK-LEAFLESS (`super::mark_leafless_route`) decides such an
+//! identity when the settled exit would claim it but for the mark.
 //!
 //! The census: with the `indirect-census` feature on and `QCORE_MARK_CENSUS`
 //! naming a file, one JSON line is appended per marked `(exit, identity)` of a
