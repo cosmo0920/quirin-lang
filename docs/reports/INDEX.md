@@ -1410,6 +1410,8 @@ Regenerate with `python3 scripts/build_docs_index.py`; validate with `--check`.
 
 | [settled-leak-joined-genuine-withdrawn](archive/language-and-tooling/settled-leak-joined-genuine-withdrawn/README.md) | SETTLED-LEAK-JOINED-GENUINE-WITHDRAWN: a withdrawn leak with an avoiding path is published |
 
+| [settled-leak-mark-leafless](settled-leak-mark-leafless/README.md) | SETTLED-LEAK-MARK-LEAFLESS: a leafless mark is decided from settled states, with an `Unknown` reason when unwitnessed |
+
 | [settled-leak-mark-without-unknown-leaf](settled-leak-mark-without-unknown-leaf/README.md) | SETTLED-LEAK-MARK-WITHOUT-UNKNOWN-LEAF: a leak marked beside a Pending hold is decided from settled states |
 
 | [settled-leak-other-refusal-schedule](archive/language-and-tooling/settled-leak-other-refusal-schedule/README.md) | SETTLED-LEAK-OTHER-REFUSAL-SCHEDULE: a leak marked by any refusal is decided from settled states |
