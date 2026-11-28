@@ -1,0 +1,4 @@
+lib/librdkafka-2.15.0/src/snappy.c compress_fragment Unknown -> Unknown
+   - 20054 call to uncontracted function `log2_floor`
+lib/librdkafka-2.15.0/src/snappy.c log2_floor Unknown -> Safe
+   - 19669 unmodeled call, aggregate or indirect access in return expression
