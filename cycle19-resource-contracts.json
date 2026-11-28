@@ -32,6 +32,8 @@
     "providers/qcore-provider-libevent/contracts/monkey/intrusive_list.qv",
     "providers/quirin-provider-msgpack/contracts/msgpack/packer.qv",
     "providers/quirin-provider-mpack/contracts/mpack/writer.qv",
+    "providers/quirin-provider-fluent-otel-proto/contracts/fluent_otel_proto/generated.qv",
+    "providers/quirin-provider-fluent-otel-proto/contracts/fluent_otel_proto/runtime.qv",
     "qcore-provider-libevent:monkey/memory.qv",
     "providers/qcore-provider-libevent/contracts/monkey/logging.qv",
     "providers/qcore-provider-libevent/contracts/monkey/scalar_observation.qv",

@@ -381,7 +381,10 @@ tested. Capability-specific witnesses and core-derived inventories (G2),
 third-party `Unsafe` witness validation (no gate; it confers no
 certificate), source integration (G3) and implementation bridges (G5) stay
 open and outside G1. Evidence table, runs and exclusions:
-[closure record](reports/p0-g1-closure-record/README.md).
+[closure record](reports/p0-g1-closure-record/README.md). The criterion is also stated as checked
+formulas over a 27-row case table, with the excluded items registered:
+[G1 closure formulas](reports/g1-closure-record/README.md) (card
+G1-CLOSURE-FORMULAS, supplementary; this note stays the authority).
 
 ## 10. What ran in this audit
 

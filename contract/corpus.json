@@ -12,6 +12,7 @@
     "../providers/qcore-provider-cmetrics/contracts",
     "../providers/qcore-provider-ctraces/contracts",
     "../providers/qcore-provider-libevent/contracts",
-    "../providers/qcore-provider-librdkafka/contracts"
+    "../providers/qcore-provider-librdkafka/contracts",
+    "../providers/quirin-provider-fluent-otel-proto/contracts"
   ]
 }

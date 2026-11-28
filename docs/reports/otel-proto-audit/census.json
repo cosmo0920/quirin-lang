@@ -1,0 +1,1024 @@
+{
+ "classification_formulas": [
+  "otp_classes_partition",
+  "otp_candidate_is_wire_and_unguarded",
+  "otp_unguarded_off_wire_undetermined",
+  "otp_guard_is_cited",
+  "otp_undetermined_names_reason",
+  "otp_no_unsafe_claimed"
+ ],
+ "conformance": {
+  "by_revision": [
+   {
+    "by_aspect": {
+     "enum-absent-in-vendored": 2,
+     "field-absent-upstream": 4,
+     "message-absent-in-vendored": 17,
+     "message-absent-upstream": 18
+    },
+    "differences": 41,
+    "rev": "v1.3.2"
+   },
+   {
+    "by_aspect": {
+     "enum-absent-in-vendored": 1,
+     "field-absent-in-vendored": 17,
+     "field-absent-upstream": 6,
+     "field-kind": 13,
+     "field-label": 15,
+     "field-name": 17,
+     "field-packed": 6,
+     "field-presence": 15,
+     "field-type_name": 7,
+     "message-absent-in-vendored": 2,
+     "message-absent-upstream": 4
+    },
+    "differences": 103,
+    "rev": "v1.4.0"
+   },
+   {
+    "by_aspect": {
+     "enum-absent-in-vendored": 1,
+     "field-absent-in-vendored": 17,
+     "field-absent-upstream": 5,
+     "field-kind": 13,
+     "field-label": 15,
+     "field-name": 17,
+     "field-packed": 6,
+     "field-presence": 15,
+     "field-type_name": 7,
+     "message-absent-in-vendored": 1,
+     "message-absent-upstream": 4
+    },
+    "differences": 101,
+    "rev": "v1.5.0"
+   },
+   {
+    "by_aspect": {
+     "enum-absent-in-vendored": 1,
+     "field-absent-in-vendored": 16,
+     "field-absent-upstream": 3,
+     "field-kind": 12,
+     "field-label": 10,
+     "field-name": 18,
+     "field-packed": 7,
+     "field-presence": 12,
+     "field-type_name": 3,
+     "message-absent-in-vendored": 1,
+     "message-absent-upstream": 3
+    },
+    "differences": 86,
+    "rev": "v1.6.0"
+   },
+   {
+    "by_aspect": {
+     "enum-absent-in-vendored": 1,
+     "field-absent-in-vendored": 10,
+     "field-absent-upstream": 2,
+     "field-kind": 12,
+     "field-label": 9,
+     "field-name": 18,
+     "field-packed": 7,
+     "field-presence": 11,
+     "field-type_name": 4,
+     "message-absent-in-vendored": 1,
+     "message-absent-upstream": 2
+    },
+    "differences": 77,
+    "rev": "v1.7.0"
+   },
+   {
+    "by_aspect": {
+     "enum-absent-in-vendored": 1,
+     "field-absent-in-vendored": 2,
+     "field-absent-upstream": 2,
+     "field-kind": 7,
+     "field-label": 4,
+     "field-name": 10,
+     "field-packed": 4,
+     "field-presence": 4
+    },
+    "differences": 34,
+    "rev": "v1.8.0"
+   },
+   {
+    "by_aspect": {
+     "field-absent-upstream": 2,
+     "field-kind": 2,
+     "field-label": 2,
+     "field-name": 3,
+     "field-packed": 2,
+     "field-presence": 2
+    },
+    "differences": 13,
+    "rev": "v1.9.0"
+   },
+   {
+    "by_aspect": {},
+    "differences": 0,
+    "rev": "v1.10.0"
+   },
+   {
+    "by_aspect": {
+     "message-absent-in-vendored": 1
+    },
+    "differences": 1,
+    "rev": "v1.11.0"
+   },
+   {
+    "by_aspect": {
+     "message-absent-in-vendored": 1
+    },
+    "differences": 1,
+    "rev": "v1.11.1"
+   }
+  ],
+  "compiler_versions": {
+   "opentelemetry/proto/collector/logs/v1/logs_service.pb-c.h": 1005002,
+   "opentelemetry/proto/collector/metrics/v1/metrics_service.pb-c.h": 1005002,
+   "opentelemetry/proto/collector/profiles/v1development/profiles_service.pb-c.h": 1005002,
+   "opentelemetry/proto/collector/trace/v1/trace_service.pb-c.h": 1005002,
+   "opentelemetry/proto/common/v1/common.pb-c.h": 1005002,
+   "opentelemetry/proto/logs/v1/logs.pb-c.h": 1005002,
+   "opentelemetry/proto/metrics/v1/metrics.pb-c.h": 1005002,
+   "opentelemetry/proto/profiles/v1development/pprofextended.pb-c.h": 1004001,
+   "opentelemetry/proto/profiles/v1development/profiles.pb-c.h": 1005002,
+   "opentelemetry/proto/resource/v1/resource.pb-c.h": 1005002,
+   "opentelemetry/proto/trace/v1/trace.pb-c.h": 1005002
+  },
+  "counts": {
+   "by_aspect": {
+    "field-absent-in-vendored": 1,
+    "message-absent-in-vendored": 1
+   },
+   "upstream_enums": 7,
+   "upstream_messages": 61,
+   "vendored_enums": 7,
+   "vendored_messages": 60
+  },
+  "deprecated_upstream": [],
+  "differences": [
+   {
+    "aspect": "message-absent-in-vendored",
+    "message": "opentelemetry.proto.processcontext.v1development.ProcessContext",
+    "upstream_fields": 2
+   },
+   {
+    "aspect": "field-absent-in-vendored",
+    "field": "type",
+    "message": "opentelemetry.proto.trace.v1.Span",
+    "number": 17,
+    "upstream": {
+     "deprecated": false,
+     "kind": "string",
+     "label": "none",
+     "name": "type",
+     "oneof": null,
+     "packed": false,
+     "presence": "implicit",
+     "type_name": null
+    }
+   }
+  ],
+  "excluded_generated_files": [
+   "opentelemetry/proto/profiles/v1development/pprofextended.pb-c.c"
+  ],
+  "vendored_files": {
+   "opentelemetry/proto/collector/logs/v1/logs_service.pb-c.c": {
+    "generated_from": "opentelemetry/proto/collector/logs/v1/logs_service.proto"
+   },
+   "opentelemetry/proto/collector/metrics/v1/metrics_service.pb-c.c": {
+    "generated_from": "opentelemetry/proto/collector/metrics/v1/metrics_service.proto"
+   },
+   "opentelemetry/proto/collector/profiles/v1development/profiles_service.pb-c.c": {
+    "generated_from": "opentelemetry/proto/collector/profiles/v1development/profiles_service.proto"
+   },
+   "opentelemetry/proto/collector/trace/v1/trace_service.pb-c.c": {
+    "generated_from": "opentelemetry/proto/collector/trace/v1/trace_service.proto"
+   },
+   "opentelemetry/proto/common/v1/common.pb-c.c": {
+    "generated_from": "opentelemetry/proto/common/v1/common.proto"
+   },
+   "opentelemetry/proto/logs/v1/logs.pb-c.c": {
+    "generated_from": "opentelemetry/proto/logs/v1/logs.proto"
+   },
+   "opentelemetry/proto/metrics/v1/metrics.pb-c.c": {
+    "generated_from": "opentelemetry/proto/metrics/v1/metrics.proto"
+   },
+   "opentelemetry/proto/profiles/v1development/profiles.pb-c.c": {
+    "generated_from": "opentelemetry/proto/profiles/v1development/profiles.proto"
+   },
+   "opentelemetry/proto/resource/v1/resource.pb-c.c": {
+    "generated_from": "opentelemetry/proto/resource/v1/resource.proto"
+   },
+   "opentelemetry/proto/trace/v1/trace.pb-c.c": {
+    "generated_from": "opentelemetry/proto/trace/v1/trace.proto"
+   }
+  }
+ },
+ "coverage": {
+  "cmetrics OTLP codec": {
+   "functions": 159,
+   "routes": {
+    "corpus": {
+     "combined": {
+      "Safe": 24,
+      "Unknown": 135
+     },
+     "custody": {
+      "Safe": 31,
+      "Unknown": 128
+     },
+     "custody_unknown_reasons": {
+      "missing-contract": 109,
+      "unresolved-alias": 76,
+      "unsupported-construct": 87
+     },
+     "null": {
+      "Safe": 80,
+      "Unknown": 79
+     },
+     "null_unknown_reasons": {
+      "null-candidate:formal": 36,
+      "null-candidate:memory-field": 61,
+      "null-candidate:memory-field+null-literal": 2
+     },
+     "rows": 159
+    },
+    "slice": {
+     "combined": {},
+     "custody": {},
+     "custody_unknown_reasons": {},
+     "null": {},
+     "null_unknown_reasons": {},
+     "rows": 0
+    },
+    "system": {
+     "combined": {},
+     "custody": {},
+     "custody_unknown_reasons": {},
+     "null": {},
+     "null_unknown_reasons": {},
+     "rows": 0
+    },
+    "twelve-home": {
+     "combined": {
+      "Safe": 24,
+      "Unknown": 135
+     },
+     "custody": {
+      "Safe": 31,
+      "Unknown": 128
+     },
+     "custody_unknown_reasons": {
+      "missing-contract": 109,
+      "unresolved-alias": 76,
+      "unsupported-construct": 87
+     },
+     "null": {
+      "Safe": 80,
+      "Unknown": 79
+     },
+     "null_unknown_reasons": {
+      "null-candidate:formal": 36,
+      "null-candidate:memory-field": 61,
+      "null-candidate:memory-field+null-literal": 2
+     },
+     "rows": 159
+    }
+   },
+   "scope": "brief",
+   "unmeasured": 0
+  },
+  "cprofiles OTLP codec": {
+   "functions": 97,
+   "routes": {
+    "corpus": {
+     "combined": {},
+     "custody": {},
+     "custody_unknown_reasons": {},
+     "null": {},
+     "null_unknown_reasons": {},
+     "rows": 0
+    },
+    "slice": {
+     "combined": {},
+     "custody": {},
+     "custody_unknown_reasons": {},
+     "null": {},
+     "null_unknown_reasons": {},
+     "rows": 0
+    },
+    "system": {
+     "combined": {},
+     "custody": {},
+     "custody_unknown_reasons": {},
+     "null": {},
+     "null_unknown_reasons": {},
+     "rows": 0
+    },
+    "twelve-home": {
+     "combined": {},
+     "custody": {},
+     "custody_unknown_reasons": {},
+     "null": {},
+     "null_unknown_reasons": {},
+     "rows": 0
+    }
+   },
+   "scope": "adjacent",
+   "unmeasured": 97
+  },
+  "ctraces OTLP codec": {
+   "functions": 86,
+   "routes": {
+    "corpus": {
+     "combined": {
+      "Safe": 14,
+      "Unknown": 67,
+      "Unsafe": 5
+     },
+     "custody": {
+      "Safe": 20,
+      "Unknown": 66
+     },
+     "custody_unknown_reasons": {
+      "missing-contract": 62,
+      "unresolved-alias": 42,
+      "unsupported-construct": 42
+     },
+     "null": {
+      "Safe": 40,
+      "Unknown": 41,
+      "Unsafe": 5
+     },
+     "null_unknown_reasons": {
+      "null-candidate:formal": 35,
+      "null-candidate:memory-field": 27,
+      "null-candidate:uncontracted-result": 3,
+      "null-finding": 5
+     },
+     "rows": 86
+    },
+    "slice": {
+     "combined": {},
+     "custody": {},
+     "custody_unknown_reasons": {},
+     "null": {},
+     "null_unknown_reasons": {},
+     "rows": 0
+    },
+    "system": {
+     "combined": {},
+     "custody": {},
+     "custody_unknown_reasons": {},
+     "null": {},
+     "null_unknown_reasons": {},
+     "rows": 0
+    },
+    "twelve-home": {
+     "combined": {
+      "Safe": 14,
+      "Unknown": 67,
+      "Unsafe": 5
+     },
+     "custody": {
+      "Safe": 20,
+      "Unknown": 66
+     },
+     "custody_unknown_reasons": {
+      "missing-contract": 62,
+      "unresolved-alias": 42,
+      "unsupported-construct": 42
+     },
+     "null": {
+      "Safe": 40,
+      "Unknown": 41,
+      "Unsafe": 5
+     },
+     "null_unknown_reasons": {
+      "null-candidate:formal": 35,
+      "null-candidate:memory-field": 27,
+      "null-candidate:uncontracted-result": 3,
+      "null-finding": 5
+     },
+     "rows": 86
+    }
+   },
+   "scope": "brief",
+   "unmeasured": 0
+  },
+  "fluent-otel-proto generated descriptors": {
+   "functions": 348,
+   "routes": {
+    "corpus": {
+     "combined": {},
+     "custody": {},
+     "custody_unknown_reasons": {},
+     "null": {},
+     "null_unknown_reasons": {},
+     "rows": 0
+    },
+    "slice": {
+     "combined": {},
+     "custody": {},
+     "custody_unknown_reasons": {},
+     "null": {},
+     "null_unknown_reasons": {},
+     "rows": 0
+    },
+    "system": {
+     "combined": {},
+     "custody": {},
+     "custody_unknown_reasons": {},
+     "null": {},
+     "null_unknown_reasons": {},
+     "rows": 0
+    },
+    "twelve-home": {
+     "combined": {},
+     "custody": {},
+     "custody_unknown_reasons": {},
+     "null": {},
+     "null_unknown_reasons": {},
+     "rows": 0
+    }
+   },
+   "scope": "brief",
+   "unmeasured": 348
+  },
+  "fluent-otel-proto helpers": {
+   "functions": 1,
+   "routes": {
+    "corpus": {
+     "combined": {},
+     "custody": {},
+     "custody_unknown_reasons": {},
+     "null": {},
+     "null_unknown_reasons": {},
+     "rows": 0
+    },
+    "slice": {
+     "combined": {},
+     "custody": {},
+     "custody_unknown_reasons": {},
+     "null": {},
+     "null_unknown_reasons": {},
+     "rows": 0
+    },
+    "system": {
+     "combined": {},
+     "custody": {},
+     "custody_unknown_reasons": {},
+     "null": {},
+     "null_unknown_reasons": {},
+     "rows": 0
+    },
+    "twelve-home": {
+     "combined": {},
+     "custody": {},
+     "custody_unknown_reasons": {},
+     "null": {},
+     "null_unknown_reasons": {},
+     "rows": 0
+    }
+   },
+   "scope": "brief",
+   "unmeasured": 1
+  },
+  "fluent-otel-proto protobuf-c runtime": {
+   "functions": 90,
+   "routes": {
+    "corpus": {
+     "combined": {},
+     "custody": {},
+     "custody_unknown_reasons": {},
+     "null": {},
+     "null_unknown_reasons": {},
+     "rows": 0
+    },
+    "slice": {
+     "combined": {},
+     "custody": {},
+     "custody_unknown_reasons": {},
+     "null": {},
+     "null_unknown_reasons": {},
+     "rows": 0
+    },
+    "system": {
+     "combined": {},
+     "custody": {},
+     "custody_unknown_reasons": {},
+     "null": {},
+     "null_unknown_reasons": {},
+     "rows": 0
+    },
+    "twelve-home": {
+     "combined": {},
+     "custody": {},
+     "custody_unknown_reasons": {},
+     "null": {},
+     "null_unknown_reasons": {},
+     "rows": 0
+    }
+   },
+   "scope": "brief",
+   "unmeasured": 90
+  },
+  "in_opentelemetry": {
+   "functions": 60,
+   "routes": {
+    "corpus": {
+     "combined": {},
+     "custody": {},
+     "custody_unknown_reasons": {},
+     "null": {},
+     "null_unknown_reasons": {},
+     "rows": 0
+    },
+    "slice": {
+     "combined": {},
+     "custody": {},
+     "custody_unknown_reasons": {},
+     "null": {},
+     "null_unknown_reasons": {},
+     "rows": 0
+    },
+    "system": {
+     "combined": {},
+     "custody": {},
+     "custody_unknown_reasons": {},
+     "null": {},
+     "null_unknown_reasons": {},
+     "rows": 0
+    },
+    "twelve-home": {
+     "combined": {},
+     "custody": {},
+     "custody_unknown_reasons": {},
+     "null": {},
+     "null_unknown_reasons": {},
+     "rows": 0
+    }
+   },
+   "scope": "brief",
+   "unmeasured": 60
+  },
+  "out_opentelemetry": {
+   "functions": 70,
+   "routes": {
+    "corpus": {
+     "combined": {},
+     "custody": {},
+     "custody_unknown_reasons": {},
+     "null": {},
+     "null_unknown_reasons": {},
+     "rows": 0
+    },
+    "slice": {
+     "combined": {},
+     "custody": {},
+     "custody_unknown_reasons": {},
+     "null": {},
+     "null_unknown_reasons": {},
+     "rows": 0
+    },
+    "system": {
+     "combined": {},
+     "custody": {},
+     "custody_unknown_reasons": {},
+     "null": {},
+     "null_unknown_reasons": {},
+     "rows": 0
+    },
+    "twelve-home": {
+     "combined": {},
+     "custody": {},
+     "custody_unknown_reasons": {},
+     "null": {},
+     "null_unknown_reasons": {},
+     "rows": 0
+    }
+   },
+   "scope": "brief",
+   "unmeasured": 70
+  },
+  "processor_content_modifier OTel": {
+   "functions": 5,
+   "routes": {
+    "corpus": {
+     "combined": {},
+     "custody": {},
+     "custody_unknown_reasons": {},
+     "null": {},
+     "null_unknown_reasons": {},
+     "rows": 0
+    },
+    "slice": {
+     "combined": {},
+     "custody": {},
+     "custody_unknown_reasons": {},
+     "null": {},
+     "null_unknown_reasons": {},
+     "rows": 0
+    },
+    "system": {
+     "combined": {},
+     "custody": {},
+     "custody_unknown_reasons": {},
+     "null": {},
+     "null_unknown_reasons": {},
+     "rows": 0
+    },
+    "twelve-home": {
+     "combined": {},
+     "custody": {},
+     "custody_unknown_reasons": {},
+     "null": {},
+     "null_unknown_reasons": {},
+     "rows": 0
+    }
+   },
+   "scope": "adjacent",
+   "unmeasured": 5
+  },
+  "processor_opentelemetry_envelope": {
+   "functions": 7,
+   "routes": {
+    "corpus": {
+     "combined": {},
+     "custody": {},
+     "custody_unknown_reasons": {},
+     "null": {},
+     "null_unknown_reasons": {},
+     "rows": 0
+    },
+    "slice": {
+     "combined": {},
+     "custody": {},
+     "custody_unknown_reasons": {},
+     "null": {},
+     "null_unknown_reasons": {},
+     "rows": 0
+    },
+    "system": {
+     "combined": {},
+     "custody": {},
+     "custody_unknown_reasons": {},
+     "null": {},
+     "null_unknown_reasons": {},
+     "rows": 0
+    },
+    "twelve-home": {
+     "combined": {},
+     "custody": {},
+     "custody_unknown_reasons": {},
+     "null": {},
+     "null_unknown_reasons": {},
+     "rows": 0
+    }
+   },
+   "scope": "brief",
+   "unmeasured": 7
+  },
+  "src/opentelemetry": {
+   "functions": 219,
+   "routes": {
+    "corpus": {
+     "combined": {},
+     "custody": {},
+     "custody_unknown_reasons": {},
+     "null": {},
+     "null_unknown_reasons": {},
+     "rows": 0
+    },
+    "slice": {
+     "combined": {},
+     "custody": {},
+     "custody_unknown_reasons": {},
+     "null": {},
+     "null_unknown_reasons": {},
+     "rows": 0
+    },
+    "system": {
+     "combined": {},
+     "custody": {},
+     "custody_unknown_reasons": {},
+     "null": {},
+     "null_unknown_reasons": {},
+     "rows": 0
+    },
+    "twelve-home": {
+     "combined": {},
+     "custody": {},
+     "custody_unknown_reasons": {},
+     "null": {},
+     "null_unknown_reasons": {},
+     "rows": 0
+    }
+   },
+   "scope": "brief",
+   "unmeasured": 219
+  }
+ },
+ "identity_formulas": [
+  "otp_identity_refused_unless_pinned",
+  "otp_pinned_identity_admitted"
+ ],
+ "inputs": {
+  "compile_db_sha256": "5e6868d9af26eaec97bc8020ed5f23496f2490abf44532443239bd4d365f7e78",
+  "describe": "v1.11.1-19-g3a6e438",
+  "fluent_bit_head": "66910c10a4d7eafa810b84229cf2dcf7b0f26f97",
+  "fluent_bit_tree": "build/cycle19/c-gateway-wave-pin/fluent-bit-clang-source/",
+  "measurement": "private/measure/r40-landing/sides/tip",
+  "measurement_build_commit": "c0cb77da3074da240882acad7a86e185bd17c418"
+ },
+ "obligation_formulas": {
+  "O0": "otp_unpack_result_tested",
+  "O1": "otp_deref_needs_nonnull",
+  "O2": "otp_subscript_needs_bound",
+  "O3": "otp_member_needs_case",
+  "O4": "otp_data_needs_length",
+  "O5": "otp_enum_index_needs_name"
+ },
+ "phase_b_effect": {
+  "corpus": {
+   "combined_rows": [
+    "lib/cmetrics/src/cmt_encode_opentelemetry_batch.c#request_data_point_count"
+   ],
+   "null_rows": [
+    "lib/cmetrics/src/cmt_decode_opentelemetry.c#clone_array",
+    "lib/cmetrics/src/cmt_decode_opentelemetry.c#clone_exemplars_to_kvlist",
+    "lib/cmetrics/src/cmt_decode_opentelemetry.c#clone_kvlist",
+    "lib/cmetrics/src/cmt_decode_opentelemetry.c#clone_variant",
+    "lib/cmetrics/src/cmt_decode_opentelemetry.c#decode_exponential_histogram_data_point_list",
+    "lib/cmetrics/src/cmt_decode_opentelemetry.c#decode_metrics_entry",
+    "lib/cmetrics/src/cmt_decode_opentelemetry.c#decode_numerical_data_point_list",
+    "lib/cmetrics/src/cmt_decode_opentelemetry.c#decode_resource_metadata_and_attributes",
+    "lib/cmetrics/src/cmt_decode_opentelemetry.c#decode_scope_metadata_and_attributes",
+    "lib/cmetrics/src/cmt_decode_opentelemetry.c#decode_scope_metrics_entry",
+    "lib/cmetrics/src/cmt_decode_opentelemetry.c#decode_service_request",
+    "lib/cmetrics/src/cmt_encode_opentelemetry_batch.c#cmt_encode_opentelemetry_split_payload",
+    "lib/cmetrics/src/cmt_encode_opentelemetry_batch.c#metric_view_create",
+    "lib/cmetrics/src/cmt_encode_opentelemetry_batch.c#metrics_batch_view_destroy",
+    "lib/cmetrics/src/cmt_encode_opentelemetry_batch.c#request_data_point_count",
+    "lib/ctraces/src/ctr_decode_opentelemetry.c#ctr_span_set_links",
+    "lib/ctraces/src/ctr_decode_opentelemetry.c#span_set_events"
+   ]
+  },
+  "slice": {
+   "combined_rows": [],
+   "null_rows": []
+  },
+  "system": {
+   "combined_rows": [],
+   "null_rows": []
+  },
+  "twelve-home": {
+   "combined_rows": [
+    "lib/cmetrics/src/cmt_encode_opentelemetry_batch.c#request_data_point_count"
+   ],
+   "null_rows": [
+    "lib/cmetrics/src/cmt_decode_opentelemetry.c#clone_array",
+    "lib/cmetrics/src/cmt_decode_opentelemetry.c#clone_exemplars_to_kvlist",
+    "lib/cmetrics/src/cmt_decode_opentelemetry.c#clone_kvlist",
+    "lib/cmetrics/src/cmt_decode_opentelemetry.c#clone_variant",
+    "lib/cmetrics/src/cmt_decode_opentelemetry.c#decode_exponential_histogram_data_point_list",
+    "lib/cmetrics/src/cmt_decode_opentelemetry.c#decode_metrics_entry",
+    "lib/cmetrics/src/cmt_decode_opentelemetry.c#decode_numerical_data_point_list",
+    "lib/cmetrics/src/cmt_decode_opentelemetry.c#decode_resource_metadata_and_attributes",
+    "lib/cmetrics/src/cmt_decode_opentelemetry.c#decode_scope_metadata_and_attributes",
+    "lib/cmetrics/src/cmt_decode_opentelemetry.c#decode_scope_metrics_entry",
+    "lib/cmetrics/src/cmt_decode_opentelemetry.c#decode_service_request",
+    "lib/cmetrics/src/cmt_encode_opentelemetry_batch.c#cmt_encode_opentelemetry_split_payload",
+    "lib/cmetrics/src/cmt_encode_opentelemetry_batch.c#metric_view_create",
+    "lib/cmetrics/src/cmt_encode_opentelemetry_batch.c#metrics_batch_view_destroy",
+    "lib/cmetrics/src/cmt_encode_opentelemetry_batch.c#request_data_point_count",
+    "lib/ctraces/src/ctr_decode_opentelemetry.c#ctr_span_set_links",
+    "lib/ctraces/src/ctr_decode_opentelemetry.c#span_set_events"
+   ]
+  }
+ },
+ "premise_formulas": [
+  "otp_absent_message_is_null",
+  "otp_repeated_elements_nonnull",
+  "otp_repeated_array_nonnull",
+  "otp_selected_member_nonnull",
+  "otp_string_nonnull",
+  "otp_bytes_data_iff_length",
+  "otp_bounded_element_nonnull",
+  "otp_selected_member_guarded_nonnull"
+ ],
+ "protocol_identity": {
+  "commit": "3a6e438003e673112efd4a00e9836c00672eae3c",
+  "files": {
+   "opentelemetry/proto/collector/logs/v1/logs_service.proto": "0252687fc8f59d139ced709d383e83678e9bd4957bdbe76077242f1c32363fa5",
+   "opentelemetry/proto/collector/metrics/v1/metrics_service.proto": "2bb3c6adee5f7609c8a32c5e4b1ec57057320015e298e9cf136699a42abc24d7",
+   "opentelemetry/proto/collector/profiles/v1development/profiles_service.proto": "5d2d5e2994fa72130474faaff0eee284857687efb339730451e3f22dc5cbf2eb",
+   "opentelemetry/proto/collector/trace/v1/trace_service.proto": "03c8cc4e3e101087d884392d6eda32152ad5cd696e6344f50deaa59804a75c7a",
+   "opentelemetry/proto/common/v1/common.proto": "4c8c143ac8c190544a3d31dcd5719d6fbc943b89037faa1cef6015c76cbdefc1",
+   "opentelemetry/proto/logs/v1/logs.proto": "0c9d0c45eea723d38ef28ee13135ff61c037387f41cacc476ccac3485d6c138a",
+   "opentelemetry/proto/metrics/v1/metrics.proto": "9663b2670f980041e73a71a7c09fdf4fe0bc64056be762f2fcbd2642c4d112a3",
+   "opentelemetry/proto/processcontext/v1development/process_context.proto": "e755272f6761620f26e983d520ad9d0256d1e1bd37ff23775a72212332cda4cd",
+   "opentelemetry/proto/profiles/v1development/profiles.proto": "231e9967a9e91ab41fc0a4dee970d2f51c35ca3a52e132bc8f606f1ae1ec39a8",
+   "opentelemetry/proto/resource/v1/resource.proto": "34fe1c26b8959f09d97656348ae03b105d15a5f07ada0f8f1614ef5dff7d1569",
+   "opentelemetry/proto/trace/v1/trace.proto": "41613c59a81c1742a9d2d7c7b8f6ddc7a4bae27438ef7a01ff464c240434dddf"
+  }
+ },
+ "schema": "otel-proto-audit/1",
+ "site_counts": {
+  "by_class": {
+   "guarded": 526,
+   "not-determinable": 232
+  },
+  "by_module": {
+   "cmetrics OTLP codec": {
+    "O0:guarded": 4,
+    "O1:guarded": 116,
+    "O1:not-determinable": 2,
+    "O2:guarded": 65,
+    "O2:not-determinable": 33,
+    "O3:guarded": 92,
+    "O3:not-determinable": 46,
+    "O4:guarded": 5,
+    "O4:not-determinable": 1
+   },
+   "cprofiles OTLP codec": {
+    "O0:guarded": 1,
+    "O1:guarded": 18,
+    "O1:not-determinable": 4,
+    "O2:guarded": 56,
+    "O2:not-determinable": 54,
+    "O3:guarded": 10,
+    "O3:not-determinable": 11,
+    "O4:guarded": 11,
+    "O4:not-determinable": 4
+   },
+   "ctraces OTLP codec": {
+    "O0:guarded": 3,
+    "O1:guarded": 13,
+    "O1:not-determinable": 5,
+    "O2:guarded": 14,
+    "O2:not-determinable": 12,
+    "O3:guarded": 16,
+    "O3:not-determinable": 11,
+    "O4:not-determinable": 7,
+    "O5:not-determinable": 2
+   },
+   "in_opentelemetry": {
+    "O0:guarded": 4,
+    "O1:guarded": 33,
+    "O2:guarded": 17,
+    "O3:guarded": 7,
+    "O4:not-determinable": 1,
+    "O5:not-determinable": 1
+   },
+   "out_opentelemetry": {
+    "O1:guarded": 21,
+    "O1:not-determinable": 4,
+    "O2:guarded": 4,
+    "O2:not-determinable": 7,
+    "O3:guarded": 8,
+    "O3:not-determinable": 9,
+    "O4:guarded": 5
+   },
+   "src/opentelemetry": {
+    "O1:not-determinable": 2,
+    "O2:guarded": 2,
+    "O2:not-determinable": 6,
+    "O3:not-determinable": 9,
+    "O4:guarded": 1,
+    "O4:not-determinable": 1
+   }
+  },
+  "not_determinable_reasons": {
+   "array-passed-without-its-count": 15,
+   "bytes-passed-with-length-to-callee": 10,
+   "bytes-passed-with-length-to-unit-callee": 1,
+   "bytes-passed-without-length": 2,
+   "callee-outside-unit": 11,
+   "callee-passes-parameter-on": 16,
+   "callee-variadic-or-deep": 1,
+   "encoder-constructed-value": 173,
+   "enum-to-callee-outside-unit": 3
+  },
+  "wire_reachable": {
+   "guarded": 307,
+   "not-determinable": 19
+  }
+ },
+ "wire_reachable": {
+  "lib/cmetrics/src/cmt_decode_opentelemetry.c": [
+   "append_new_map_label_key",
+   "append_new_metric_label_value",
+   "clone_array",
+   "clone_array_entry",
+   "clone_exemplars_to_kvlist",
+   "clone_kvlist",
+   "clone_kvlist_entry",
+   "clone_variant",
+   "cmt_decode_opentelemetry_create",
+   "compute_metric_hash",
+   "create_label",
+   "decode_counter_entry",
+   "decode_data_point_labels",
+   "decode_exponential_histogram_data_point",
+   "decode_exponential_histogram_data_point_list",
+   "decode_exponential_histogram_entry",
+   "decode_gauge_entry",
+   "decode_histogram_data_point",
+   "decode_histogram_data_point_list",
+   "decode_histogram_entry",
+   "decode_metric_unit",
+   "decode_metrics_entry",
+   "decode_numerical_data_point",
+   "decode_numerical_data_point_list",
+   "decode_resource_metadata_and_attributes",
+   "decode_resource_metrics_entry",
+   "decode_resource_metrics_metadata",
+   "decode_scope_metadata_and_attributes",
+   "decode_scope_metrics_entry",
+   "decode_scope_metrics_metadata",
+   "decode_service_request",
+   "decode_summary_data_point",
+   "decode_summary_data_point_list",
+   "decode_summary_entry",
+   "destroy_context_list",
+   "get_or_create_data_point_metadata_context",
+   "get_or_create_external_metadata_kvlist",
+   "get_or_create_metric_metadata_context",
+   "map_type_to_key"
+  ],
+  "lib/cmetrics/src/cmt_encode_opentelemetry_batch.c": [
+   "append_original_payload",
+   "batch_add_metric",
+   "batch_add_resource",
+   "batch_add_scope",
+   "batch_ensure_resource",
+   "batch_ensure_scope",
+   "batch_pack",
+   "batches_append",
+   "cmt_encode_opentelemetry_create_batches",
+   "cmt_encode_opentelemetry_destroy_batches",
+   "cmt_encode_opentelemetry_split_payload",
+   "empty_batches_create",
+   "metric_data_point_count",
+   "metric_view_create",
+   "metric_view_destroy",
+   "metrics_batch_view_destroy",
+   "metrics_batch_view_init",
+   "request_data_point_count",
+   "set_result"
+  ],
+  "lib/cprofiles/cprof_decode_opentelemetry.c": [
+   "cprof_decode_opentelemetry_create",
+   "decode_function_entry",
+   "decode_instrumentation_scope",
+   "decode_keyvalueandunit_entry",
+   "decode_line_entry",
+   "decode_link_table_entry",
+   "decode_location_entry",
+   "decode_mapping_entry",
+   "decode_profile_entry",
+   "decode_profile_into_scope",
+   "decode_profile_sample_entry",
+   "decode_resource",
+   "decode_resource_profiles_entry",
+   "decode_scope_profiles_entry",
+   "decode_service_request"
+  ],
+  "lib/ctraces/src/ctr_decode_opentelemetry.c": [
+   "convert_any_value",
+   "convert_array_value",
+   "convert_bool_value",
+   "convert_bytes_value",
+   "convert_double_value",
+   "convert_int_value",
+   "convert_kvlist_value",
+   "convert_otel_attrs",
+   "convert_string_value",
+   "ctr_decode_opentelemetry_create",
+   "ctr_scope_span_set_scope",
+   "ctr_span_set_links",
+   "resource_set_data",
+   "span_set_attributes",
+   "span_set_events"
+  ],
+  "plugins/in_opentelemetry/opentelemetry_logs.c": [
+   "binary_payload_to_msgpack",
+   "otel_pack_array",
+   "otel_pack_bool",
+   "otel_pack_bytes",
+   "otel_pack_double",
+   "otel_pack_int",
+   "otel_pack_kvarray",
+   "otel_pack_kvlist",
+   "otel_pack_string",
+   "otel_pack_v1_metadata",
+   "otlp_pack_any_value",
+   "protobuf_arena_create",
+   "protobuf_logs_free",
+   "protobuf_logs_unpack"
+  ]
+ }
+}

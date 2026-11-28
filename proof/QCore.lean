@@ -371,6 +371,7 @@ import QCore.OpensslRemainingSetters
 import QCore.OpensslUnstatedSlots
 import QCore.OrderedLifetimeReplay
 import QCore.OsEndpointPostState
+import QCore.OtelProtoObligations
 import QCore.OutParameterBodySummary
 import QCore.OutParameterScalarFramePremise
 import QCore.OutSlotCallWrite

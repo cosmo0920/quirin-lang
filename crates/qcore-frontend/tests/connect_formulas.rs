@@ -63,7 +63,7 @@ fn every_cx_term_is_used_typed_and_bound_to_lean() {
         .iter()
         .filter(|t| t.block == "CX")
         .collect::<Vec<_>>();
-    assert_eq!(cx.len(), 90);
+    assert_eq!(cx.len(), 94);
     let registered =
         |s: &str| s == "obj" || s == "integer" || RENDERED_VALUE_SORTS.iter().any(|(v, _)| *v == s);
     for t in &cx {
@@ -95,10 +95,18 @@ fn every_cx_term_is_used_typed_and_bound_to_lean() {
         .filter(|(s, _)| s.starts_with("cx_"))
         .count();
     assert_eq!(sorts, 10);
-    // The CX block is the last block, contiguous.
+    // The CX block is contiguous, followed only by the G1 block (card
+    // G1-CLOSURE-FORMULAS) and then the OTP block (card OTEL-PROTO-AUDIT),
+    // never reordered.
     let blocks: Vec<_> = RENDERED_TERMS.iter().map(|t| t.block).collect();
     let first = blocks.iter().position(|b| *b == "CX").unwrap();
-    assert!(blocks[first..].iter().all(|b| *b == "CX"));
+    let count = blocks.iter().filter(|b| **b == "CX").count();
+    assert!(blocks[first..first + count].iter().all(|b| *b == "CX"));
+    assert!(
+        blocks[first + count..]
+            .iter()
+            .all(|b| *b == "G1" || *b == "OTP")
+    );
     assert_eq!(blocks[first - 1], "K6");
     // Every formula has its Lean theorem, every term its Lean definition.
     let lean = std::fs::read_to_string(

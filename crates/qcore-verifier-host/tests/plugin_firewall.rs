@@ -479,3 +479,110 @@ fn the_classification_never_disagrees_with_the_registry_on_safe() {
         assert_ne!(verdict(&claim), Verdict::Unsafe);
     }
 }
+
+/// Card G1-CLOSURE-FORMULAS (`docs/reports/g1-closure-record/README.md`,
+/// case `g1_case_vp02_v2_empty_inventory`): the evidence-v2 counterpart of
+/// REEVALUATION_SPEC finding VP02. A provider answers `Safe` for a task whose
+/// core inventory holds no obligation of the requested capability, with
+/// coverage equal to that empty inventory and a witness the checker accepts
+/// (`Replay` discharges the empty set). Without the firewall's
+/// empty-inventory refusal the discharged set would equal the required one
+/// and a certificate would be minted; the refusal is QP016 at the evidence
+/// firewall, after the provider answered, never a transport failure.
+#[test]
+fn g1_vp02_empty_core_inventory_cannot_obtain_a_v2_certificate() {
+    let mut registry = VerifierRegistry::default();
+    registry
+        .register(Arc::new(Plugin {
+            manifest: manifest(),
+            answer: Answer::Certified,
+        }))
+        .unwrap();
+    let mut empty = task();
+    empty.obligations.clear();
+    empty.validate().unwrap();
+    assert!(
+        empty
+            .coverage_for(VerifierCapability::ResourceContracts)
+            .is_empty()
+    );
+    let discharged = Replay
+        .check(
+            &empty,
+            &witness(&request(&empty), &["pool_get", "pool_put"]),
+        )
+        .unwrap();
+    assert!(discharged.is_empty());
+    let outcome = registry.verify_v2(&request(&empty), &empty, Some(&Replay));
+    assert_eq!(outcome.verdict, ProposedVerdict::Unknown);
+    assert!(outcome.certificate.is_none());
+    assert!(outcome.composite.is_none());
+    assert_eq!(outcome.diagnostics.len(), 1, "{outcome:?}");
+    assert_eq!(outcome.diagnostics[0].code, "QP016", "{outcome:?}");
+    assert!(
+        outcome.diagnostics[0]
+            .message
+            .contains("no independently checked no-obligations argument"),
+        "{outcome:?}"
+    );
+    // The positive control on the same registry and checker survives.
+    let task = task();
+    let certified = registry.verify_v2(&request(&task), &task, Some(&Replay));
+    assert_eq!(certified.verdict, ProposedVerdict::Safe);
+    let certificate = certified.certificate.expect("positive control certified");
+    assert_eq!(
+        certificate.coverage(),
+        &task.coverage_for(VerifierCapability::ResourceContracts)
+    );
+}
+
+/// Card G1-CLOSURE-FORMULAS (case `g1_case_vp_v2_unmatched_target`): a task
+/// whose target profile, library, dialect or backend the manifest does not
+/// declare, or whose capability it does not declare, is refused at QP005
+/// before the provider is consulted, though the provider would answer with a
+/// witness the checker replays; the same request inside the declared target
+/// is certified.
+#[test]
+fn g1_unmatched_target_profile_cannot_obtain_a_v2_certificate() {
+    let mut registry = VerifierRegistry::default();
+    registry
+        .register(Arc::new(Plugin {
+            manifest: manifest(),
+            answer: Answer::Certified,
+        }))
+        .unwrap();
+    for field in ["profile", "library", "dialect", "backend"] {
+        let mut outside = task();
+        match field {
+            "profile" => outside.target.profile = "undeclared-profile".into(),
+            "library" => outside.target.library = "other-library".into(),
+            "dialect" => outside.target.dialect = "c11".into(),
+            _ => outside.target.backend = "native".into(),
+        }
+        let outcome = registry.verify_v2(&request(&outside), &outside, Some(&Replay));
+        assert_eq!(outcome.verdict, ProposedVerdict::Unknown, "{field}");
+        assert!(outcome.certificate.is_none(), "{field}");
+        assert_eq!(outcome.diagnostics.len(), 1, "{field}: {outcome:?}");
+        assert_eq!(outcome.diagnostics[0].code, "QP005", "{field}");
+    }
+    // A capability the manifest does not declare is refused the same way.
+    let mut other = task();
+    for obligation in &mut other.obligations {
+        obligation.capability = VerifierCapability::Concurrency;
+    }
+    let mut request_other = request(&other);
+    request_other.capability = VerifierCapability::Concurrency;
+    request_other.obligations = other
+        .obligations_for(VerifierCapability::Concurrency)
+        .into_iter()
+        .cloned()
+        .collect();
+    let outcome = registry.verify_v2(&request_other, &other, Some(&Replay));
+    assert_eq!(outcome.verdict, ProposedVerdict::Unknown);
+    assert!(outcome.certificate.is_none());
+    assert_eq!(outcome.diagnostics[0].code, "QP005", "{outcome:?}");
+    let task = task();
+    let inside = registry.verify_v2(&request(&task), &task, Some(&Replay));
+    assert_eq!(inside.verdict, ProposedVerdict::Safe);
+    assert!(inside.certificate.is_some());
+}

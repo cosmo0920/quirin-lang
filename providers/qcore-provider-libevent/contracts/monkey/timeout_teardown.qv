@@ -24,6 +24,14 @@ module contract;
 // (`qcore_verification::timeout_teardown`) now evaluates the owner's
 // declaration and binds the owner's digest into its projection and evidence.
 
+// Card CONNECT-LIBC-EFFECT-CLAIMS: `path_call_sequences` below and
+// `cb_timeout_teardown_path`'s `path_calls` are call-site OBSERVATIONS of
+// cb_timeout's own body (the calls on each typed source path at the pinned
+// revision), owned by this crate (`cx_observation_accepted`). They name libc
+// functions (`send`, `__errno_location`, `perror`) only as elements of that
+// body's calls and state no effect of any callee; the libc callees' declared
+// effects are quirin-provider-libc's (`libc/callee_effects.qv`).
+
 extern fn cb_timeout_source() -> unit
 contract {
     ensures normal (signature == "void (int, short, void *)") or (signature == "void (evutil_socket_t, short, void *)");

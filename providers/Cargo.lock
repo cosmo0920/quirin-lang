@@ -274,6 +274,10 @@ dependencies = [
 ]
 
 [[package]]
+name = "quirin-provider-fluent-otel-proto"
+version = "0.1.0"
+
+[[package]]
 name = "quirin-provider-libc"
 version = "0.1.0"
 
@@ -332,6 +336,7 @@ dependencies = [
  "qcore-schemas",
  "quirin-provider-cfl",
  "quirin-provider-fluent-bit",
+ "quirin-provider-fluent-otel-proto",
  "quirin-provider-libc",
  "quirin-provider-mpack",
  "quirin-provider-msgpack",

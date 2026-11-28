@@ -3,7 +3,7 @@
   "plugin_id": "qcore.libevent",
   "contracts": {
     "contracts/monkey/callback_binding.qv": "55587515743ddadde845440ebefd1b9555dd2cca65983386148365a6b14e8fc8",
-    "contracts/monkey/callback_task_handoff.qv": "f988c81e00471650a6b7c69c613be07f063a09d026287ff2dad6a3686e8e3311",
+    "contracts/monkey/callback_task_handoff.qv": "36aae2b9bfe7d180d64f5b85eaff7f9b82f0d76d6c3f137e71cff4c8c62e79be",
     "contracts/monkey/composition.qv": "e7d841d7fd9c9322591c6a4c2339f31dc05e5ee96b62187b51042e42c2a996c8",
     "contracts/monkey/cycle18_composition.qv": "a5d7c2ca197f81395df2f141ea88ec136fa14cec4d067f4c85cc018738d2571e",
     "contracts/monkey/descriptor_observation.qv": "c12c580484b350932aa78d46d029aa1ab321286a568edac8a8cd550fd9d5ed35",
@@ -16,7 +16,7 @@
     "contracts/monkey/result_range.qv": "d6ea9b348959caed059718d594b6a30f4290c130c0bc89116ed02ce92f1a82c7",
     "contracts/monkey/scalar_observation.qv": "ca68fd35d557accac10dfb043d60e57fa096aeb97c53de09a38416e1f8c25303",
     "contracts/monkey/string.qv": "ee0d13e55f40331438e572703773a222c56a519e511a8ff885be1616fecba8a2",
-    "contracts/monkey/timeout_teardown.qv": "64b92201adeb7e750a5f83c33642108550cb864caba3a9fab9fe33b9d32c55ca",
+    "contracts/monkey/timeout_teardown.qv": "404892b072c89ca07ede6b607661bb61b12bb1e43928f20fca09fa2ebe17b7f9",
     "contracts/monkey/vhost_set.qv": "1d9b9bad2a1e1f30cb2530cb600c831eeffee5c387c796b996f26efcc314af46",
     "contracts/monkey/wait_failure_policy.qv": "26f45d80a0e930bc44b9b308182a74f98b3709f1b28ed0c894a61e91073c8633",
     "contracts/monkey/wait_identity_policy.qv": "52dadbe99576d93282c4bbf4b29583a35360d91ff9f8f82564999bbaf5fbf115",

@@ -22,9 +22,11 @@ use qcore_c_gateway::typed_source::{
 use qcore_contract::profile_loader::load_source_set_profile;
 use qcore_schemas::profile::ImportRole;
 use qcore_verification::callback_task_handoff::{
-    CallbackTaskHandoffError, CallbackTaskObservation, CallbackTaskObservationAction as Action,
-    CallbackTaskObservationBundle, check_callback_task_observations,
-    check_taskful_callback_observations, project_callback_task_source,
+    CALLBACK_TASK_HANDOFF_POLICY, CallbackTaskHandoffError, CallbackTaskObservation,
+    CallbackTaskObservationAction as Action, CallbackTaskObservationBundle, CalleeEffectSource,
+    LIBC_CALLEE_EFFECTS, LIBC_CRATE, POLICY_CRATE, callee_effect_sources,
+    check_callback_task_observations, check_libc_callee_effects_identity,
+    check_taskful_callback_observations, declared_callee_effect_in, project_callback_task_source,
     project_taskful_callback_source, taskful_fixture_contract,
 };
 use qcore_verification::monkey_wait_projection::monkey_source_revision;
@@ -455,4 +457,112 @@ fn taskful_source_bytes_are_pinned_even_when_imported_summaries_are_unchanged() 
         ),
         Err(CallbackTaskHandoffError::Source(_))
     ));
+}
+
+// Card CONNECT-LIBC-EFFECT-CLAIMS (user decision of 2026-11-27, "Option A").
+
+#[test]
+fn libc_callee_effects_resolve_from_libc() {
+    let sources = callee_effect_sources();
+    for callee in ["send", "perror", "__errno_location"] {
+        assert_eq!(declared_callee_effect_in(&sources, callee), Ok(LIBC_CRATE));
+    }
+    for callee in [
+        "event_del",
+        "event_free",
+        "evutil_closesocket",
+        "mk_mem_free",
+    ] {
+        assert_eq!(
+            declared_callee_effect_in(&sources, callee),
+            Ok(POLICY_CRATE)
+        );
+    }
+    assert!(!CALLBACK_TASK_HANDOFF_POLICY.contains("callee == \"send\""));
+    assert!(LIBC_CALLEE_EFFECTS.contains("callee == \"send\""));
+}
+
+#[test]
+fn a_libc_effect_declaration_outside_libc_is_refused() {
+    let policy = format!(
+        "{CALLBACK_TASK_HANDOFF_POLICY}\nextern fn effect_send() -> unit\ncontract {{ ensures normal callee == \"send\"; ensures normal task_spawn == 0; ensures normal defer == 0; }};\n"
+    );
+    let declarations = ["effect_event_del", "effect_send"];
+    let sources = [CalleeEffectSource {
+        owner_crate: POLICY_CRATE,
+        text: &policy,
+        declarations: &declarations,
+    }];
+    let Err(CallbackTaskHandoffError::Policy(message)) =
+        declared_callee_effect_in(&sources, "event_del")
+    else {
+        panic!("a libc effect declared in qcore-provider-libevent was accepted");
+    };
+    assert!(
+        message.contains("cx_refuse_libc_effect_elsewhere"),
+        "{message}"
+    );
+}
+
+#[test]
+fn libc_holds_no_effect_of_another_owners_callee() {
+    let module = format!(
+        "{LIBC_CALLEE_EFFECTS}\nextern fn effect_event_del() -> unit\ncontract {{ ensures normal callee == \"event_del\"; ensures normal task_spawn == 0; ensures normal defer == 0; }};\n"
+    );
+    let declarations = ["effect_send", "effect_event_del"];
+    let sources = [CalleeEffectSource {
+        owner_crate: LIBC_CRATE,
+        text: &module,
+        declarations: &declarations,
+    }];
+    assert!(matches!(
+        declared_callee_effect_in(&sources, "send"),
+        Err(CallbackTaskHandoffError::Policy(message)) if message.contains("which is no libc name")
+    ));
+}
+
+#[test]
+fn a_changed_libc_module_refuses_the_audit() {
+    let lock = include_bytes!("../../../providers/quirin-provider-libc/contract-inventory.lock");
+    let digest = check_libc_callee_effects_identity(LIBC_CALLEE_EFFECTS.as_bytes(), lock).unwrap();
+    assert_eq!(
+        digest,
+        qcore_schemas::sha256_hex(LIBC_CALLEE_EFFECTS.as_bytes())
+    );
+    // A changed module: one clause is no longer the reviewed one.
+    let changed = LIBC_CALLEE_EFFECTS.replacen(
+        "callee == \"send\"; ensures normal task_spawn == 0",
+        "callee == \"send\"; ensures normal task_spawn == 1",
+        1,
+    );
+    assert_ne!(changed, LIBC_CALLEE_EFFECTS);
+    assert!(matches!(
+        check_libc_callee_effects_identity(changed.as_bytes(), lock),
+        Err(CallbackTaskHandoffError::Policy(message)) if message.contains("differs from the verifier")
+    ));
+    // An inventory lock that records another digest for the module.
+    let stale = std::str::from_utf8(lock)
+        .unwrap()
+        .replace(&digest, &"0".repeat(64));
+    assert!(matches!(
+        check_libc_callee_effects_identity(LIBC_CALLEE_EFFECTS.as_bytes(), stale.as_bytes()),
+        Err(CallbackTaskHandoffError::Policy(message)) if message.contains("does not record")
+    ));
+    // Another crate's inventory lock.
+    let other =
+        include_bytes!("../../../providers/qcore-provider-libevent/contract-inventory.lock");
+    assert!(check_libc_callee_effects_identity(LIBC_CALLEE_EFFECTS.as_bytes(), other).is_err());
+}
+
+#[test]
+fn the_projection_binds_the_libc_module_digest() {
+    if qcore_c_gateway::clang_command().is_err() {
+        return;
+    }
+    let imported = imported(CALLBACKS);
+    let projection = project_callback_task_source(&summaries(&imported)).unwrap();
+    assert_eq!(
+        projection.libc_effects_digest(),
+        qcore_schemas::sha256_hex(LIBC_CALLEE_EFFECTS.as_bytes())
+    );
 }

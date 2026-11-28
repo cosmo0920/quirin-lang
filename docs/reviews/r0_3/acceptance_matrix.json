@@ -195,7 +195,7 @@
   "ct_stage_names": 20,
   "ct_cells": 1000,
   "unverified_spec_items": 10,
-  "named_followups": 1145
+  "named_followups": 1158
  },
  "derivation": {
   "rule": "no count in a section this file marks `derived` is hand-copied from a status ledger; each is read from the manifest or validated run record named beside it. Sections marked `hand_maintained` are recorded analysis carried verbatim from the previous matrix, and `integrator_supplied` numbers name whether they were measured for this run or carried - see section_ownership.",
@@ -6626,7 +6626,7 @@
   ]
  },
  "corpus": {
-  "contract_modules": 155,
+  "contract_modules": 158,
   "contract_modules_pinned_by": "compiler/tests/qcore_contract_corpus.rs",
   "contract_clause_pin": {
    "const": "EXPECTED_CONTRACTS",
@@ -6899,7 +6899,7 @@
    "crates/quirin-audit-plugin-openssl",
    "crates/quirin-source-analysis"
   ],
-  "provider_workspace_members": 16,
+  "provider_workspace_members": 17,
   "provider_workspace_member_paths": [
    "conformance",
    "qcore-provider-chunkio",
@@ -6909,6 +6909,7 @@
    "qcore-provider-librdkafka",
    "quirin-provider-cfl",
    "quirin-provider-fluent-bit",
+   "quirin-provider-fluent-otel-proto",
    "quirin-provider-libc",
    "quirin-provider-libcurl",
    "quirin-provider-mpack",
@@ -6921,11 +6922,11 @@
   "note": "providers/ is a separate Cargo workspace, excluded from the core workspace; P01 verified empirically that the core workspace builds and passes its full suite with providers/ moved out of the tree."
  },
  "validation": {
-  "note": "Landing integrate/r88 (base main 94e9c7b74; USER DECISION 2026-11-28 \"limit + one write only\" and \"land SETTLED-LEAK-MARK-LEAFLESS as r87 and FB-LEDGER as r88\"). Contents: FB-LEDGER-MEM-BUF-LIMIT-BOUND ff94be398 (no gateway rule: a checked census of Fluent Bit 046accf6 (CENSUS.md, census.py over 24 hashed inputs, 93 rows) locates the append's one write (flb_input_chunk.c:3455) after the paused gate and every mem_buf_status and mem_buf_limit write; QCore.MemBufLimitBound new proves mem_chunks_size <= L + W and resident bytes <= L + W for storage.type memory and memrb under named premises (P-MBL-WRITE-BOUND for W, engine-thread serialisation, no re-entrant append, one stream per instance, no size_t wrap, non-zero limit, destroy removing content, no shutdown-flush append, quiet rate gate for memory, non-expanding filters for memrb), with L - 1 + W reached; counterexamples outside the premises (protect's rate-gate return, the shutdown-flush arm, filesystem storage, expanding memrb filters, limit 0) recorded, none presented as an upstream defect; ledger_transition unit fixtures read route T's paths row for row against the Lean vectors with seven mutation controls; max_chunks_up and storage.backlog.mem_limit stay uncertified by the user's choice). Merge clean. Amendments applied with --profiles-base origin/main: amends FB-LEDGER-ADVISORY-LIMITS; registers FB-MBL-PINNED-BODIES; one STATUS edit under Coverage by area. llp64_fixture_scan over the card's test changes: 0 counted. Full landing gate on 0261efa75 (raw record private/integrate-r88/gate/gate.json, kept out of the tree by the report-hygiene rule) via scripts/gate_scope.py --base origin/main --full --landing through private/toolchain/env.sh: Rust 725 units / 770 summaries, 10421 passed, 0 failed, 24 ignored; fmt, Clippy and both reevaluation examples exit 0; Lean exit 0 and scripts/check_lean_audits.py over all modules exit 0, 538 audits (private/integrate-r88/lean.log). The gate scope did not select the provider gate; provider_tests 182 (1 ignored) is carried from the integrate/r85 landing gate. Python (814 tests) exit 1 only on the stale matrix Lean-audit count (537 against 538 from the new QCore.MemBufLimitBound audit), follow-up count (1144 against 1145) and report index (280 against 281 directories), cleared by regenerating from this record; the rerun after the records commit exits 0. Measurement is the card's own (opt-in current --monkey-linked over Fluent Bit 046accf6, base 287dce8ed vs tip 748c0a6a7, each from its own git archive tree: no moved row, 4,804 function rows and 181 unit statuses identical). The card measured on a base without r87; the combination is covered by this gate, not by a joint measurement. Pinned-route parity (quirin-audit measure --declared) was not run: this host holds no build/cycle19 inputs or baselines. No profile baseline is changed and land.py publish is owed.",
-  "workspace_tests": 10421,
-  "provider_tests": 182,
-  "python_evidence_validator_tests": 814,
-  "lean_audits": 538,
+  "note": "Landing integrate/r41-r42 (USER DECISIONS 2026-11-27 \"Supplement\" for G1; 2026-11-28 \"Land with record\"). Merges G1-CLOSURE-FORMULAS (efae981fc, as a supplement to P0-G1-CLOSURE-RECORD), CONNECT-LIBC-EFFECT-CLAIMS (8eaaa4ab1), OTEL-PROTO-AUDIT (5177d9c77) and OTEL-PROTO-PHASE-B1 (c49eb28f3); amendments applied in order with --profiles-base origin/main in 351ad67c2, with two landing repairs: the OTel census split into census.json plus census-rows.json.gz (512 KiB ceiling), and the gate read census extended by the 24 new test units (318fdfca6, 727 of 784). A first full landing gate on 351ad67c2 failed only on the known libcurl test and on test_the_census_covers_the_suite (703 of 784), repaired by 318fdfca6. Main moved to 287dce8ed (integrate/r84-r86, rule 46 kill policy); the merge 1a289aa10 kept both increments paragraphs and both sides' follow-ups, dropped main's INTEGRATOR-QUEUE placeholders for G1-CLOSURE-FORMULAS and its four follow-ups, and registered OTEL-PROTO-PHASE-B1-CALLER-PREDICTION. Code changed on both sides, so the full landing gate ran on the merged tip 1a289aa10 (scripts/gate_scope.py --base origin/main --full --landing; raw record kept in the landing worktree's private/gate-full-merged/gate.json, sha256 fb82a868d7e9450d0958fe367a380826690636743395c455521430ad9bdd02e8): Rust 728 units / 773 summaries, 10433 passed, 1 failed (the known libcurl curlver.h host failure, qcore-audit::test::libcurl_user_crate_versions), 24 ignored; fmt, Clippy, both reevaluation examples, Lean, Python 834, provider package build/verify, provider tests 187 passed / 1 ignored, provider fmt and Clippy exit 0; 537 Lean audits on disk. Measurements (quirin-audit measure, four live routes): (1) declared, base rev:1f672bfca, tip rev:351ad67c2, --declared docs/reports/otel-proto-phase-b1/PREDICTION.md: mismatch on corpus and twelve-home (the 7 declared Unknown -> Safe rows plus 5 unpredicted: cmetrics/ctraces otlp_kvpair_value_initialize and cmetrics render_opentelemetry_context_to_sds Unknown -> Safe, ctraces set_spans and set_scope_spans Unknown -> provisional Unsafe), match on system and slice; (2) merged tree, base rev:287dce8ed, tip rev:1a289aa10 (record beside this file as native-comparison.json.gz, uncompressed sha256 305b90af52967becdcb75dc184aa4079c91526962dcd172d8d3df03a849d75b7): status complete, the same 12 moves on corpus and twelve-home (1190/3632/12 -> 1200/3620/14), none on system (124/320/4) or slice (65 Safe / 4 Pending / 334 Unknown / 1 Unsafe), 0 unmatched. Every unpredicted move depends on a B1 contract; the two provisional Unsafe rows are allocation-failure leaks confirmed by source reading (README.md), not upstream reports. After the gate, main moved to 5c26706b0 (integrate/r87 SETTLED-LEAK-MARK-LEAFLESS, r88 FB-LEDGER-MEM-BUF-LIMIT-BOUND); no code file is shared with this round (only STATUS, the increments page, gateway.md, the matrix and proof/QCore.lean), so per the landing race policy the merge was checked by a targeted run: Lean (all audits, 539 on disk after the merge: 536 + this round 1 + r87-r88 2), qcore-c-gateway and qcore-frontend tests, the Python suite, land.py check and contracts.py check; lean_audits records the merged count.",
+  "workspace_tests": 10433,
+  "provider_tests": 187,
+  "python_evidence_validator_tests": 834,
+  "lean_audits": 539,
   "lean_audit_files": [
    "AuditAbiEnumConstPointer.lean",
    "AuditAddressArrowPlace.lean",
@@ -7248,6 +7249,7 @@
    "AuditOpensslUnstatedSlots.lean",
    "AuditOrderedLifetimeReplay.lean",
    "AuditOsEndpointPostState.lean",
+   "AuditOtelProtoObligations.lean",
    "AuditOutParameterBodySummary.lean",
    "AuditOutParameterScalarFramePremise.lean",
    "AuditOutSlotCallWrite.lean",
@@ -7470,9 +7472,9 @@
   "reevaluation_followup_exit": 0,
   "cargo_fmt": "clean",
   "cargo_clippy": "clean",
-  "standing_gate": "full landing gate: every step exits 0 except the Python suite's stale-matrix check, cleared by regenerating the matrix from this record; provider gate not selected (no providers/ change), provider count carried from the integrate/r74 landing batch A gate",
+  "standing_gate": "full landing gate on 1a289aa10: every step exits 0 except rust-suite (the known host libcurl failure); merge with r87-r88 checked by a targeted run; Lean 539",
   "full_language_conformance": false,
-  "measurement_provenance": "integrator_supplied (docs/reports/fb-ledger-mem-buf-limit-bound/integration/gate.json)"
+  "measurement_provenance": "integrator_supplied (docs/reports/otel-proto-phase-b1/integration/gate.json)"
  },
  "named_followups": [
   {
@@ -8633,8 +8635,8 @@
   {
    "id": "CPROFILES-STRAY-DUPLICATE-TREE",
    "title": "lib/cprofiles/*.c duplicates lib/cprofiles/src/*.c and the two copies are NOT identical",
-   "why": "Found incidentally by card W37-CORPUS-CONTRACTS-4's definition-count survey: lib/cprofiles/cprof_encode_opentelemetry.c and lib/cprofiles/src/cprof_encode_opentelemetry.c are both present and differ in size (92,051 vs 82,980 bytes), and the same stray-duplicate pattern applies to the whole lib/cprofiles/*.c set. Nothing in that card depends on it and no claim is made about which tree the pinned build compiles. It is recorded because a resource contract is keyed by NAME, so a future declaration naming anything defined in that library would meet two candidate definitions that disagree - the ADD-NAME-COLLISION hazard, latent. Discharge condition: Determine which of the two trees the pinned compile database actually builds, and record it beside the corpus conventions.",
-   "source": "docs/reports/w37-corpus-contracts-4/README.md"
+   "why": "Found incidentally by card W37-CORPUS-CONTRACTS-4's definition-count survey: lib/cprofiles/cprof_encode_opentelemetry.c and lib/cprofiles/src/cprof_encode_opentelemetry.c are both present and differ in size (92,051 vs 82,980 bytes), and the same stray-duplicate pattern applies to the whole lib/cprofiles/*.c set. Nothing in that card depends on it and no claim is made about which tree the pinned build compiles. It is recorded because a resource contract is keyed by NAME, so a future declaration naming anything defined in that library would meet two candidate definitions that disagree - the ADD-NAME-COLLISION hazard, latent. Discharge condition: Determine which of the two trees the pinned compile database actually builds, and record it beside the corpus conventions. OBSERVED by OTEL-PROTO-AUDIT: the pinned compile database (build/compile_commands.json, sha256 5e6868d9...f7e78, Fluent Bit 66910c10) compiles the root copies lib/cprofiles/cprof_*.c (19 units, among them cprof_decode_opentelemetry.c and cprof_encode_opentelemetry.c) and no file under lib/cprofiles/src/.",
+   "source": "docs/reports/w37-corpus-contracts-4/README.md, docs/reports/otel-proto-audit/README.md"
   },
   {
    "id": "MPACK-WRITER-INTERIOR-REALLOC",
@@ -11353,8 +11355,8 @@
   {
    "id": "CG13-UNION-PUNNING-FLOW-INSENSITIVE",
    "title": "A union pointer read is refused whenever the function stores through another member of that union anywhere (104 refused consultations over 17 function names)",
-   "why": "Found by CG13-UNION-AND-BITFIELD-PLACES (gateway rule 10w): the punning check (`union_bitfield::punned`) is flow- and tag-insensitive. A pointer value read through a union member (or a pointer loaded through one to read through) is refused when the function stores through, increments or takes the address of another member of a union of the same record, or writes a whole object of its type, wherever that store is. Tagged unions written in one arm and read in another (the OpenTelemetry `value_case`/`data_case` initialisers, `initialize_metric`, `otlp_any_value_initialize`) therefore stay refused. Measured on the corpus arbiter at the card's final tip from its parity rows (`position: union-bitfield`, outcome `refused-punned`, deduplicated by function, node offset and outcome): 104 consultations over 17 function names. A callee's store through another member is not visible at all: the premise `union-live-member-view` (a pointer so read is still only a target-free borrow). DISCHARGE: a live-member reading (a store of the member read, or a tag test, dominating the read with no intervening store through another member or call that may write the object), with Lean parity and a measured re-pin.",
-   "source": "docs/reports/archive/gateway-and-clang/cg13-union-and-bitfield-places/README.md",
+   "why": "Found by CG13-UNION-AND-BITFIELD-PLACES (gateway rule 10w): the punning check (`union_bitfield::punned`) is flow- and tag-insensitive. A pointer value read through a union member (or a pointer loaded through one to read through) is refused when the function stores through, increments or takes the address of another member of a union of the same record, or writes a whole object of its type, wherever that store is. Tagged unions written in one arm and read in another (the OpenTelemetry `value_case`/`data_case` initialisers, `initialize_metric`, `otlp_any_value_initialize`) therefore stay refused. Measured on the corpus arbiter at the card's final tip from its parity rows (`position: union-bitfield`, outcome `refused-punned`, deduplicated by function, node offset and outcome): 104 consultations over 17 function names. A callee's store through another member is not visible at all: the premise `union-live-member-view` (a pointer so read is still only a target-free borrow). DISCHARGE: a live-member reading (a store of the member read, or a tag test, dominating the read with no intervening store through another member or call that may write the object), with Lean parity and a measured re-pin. OBSERVED by OTEL-PROTO-AUDIT (round 42, pinned tree 66910c10): the oneof reads of the OpenTelemetry decoders are case-tested. Its site census (scripts/otel_proto_sites.py, O3) finds 198 oneof member reads on the brief's modules, 123 guarded by a switch or test on the case discriminant (value_case, data_case) and 75 in encoder-built messages, not determinable (guarded/not determinable: cmetrics 92/46, ctraces 16/11, in_opentelemetry 7/0, out_opentelemetry 8/9, src/opentelemetry 0/9); none is unguarded on the wire. Those guarded sites are the live-member reading this entry's discharge asks for (a tag test dominating the read), with the line of each test in docs/reports/otel-proto-audit/census.json.",
+   "source": "docs/reports/archive/gateway-and-clang/cg13-union-and-bitfield-places/README.md, docs/reports/otel-proto-audit/README.md",
    "recorded_by": "CG13-UNION-AND-BITFIELD-PLACES"
   },
   {
@@ -15269,13 +15271,6 @@
    "recorded_by": "OUT-SLOT-CONDITIONAL-DELIVERY"
   },
   {
-   "id": "CONNECT-LIBC-EFFECT-CLAIMS",
-   "title": "libevent states task and defer effects of libc callees outside quirin-provider-libc",
-   "why": "MEASURED by card CONNECT-ADOPT-DECLARED-DEPENDENCIES (base 1ecaf97e9): qcore-provider-libevent's monkey/callback_task_handoff.qv declares effect_send, effect_perror and effect_errno_location (callee == \"send\", \"perror\", \"__errno_location\"; task_spawn == 0; defer == 0), and monkey/timeout_teardown.qv records path_calls through send, __errno_location and perror. They name libc symbols and read no libc clause, so no link is required, but they are effect claims about libc functions held outside quirin-provider-libc (rule 10j owns libc declarations, not effect observations). DISCHARGE: decide whether task and defer effect claims about libc callees move into quirin-provider-libc (and are then linked), or are recorded as observations owned by the observing crate.",
-   "source": "docs/reports/connect-adopt-declared-dependencies/README.md",
-   "recorded_by": "CONNECT-ADOPT-DECLARED-DEPENDENCIES"
-  },
-  {
    "id": "LINKAGE-PREMISES-BLOCK-RERENDER",
    "title": "A `premises { ... };` block is admitted only where the consumers compare block-free tokens",
    "why": "MEASURED by card CONNECT-ADOPT-DECLARED-DEPENDENCIES: the resource v1 loader, the [[local]] re-rendering (local_condition::without_local) and the inheritance shape check (contract_inclusion::canonical_shape) compare a declaration's tokens with the blocks' openers and `};` removed (contract_dependency::without_linkage_blocks), so a grouped declaration loads; the shipped links use the single-clause form. The bounds, outer and model vocabularies reject a link (no QuantLink reading), so they reject a premises block holding one; a premises block holding only their own clauses has not been exercised there. DISCHARGE: a fixture per vocabulary for a premises block of its own clauses, or a refusal by name.",
@@ -15332,39 +15327,130 @@
    "recorded_by": "FB-BACKLOG-ACCOUNTING"
   },
   {
-   "id": "G1-CLOSURE-FORMULAS",
-   "title": "Queued card: G1 closure formulas supplementing P0-G1-CLOSURE-RECORD (16 checked formulas over the 27-row case table, two firewall controls)",
-   "why": "Queued card, in flight (recorded by the integrator 2026-11-27 so the queue is on main). Running in another session; it supplements P0-G1-CLOSURE-RECORD's G1 evaluation with 16 checked formulas over the 27-row case table and two firewall controls, and registers four follow-ups (G1-EXCLUDED-CAPABILITIES-WITHOUT-CHECKER, G1-EXCLUDED-EMPTY-SCOPE-ARGUMENT, G1-WM-CERTIFICATE-MODEL-IDENTITY, G1-WM-MIXED-SIZE-ROUTE-CONTROL), recorded here ahead of its landing. DISCHARGE: the card lands with its full landing gate; its amendments retire this entry and amend (not register) the four follow-ups.",
-   "source": "docs/reports/p0-g1-closure-record/README.md",
-   "recorded_by": "INTEGRATOR-QUEUE"
-  },
-  {
    "id": "G1-EXCLUDED-CAPABILITIES-WITHOUT-CHECKER",
-   "title": "G1 exclusion: capabilities with no checker (from G1-CLOSURE-FORMULAS)",
-   "why": "Follow-up announced by queued card G1-CLOSURE-FORMULAS, recorded ahead of its landing. DISCHARGE: as stated in G1-CLOSURE-FORMULAS's report, which amends this entry when it lands.",
-   "source": "docs/reports/p0-g1-closure-record/README.md",
-   "recorded_by": "INTEGRATOR-QUEUE"
+   "title": "EventTraces, Concurrency and TranslationUnitProjection have no core witness checker, so no certificate exists for them",
+   "why": "G1-CLOSURE-FORMULAS: G1's closure covers CoreCertificates only for capabilities with a registered trusted-core WitnessChecker (ResourceContracts, ChunkLifecycle, ObservationHooks). Every v2 request for EventTraces, Concurrency or TranslationUnitProjection is Unknown (QP016, check_evidence_v2), and every v1 request is Unknown (QP009, check_evidence). That is containment, not verification. REEVALUATION_SPEC §6 and §9 G2 require a versioned capability-specific relation check(program, profile, assumptions, witness) with a proof that an accepted witness entails the property. DISCHARGE: a trusted-core checker per capability with its core-derived inventory, a positive and a negative control through verify_v2, and Lean parity; or a recorded decision that the capability stays uncertifiable.",
+   "source": "docs/reports/g1-closure-record/README.md",
+   "recorded_by": "G1-CLOSURE-FORMULAS"
   },
   {
    "id": "G1-EXCLUDED-EMPTY-SCOPE-ARGUMENT",
-   "title": "G1 exclusion: the empty-scope argument (from G1-CLOSURE-FORMULAS)",
-   "why": "Follow-up announced by queued card G1-CLOSURE-FORMULAS, recorded ahead of its landing. DISCHARGE: as stated in G1-CLOSURE-FORMULAS's report, which amends this entry when it lands.",
-   "source": "docs/reports/p0-g1-closure-record/README.md",
-   "recorded_by": "INTEGRATOR-QUEUE"
+   "title": "A genuinely empty verification scope cannot be certified: no independently checked no-obligations argument exists",
+   "why": "G1-CLOSURE-FORMULAS: VP02's containment refuses every empty scope. v1 refuses empty facts, claims or coverage (QP009, check_evidence). v2 refuses an empty core inventory (QP016, check_evidence_v2, tested by g1_vp02_empty_core_inventory_cannot_obtain_a_v2_certificate). A scope that truly has no obligations is therefore Unknown, a precision gap rather than a containment gap. REEVALUATION_SPEC §6: an empty scope is safe only with an independently checked no-obligations argument. DISCHARGE: a core-derived, independently checked no-obligations argument, with a control showing that it certifies a genuinely empty scope and refuses a provider-asserted one; or a recorded decision that empty scopes stay Unknown.",
+   "source": "docs/reports/g1-closure-record/README.md",
+   "recorded_by": "G1-CLOSURE-FORMULAS"
   },
   {
    "id": "G1-WM-CERTIFICATE-MODEL-IDENTITY",
-   "title": "G1 weak memory: certificate model identity (from G1-CLOSURE-FORMULAS)",
-   "why": "Follow-up announced by queued card G1-CLOSURE-FORMULAS, recorded ahead of its landing. DISCHARGE: as stated in G1-CLOSURE-FORMULAS's report, which amends this entry when it lands.",
-   "source": "docs/reports/p0-g1-closure-record/README.md",
-   "recorded_by": "INTEGRATOR-QUEUE"
+   "title": "C11ExecutionCertificate names no memory model or semantic profile",
+   "why": "G1-CLOSURE-FORMULAS: the weak-memory checker admits exactly one model, C11 as published (N1570), atomic fragment, with no model parameter (R-WM1). G1's profile restriction therefore holds by construction. But the certificate value check_c11_execution returns (crates/qcore-core/src/weak_memory.rs: event_count, happens_before, source_observation) carries no model, standard or fragment identifier. REEVALUATION_SPEC §1 requires every published result to identify its semantic profile, and §2 says to select the same model before comparing verdicts. DISCHARGE: carry the model identity (standard, fragment, checker version) on the certificate and on every verdict built on it, with a test; or show that each publishing consumer already names it.",
+   "source": "docs/reports/g1-closure-record/README.md",
+   "recorded_by": "G1-CLOSURE-FORMULAS"
   },
   {
    "id": "G1-WM-MIXED-SIZE-ROUTE-CONTROL",
-   "title": "G1 weak memory: mixed-size route control (from G1-CLOSURE-FORMULAS)",
-   "why": "Follow-up announced by queued card G1-CLOSURE-FORMULAS, recorded ahead of its landing. DISCHARGE: as stated in G1-CLOSURE-FORMULAS's report, which amends this entry when it lands.",
-   "source": "docs/reports/p0-g1-closure-record/README.md",
-   "recorded_by": "INTEGRATOR-QUEUE"
+   "title": "No executed control shows that the atomic source route refuses a mixed-size, union or bit-field access to an atomic object",
+   "why": "G1-CLOSURE-FORMULAS: mixed-size accesses are outside the weak-memory model (no MemoryEventKind), so they cannot reach check_c11_execution directly. G1's record executed the atomic route's refusals for consume, __sync, by-pointer, unlisted and unevaluated forms (cg19_refusals_name_the_form_and_card). It executed no case in which C source accesses an atomic object through a differently sized or overlapping lvalue (a union arm, a char pointer, a bit-field). REEVALUATION_SPEC §2 (Marmanis et al.) requires unsupported mixed-size behaviour to remain Unknown. DISCHARGE: a source-level control per shape showing a refusal (Unknown) and never a represented event, or a fix where one is admitted.",
+   "source": "docs/reports/g1-closure-record/README.md",
+   "recorded_by": "G1-CLOSURE-FORMULAS"
+  },
+  {
+   "id": "CALLEE-EFFECT-RESOURCE-VOCABULARY",
+   "title": "Task/defer effects of libc callees have no resource-v1 vocabulary",
+   "why": "MEASURED by card CONNECT-LIBC-EFFECT-CLAIMS: the libc callees' task/defer effects live in a literal-fact module (libc/callee_effects.qv) outside every view and every contracts.lock. A dependent therefore cannot link them with linkage_contract_v1, and a change is caught only by the callback task-handoff audit's identity check against the crate's contract-inventory.lock (Unknown), never held Pending through a link. The long-term home (Option B of the card's hand-back) is a resource-v1 predicate on the libc declarations themselves (send, perror, __errno_location), for example resource_task_effect(none). It would need loader, schema, C04 spec, grammar and Lean work, with the verifier reading the loaded libc environment. DISCHARGE: that vocabulary with its consumers, or a recorded decision to keep the literal module.",
+   "source": "docs/reports/connect-libc-effect-claims/README.md",
+   "recorded_by": "CONNECT-LIBC-EFFECT-CLAIMS"
+  },
+  {
+   "id": "CALLEE-EFFECT-OWNER-GENERAL",
+   "title": "Callee-effect ownership is checked for libc callees only",
+   "why": "MEASURED by card CONNECT-LIBC-EFFECT-CLAIMS: QL010 (cx_refuse_libc_effect_elsewhere) refuses a task/defer effect declaration of a libc callee outside quirin-provider-libc. Nothing checks that the effect of any other callee is declared by that callee's owner crate. At the card's tip, libevent's remaining four (event_del, event_free, evutil_closesocket, mk_mem_free) name libevent or Monkey functions and so sit with their owner. DISCHARGE: an ownership map from callee to owning crate and QL010 generalised to it, or a recorded decision that only libc needs the check.",
+   "source": "docs/reports/connect-libc-effect-claims/README.md",
+   "recorded_by": "CONNECT-LIBC-EFFECT-CLAIMS"
+  },
+  {
+   "id": "OTEL-PROTO-PHASE-B",
+   "title": "The OpenTelemetry protocol facts are stated and checked, but no contract carries them and no verdict rests on them",
+   "why": "Card OTEL-PROTO-AUDIT (round 42) stated protobuf-c's unpack facts and the six decoder/encoder obligations O0-O5 as formulas of the new OTP block (22 formulas, guarded_proposition, Lean QCore.OtelProtoObligations) and censused 758 sites in the OTel units (526 guarded, 0 candidates, 232 not determinable), but nothing reads them when deciding a verdict. Phase B options (report section 6): (1, recommended) a new provider crate quirin-provider-fluent-otel-proto on the shipped load path owning the generated *__unpack/__free_unpacked/__init/__pack functions with the WellFormed postcondition as result facts, a plugin-SDK checker as in quirin-provider-libcurl, its pin the protocol identity plus every compiled .pb-c.c/.pb-c.h and protobuf-c.c digest, consumers linking by linkage_contract_v1; (2) a plugin-SDK user crate (no shipped route can rest on it); (3) restating the facts in the cmetrics, ctraces and fluent-bit crates (four authorities). Either way the null model needs a conditional member reading (an element below a tested count, a sub-message under a tested presence, a member under a tested case), an analyzer change with Lean parity. Expected effect, an upper bound: system and slice none; corpus and twelve-home at most 17 null rows and 1 combined row (cmt_encode_opentelemetry_batch.c request_data_point_count) Unknown -> Safe. DISCHARGE: the user's choice, implemented and measured. AMENDED by OTEL-PROTO-PHASE-B1 (USER DECISIONS 2026-11-27 \"New provider crate\", \"Phase it, accept 7\"; option 1, phased): phase B1 is done. The shipped crate quirin-provider-fluent-otel-proto (providers/contract-load-path.json, the corpus index, cycle19-resource-contracts.json and the cmetrics, ctraces and fluent_bit library-provider lists) declares custody contracts for the 78 generated functions the OTel consumer units call (52 __init, 9 __get_packed_size, 9 __pack, 4 __unpack, 4 __free_unpacked) and the 4 protobuf-c runtime entry points (82 declarations, 2 modules written by its scripts/generate.py, which refuses a prototype or body that is not the protoc-c 1.5 shape of its family): __unpack an owned nullable result, __free_unpacked a nullable release, the rest borrowed. Every declaration is pinned (contracts.lock, 82 pinned at 046accf6 and 66910c10) to its generated definition and prototype, so a regenerated file holds it (contract-pin-mismatch, Unknown); protocol-identity.json pins the opentelemetry-proto identity and the 22 compiled generated and runtime files on the vendored v1.10.0 basis. No checker: the shipped load path carries no checker bindings (user decision 2026-11-16). No existing cmetrics, ctraces or fluent-bit declaration rests on the new declarations, so no linkage_contract_v1 link is required and none was added (a link to an unrecorded reliance is refused); a fixture shows an unlinked reliance on a generated release refused. Prediction (docs/reports/otel-proto-phase-b1/PREDICTION.md): the 7 accepted custody rows Unknown -> Safe on corpus and twelve-home, none on system or slice. What remains of this entry is B2+B3, now OTEL-PROTO-NULL-CONDITIONAL-READING. DISCHARGE: that entry's discharge.",
+   "source": "docs/reports/otel-proto-audit/README.md, docs/reports/otel-proto-phase-b1/README.md",
+   "recorded_by": "OTEL-PROTO-AUDIT"
+  },
+  {
+   "id": "OTEL-PROTO-SPAN-TYPE-ABSENT",
+   "title": "opentelemetry.proto.trace.v1.Span.type (field 17, string) is absent from the vendored generated code",
+   "why": "Conformance difference D1 of card OTEL-PROTO-AUDIT: the pinned protocol declares Span.type = 17 (implicit presence); the vendored trace.pb-c.c has no descriptor for it, so ctraces' decoder keeps it only as an unknown field and its encoder cannot emit it. A fact, not a defect claim; nothing is filed upstream. DISCHARGE: the vendored code regenerated at a protocol that has it (an upstream matter), or the Phase B basis decision recording it as not decodable.",
+   "source": "docs/reports/otel-proto-audit/README.md",
+   "recorded_by": "OTEL-PROTO-AUDIT"
+  },
+  {
+   "id": "OTEL-PROTO-PROCESSCONTEXT-ABSENT",
+   "title": "opentelemetry.proto.processcontext.v1development.ProcessContext has no vendored generated code",
+   "why": "Conformance difference D2 of card OTEL-PROTO-AUDIT: process_context.proto (2 fields, added after v1.10.0) has no .pb-c.c counterpart; no Fluent Bit unit names the message. DISCHARGE: recorded as outside the decodable set in the Phase B basis decision, or generated code appears and is audited.",
+   "source": "docs/reports/otel-proto-audit/README.md",
+   "recorded_by": "OTEL-PROTO-AUDIT"
+  },
+  {
+   "id": "OTEL-PROTO-STALE-PPROFEXTENDED",
+   "title": "fluent-otel-proto ships a stale, uncompiled pprofextended.pb-c.c that redefines eight profiles message names",
+   "why": "Conformance fact D3 of card OTEL-PROTO-AUDIT: proto_c/opentelemetry/proto/profiles/v1development/pprofextended.pb-c.c was generated by protoc-c 1.4.1, is absent from the compile database, defines 8 message names profiles.pb-c.c also defines (Profile, Sample, Location, ...) and AttributeUnit, Label and AggregationTemporality, which no current tag declares. The conformance reader refuses a twice-generated name and excludes the file by name. A provider pin must exclude it too. DISCHARGE: the exclusion stated in the Phase B pin, or the file gone from the pinned tree.",
+   "source": "docs/reports/otel-proto-audit/README.md",
+   "recorded_by": "OTEL-PROTO-AUDIT"
+  },
+  {
+   "id": "OTEL-SITES-ENCODER-CONSTRUCTION",
+   "title": "173 encoder sites rely on fields the encoder itself built; the site reader does not follow the construction",
+   "why": "Not-determinable class N1 of card OTEL-PROTO-AUDIT (reason encoder-constructed-value): in cmt_encode_opentelemetry.c, ctr_encode_opentelemetry.c, flb_opentelemetry_otlp_proto.c, out_opentelemetry and cprof_encode_opentelemetry.c, a dereference, subscript or oneof read of a message the encoder allocated and filled, often in another function, with no test on the path. Not reachable from wire input, so never a candidate. DISCHARGE: a construction-aware reading (the allocation-and-assignment that sets the field, across the unit's calls) classifies them guarded or candidate, re-running scripts/otel_proto_sites.py.",
+   "source": "docs/reports/otel-proto-audit/README.md",
+   "recorded_by": "OTEL-PROTO-AUDIT"
+  },
+  {
+   "id": "OTEL-SITES-CALLEE-CHAINS",
+   "title": "17 OTel sites hand a protobuf field to a unit callee that passes it on further or too deep",
+   "why": "Not-determinable class N2 of card OTEL-PROTO-AUDIT (callee-passes-parameter-on 16 off the wire, callee-variadic-or-deep 1 on it: cprof_decode_opentelemetry.c:772): the callee's parameter is copied or handed to a further callee the reader does not follow past depth 3. DISCHARGE: the interprocedural reading extended (parameter copies, deeper chains), each site classified.",
+   "source": "docs/reports/otel-proto-audit/README.md",
+   "recorded_by": "OTEL-PROTO-AUDIT"
+  },
+  {
+   "id": "OTEL-SITES-ARRAY-WITHOUT-COUNT",
+   "title": "15 encoder sites hand a repeated field's array to a callee without its count",
+   "why": "Not-determinable class N3 of card OTEL-PROTO-AUDIT (array-passed-without-its-count): the destroy_*_list helpers and memcpy copies of bucket_counts in the cmetrics, ctraces and cprofiles encoders and out_opentelemetry receive the array but not n_x, so the bound the callee relies on is not visible at the call. Off the wire. DISCHARGE: the callee's own bound (a NULL-terminated list, a separately passed length) read, each site classified.",
+   "source": "docs/reports/otel-proto-audit/README.md",
+   "recorded_by": "OTEL-PROTO-AUDIT"
+  },
+  {
+   "id": "OTEL-SITES-BYTES-TO-CALLEE",
+   "title": "13 OTel sites hand a bytes field's data to a callee; correct only if the callee accepts data = NULL with len = 0",
+   "why": "Not-determinable class N4 of card OTEL-PROTO-AUDIT: 8 on the wire (ctr_span_set_trace_id/_span_id/_parent_span_id and ctr_link_create from ctr_decode_opentelemetry.c, cfl_variant_create_from_bytes from cmt_decode_opentelemetry.c:131, msgpack_pack_bin_with_body from in_opentelemetry/opentelemetry_logs.c:207, convert_bytes_value), 5 off it (memcmp in cprof_encode link_equal, memcpy in ctr_encode). protobuf-c leaves data NULL exactly when len is 0 (otp_bytes_data_iff_length). DISCHARGE: each callee's handling of (NULL, 0) read from its body (memcpy/memcmp with a NULL pointer and length 0 is undefined in C17), each site classified.",
+   "source": "docs/reports/otel-proto-audit/README.md",
+   "recorded_by": "OTEL-PROTO-AUDIT"
+  },
+  {
+   "id": "OTEL-SITES-CROSS-UNIT-CALLEE",
+   "title": "11 OTel sites hand a sub-message or repeated array to a callee defined in another unit",
+   "why": "Not-determinable class N5 of card OTEL-PROTO-AUDIT (callee-outside-unit; 7 on the wire: cmt_decode_opentelemetry.c:1031 explicit_bounds, cprof_decode_opentelemetry.c :52, :96, :470 (2), :542 (2)): the site reader is intra-unit. DISCHARGE: the callees' bodies read across units (or declared), each site classified.",
+   "source": "docs/reports/otel-proto-audit/README.md",
+   "recorded_by": "OTEL-PROTO-AUDIT"
+  },
+  {
+   "id": "OTEL-SITES-ENUM-TO-CALLEE",
+   "title": "3 decoded OpenTelemetry enum values are handed to callees in other units",
+   "why": "Not-determinable class N6 of card OTEL-PROTO-AUDIT (enum-to-callee-outside-unit, all on the wire): otel_span->kind to ctr_span_kind_set and otel_span->status->code to ctr_span_set_status (ctr_decode_opentelemetry.c:620, :625), severity_number to msgpack_pack_uint64 (in_opentelemetry/opentelemetry_logs.c:317). A decoder keeps any int32, named or not (otp_enum_index_needs_name). DISCHARGE: each callee read for an unnamed value (an index, a table lookup), each site classified.",
+   "source": "docs/reports/otel-proto-audit/README.md",
+   "recorded_by": "OTEL-PROTO-AUDIT"
+  },
+  {
+   "id": "OTEL-ROUTE-COVERAGE",
+   "title": "795 functions of the OpenTelemetry modules are on no pinned route",
+   "why": "Coverage census of card OTEL-PROTO-AUDIT: only the cmetrics and ctraces OTLP codecs (5 units, 245 functions) are measured, on corpus and twelve-home; system and slice hold no OTel unit. Unmeasured: the generated descriptors (11 units, 348 functions), the protobuf-c runtime (90), fluent-otel-proto's helper (1), src/opentelemetry (219), in_opentelemetry (60), out_opentelemetry (70), processor_opentelemetry_envelope (7); adjacent, not named by the brief: cprofiles' OTLP codec (97) and processor_content_modifier's cm_opentelemetry.c (5). They are never counted as covered. DISCHARGE: a pinned route that measures them (a system-selection extension or a new selection), measured.",
+   "source": "docs/reports/otel-proto-audit/README.md",
+   "recorded_by": "OTEL-PROTO-AUDIT"
+  },
+  {
+   "id": "OTEL-PROTO-NULL-CONDITIONAL-READING",
+   "title": "The null model cannot read the protocol's conditional facts (element below a tested count, sub-message under a tested presence, member under a tested case)",
+   "why": "Phases B2+B3 of OTEL-PROTO-PHASE-B as one analyzer card (USER DECISION 2026-11-27, \"Phase it, accept 7\"). The null walk refines only NULL tests (qcore-c-gateway src/null_deref/walk.rs condition): an integer or case comparison leaves the state not definite, and the protocol facts hold only for messages protobuf-c unpacked (encoders build the same types with NULL slots). The card adds: path state for index < count and case = number facts, with invalidation on writes and loop fixed points; a well-formed mark carried from a new unpack result clause (contract spec, grammar, frontend, Lean) through sub-message, element and selected-member reads; and a quant wellformed precondition inferred for OpenTelemetry-message formals and discharged at each call site, mirroring quant null-deref; each in new role-named modules with small hook points, Lean in QCore.OtelProtoObligations and QCore.NullDeref, placeholder-free. Prediction: the 17 null rows and 1 combined row bounded by OTEL-PROTO-AUDIT (corpus and twelve-home; cmt_decode_opentelemetry.c 11, cmt_encode_opentelemetry_batch.c 4, ctr_decode_opentelemetry.c ctr_span_set_links and span_set_events; combined cmt_encode_opentelemetry_batch.c request_data_point_count), none on system or slice. DISCHARGE: implemented and measured.",
+   "source": "docs/reports/otel-proto-phase-b1/README.md",
+   "recorded_by": "OTEL-PROTO-PHASE-B1"
   },
   {
    "id": "FB-CHUNK-LIFECYCLE-OUT-OF-FILE-CALLEES",
@@ -15392,6 +15478,13 @@
    "why": "FB-RETRY-LIFECYCLE-CONTRACTS' census lists, per declaration a lifecycle row resolves in force, the Rust test files that state it (extern fn NAME( in their contract text) or load its module (include_str!). At base 56584db0b 15 have none, among them the retry lifecycle's own flb_task_retry_destroy, flb_task_users_inc, flb_task_users_dec, flb_task_retry_count, flb_task_running_count, flb_task_set_route_status, flb_output_thread_pool_flush and flb_output_flush_id_get (the counted-user ones have generic analogues in retry_lifetime.rs's u_* family). Their clauses are pinned and checked by the route where a body is analysed, but no fixture reproduces each callee's shape against the production text and refuses a violating body. DISCHARGE: a fixture per declaration in an existing test file, as retry_lifetime.rs's retry_lifecycle_contracts module does for retry_lifecycle.qv.",
    "source": "docs/reports/fb-retry-lifecycle-contracts/README.md",
    "recorded_by": "FB-RETRY-LIFECYCLE-CONTRACTS"
+  },
+  {
+   "id": "OTEL-PROTO-PHASE-B1-CALLER-PREDICTION",
+   "title": "OTEL-PROTO-PHASE-B1's prediction named only the directly contracted rows, not the rows its contracts made analysable",
+   "why": "Integrator, round 41-42 landing (USER DECISION 2026-11-28 \"Land with record\"): the merged-tree measurement (base 1f672bfca, tip 351ad67c2) matched B1's seven declared Unknown -> Safe rows and moved five more on corpus and twelve-home, every one depending on a B1 opentelemetry__* contract or a new initialize_* summary: cmetrics and ctraces otlp_kvpair_value_initialize and cmetrics render_opentelemetry_context_to_sds Unknown -> Safe; ctraces set_spans and set_scope_spans Unknown -> provisional Unsafe (a leak of the calloc'd array at ctr_encode_opentelemetry.c:876 / :984 when the first initialize_span / initialize_scope_span fails, the cleanup being guarded by index > 0; source reading of the pinned copy, allocation-failure path only; not an upstream report). DISCHARGE: the B2+B3 card's prediction states the callers of every row it moves, and the two provisional Unsafe rows get a native or witness check before any claim beyond this record.",
+   "source": "docs/reports/otel-proto-phase-b1/integration/README.md",
+   "recorded_by": "OTEL-PROTO-PHASE-B1"
   },
   {
    "id": "FORGET-PUBLISHED-STALE-MARK",

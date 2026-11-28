@@ -123,3 +123,10 @@ declared contract dependencies). -/
 #print axioms QCore.MeasureConnect.formula_cx_marker_needs_link
 #print axioms QCore.MeasureConnect.formula_cx_link_is_a_dependency
 #print axioms QCore.MeasureConnect.formula_cx_dependency_is_a_link
+#print axioms QCore.MeasureConnect.formula_cx_refuse_libc_effect_elsewhere
+#print axioms QCore.MeasureConnect.formula_cx_refuse_foreign_effect_in_libc
+#print axioms QCore.MeasureConnect.formula_cx_effect_refused_is_a_misplaced_effect
+#print axioms QCore.MeasureConnect.formula_cx_libc_owner_effect_accepted
+#print axioms QCore.MeasureConnect.formula_cx_observation_accepted
+#print axioms QCore.MeasureConnect.formula_cx_effect_refusal_fails_the_check
+#print axioms QCore.MeasureConnect.formula_cx_failed_effect_check_has_a_refusal

@@ -1,0 +1,31 @@
+{
+ "schema": "otel-proto-audit-formulas/1",
+ "card": "OTEL-PROTO-AUDIT",
+ "block": "OTP",
+ "validator": "qcore_frontend::premise_formula::guarded_proposition (crates/qcore-frontend/tests/otel_proto_formulas.rs)",
+ "lean": "QCore.OtelProtoObligations (formula_<id>)",
+ "formulas": [
+  ["otp_absent_message_is_null", "forall (#m: otp_msg) { forall (#f: otp_field) { ((#otp_unpacked(#m) && ((#otp_message_typed(#f) && !#otp_repeated(#f)) && !#otp_oneof(#f))) => ((#otp_present(#m,#f) => #otp_nonnull(#m,#f)) && (#otp_nonnull(#m,#f) => #otp_present(#m,#f)))) } }"],
+  ["otp_repeated_elements_nonnull", "forall (#m: otp_msg) { forall (#f: otp_field) { forall (#p: otp_pos) { (((#otp_unpacked(#m) && (#otp_repeated(#f) && #otp_message_typed(#f))) && (0 <= #otp_at(#p) && #otp_at(#p) < #otp_count(#m,#f))) => #otp_elem_nonnull(#m,#f,#p)) } } }"],
+  ["otp_repeated_array_nonnull", "forall (#m: otp_msg) { forall (#f: otp_field) { ((#otp_unpacked(#m) && #otp_repeated(#f)) => (0 < #otp_count(#m,#f) => #otp_nonnull(#m,#f))) } }"],
+  ["otp_selected_member_nonnull", "forall (#m: otp_msg) { forall (#f: otp_field) { (((#otp_unpacked(#m) && #otp_oneof(#f)) && #otp_message_typed(#f)) => (#otp_case(#m,#f) == #otp_number(#f) => #otp_nonnull(#m,#f))) } }"],
+  ["otp_string_nonnull", "forall (#m: otp_msg) { forall (#f: otp_field) { ((#otp_unpacked(#m) && ((#otp_string(#f) && !#otp_repeated(#f)) && (!#otp_oneof(#f) || #otp_case(#m,#f) == #otp_number(#f)))) => #otp_nonnull(#m,#f)) } }"],
+  ["otp_bytes_data_iff_length", "forall (#m: otp_msg) { forall (#f: otp_field) { ((#otp_unpacked(#m) && ((#otp_bytes(#f) && !#otp_repeated(#f)) && (!#otp_oneof(#f) || #otp_case(#m,#f) == #otp_number(#f)))) => ((#otp_data_nonnull(#m,#f) => 0 < #otp_len(#m,#f)) && (0 < #otp_len(#m,#f) => #otp_data_nonnull(#m,#f)))) } }"],
+  ["otp_unpack_result_tested", "forall (#s: otp_site) { ((#otp_unpack_site(#s) && #otp_guarded(#s)) => #otp_result_nonnull(#s)) }"],
+  ["otp_deref_needs_nonnull", "forall (#s: otp_site) { forall (#m: otp_msg) { forall (#f: otp_field) { (((#otp_deref_site(#s) && #otp_reads(#s,#m,#f)) && #otp_guarded(#s)) => #otp_nonnull(#m,#f)) } } }"],
+  ["otp_subscript_needs_bound", "forall (#s: otp_site) { forall (#m: otp_msg) { forall (#f: otp_field) { (((#otp_subscript_site(#s) && #otp_reads(#s,#m,#f)) && #otp_guarded(#s)) => (0 <= #otp_at(#otp_pos_of(#s)) && #otp_at(#otp_pos_of(#s)) < #otp_count(#m,#f))) } } }"],
+  ["otp_member_needs_case", "forall (#s: otp_site) { forall (#m: otp_msg) { forall (#f: otp_field) { (((#otp_member_site(#s) && #otp_reads(#s,#m,#f)) && #otp_guarded(#s)) => #otp_case(#m,#f) == #otp_number(#f)) } } }"],
+  ["otp_data_needs_length", "forall (#s: otp_site) { forall (#m: otp_msg) { forall (#f: otp_field) { (((#otp_data_site(#s) && #otp_reads(#s,#m,#f)) && #otp_guarded(#s)) => (0 < #otp_len(#m,#f) || #otp_data_nonnull(#m,#f))) } } }"],
+  ["otp_enum_index_needs_name", "forall (#s: otp_site) { forall (#m: otp_msg) { forall (#f: otp_field) { ((((#otp_enum_site(#s) && #otp_reads(#s,#m,#f)) && #otp_enum(#f)) && #otp_guarded(#s)) => #otp_value_named(#m,#f)) } } }"],
+  ["otp_bounded_element_nonnull", "forall (#s: otp_site) { forall (#m: otp_msg) { forall (#f: otp_field) { (((((#otp_subscript_site(#s) && #otp_reads(#s,#m,#f)) && #otp_guarded(#s)) && #otp_unpacked(#m)) && (#otp_repeated(#f) && #otp_message_typed(#f))) => #otp_elem_nonnull(#m,#f,#otp_pos_of(#s))) } } }"],
+  ["otp_selected_member_guarded_nonnull", "forall (#s: otp_site) { forall (#m: otp_msg) { forall (#f: otp_field) { (((((#otp_member_site(#s) && #otp_reads(#s,#m,#f)) && #otp_guarded(#s)) && #otp_unpacked(#m)) && (#otp_oneof(#f) && #otp_message_typed(#f))) => #otp_nonnull(#m,#f)) } } }"],
+  ["otp_classes_partition", "forall (#s: otp_site) { (((#otp_guarded(#s) || #otp_candidate(#s)) || #otp_undetermined(#s)) && ((!(#otp_guarded(#s) && #otp_candidate(#s)) && !(#otp_guarded(#s) && #otp_undetermined(#s))) && !(#otp_candidate(#s) && #otp_undetermined(#s)))) }"],
+  ["otp_candidate_is_wire_and_unguarded", "forall (#s: otp_site) { (#otp_candidate(#s) => (#otp_wire(#s) && !#otp_guarded(#s))) }"],
+  ["otp_unguarded_off_wire_undetermined", "forall (#s: otp_site) { ((!#otp_guarded(#s) && !#otp_wire(#s)) => #otp_undetermined(#s)) }"],
+  ["otp_guard_is_cited", "forall (#s: otp_site) { (#otp_guarded(#s) => #otp_cited(#s)) }"],
+  ["otp_undetermined_names_reason", "forall (#s: otp_site) { (#otp_undetermined(#s) => #otp_reason_named(#s)) }"],
+  ["otp_no_unsafe_claimed", "forall (#s: otp_site) { !#otp_unsafe_claimed(#s) }"],
+  ["otp_identity_refused_unless_pinned", "forall (#d: otp_identity) { (!#otp_pinned(#d) => #otp_refused(#d)) }"],
+  ["otp_pinned_identity_admitted", "forall (#d: otp_identity) { (#otp_pinned(#d) => !#otp_refused(#d)) }"]
+ ]
+}

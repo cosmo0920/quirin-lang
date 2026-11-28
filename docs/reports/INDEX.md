@@ -295,6 +295,8 @@ Regenerate with `python3 scripts/build_docs_index.py`; validate with `--check`.
 
 | [connect-adopt-declared-dependencies](connect-adopt-declared-dependencies/README.md) | CONNECT-ADOPT-DECLARED-DEPENDENCIES: every verdict reliance, declared |
 
+| [connect-libc-effect-claims](connect-libc-effect-claims/README.md) | CONNECT-LIBC-EFFECT-CLAIMS: libc effect claims held outside quirin-provider-libc |
+
 | [contract-adoption-not-in-force](archive/contracts-and-premises/contract-adoption-not-in-force/README.md) | CONTRACT-ADOPTION-NOT-IN-FORCE |
 
 | [contract-check-load-path](archive/contracts-and-premises/contract-check-load-path/README.md) | CONTRACT-CHECK-LOAD-PATH |
@@ -643,6 +645,8 @@ Regenerate with `python3 scripts/build_docs_index.py`; validate with `--check`.
 | Card directory | Original report title |
 |---|---|
 
+| [g1-closure-record](g1-closure-record/README.md) | G1-CLOSURE-FORMULAS: gate G1 (certificate containment) as checked formulas |
+
 | [gapo-parity-decisions-nondeterministic](archive/language-and-tooling/gapo-parity-decisions-nondeterministic/README.md) | GAPO-PARITY-DECISIONS-NONDETERMINISTIC: a consultation's parity decisions are its own |
 
 | [gapo-return-correctness](archive/language-and-tooling/gapo-return-correctness/README.md) | GAPO-RETURN-CORRECTNESS |
@@ -945,6 +949,10 @@ Regenerate with `python3 scripts/build_docs_index.py`; validate with `--check`.
 | [openssl-undeclared-handshake-callbacks](archive/contracts-and-premises/openssl-undeclared-handshake-callbacks/README.md) | OPENSSL-UNDECLARED-HANDSHAKE-CALLBACKS: the handshake slots whose setters were undeclared |
 
 | [openssl-unstated-callback-slots](archive/contracts-and-premises/openssl-unstated-callback-slots/README.md) | OPENSSL-UNSTATED-CALLBACK-SLOTS: the slots the narrowed OpenSSL premise covered, stated |
+
+| [otel-proto-audit](otel-proto-audit/README.md) | OTEL-PROTO-AUDIT |
+
+| [otel-proto-phase-b1](otel-proto-phase-b1/README.md) | OTEL-PROTO-PHASE-B1 |
 
 | [out-parameter-body-summary](archive/language-and-tooling/out-parameter-body-summary/README.md) | OUT-PARAMETER-BODY-SUMMARY |
 

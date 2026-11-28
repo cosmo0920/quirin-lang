@@ -9,7 +9,8 @@
         "quirin-provider-cfl",
         "quirin-provider-mpack",
         "quirin-provider-msgpack",
-        "qcore-provider-cmetrics"
+        "qcore-provider-cmetrics",
+        "quirin-provider-fluent-otel-proto"
       ],
       "dependent_libraries": []
     },
@@ -19,7 +20,8 @@
         "quirin-provider-cfl",
         "quirin-provider-mpack",
         "quirin-provider-msgpack",
-        "qcore-provider-ctraces"
+        "qcore-provider-ctraces",
+        "quirin-provider-fluent-otel-proto"
       ],
       "dependent_libraries": [
         "cmetrics"
@@ -53,7 +55,8 @@
         "quirin-provider-cfl",
         "quirin-provider-msgpack",
         "quirin-provider-mpack",
-        "quirin-provider-fluent-bit"
+        "quirin-provider-fluent-bit",
+        "quirin-provider-fluent-otel-proto"
       ],
       "dependent_libraries": [
         "cmetrics",

@@ -400,6 +400,7 @@ fn recorded_namespaces_equal_the_derived_ones() {
         ("quirin-provider-mpack", "mpack"),
         ("quirin-provider-msgpack", "msgpack"),
         ("quirin-provider-fluent-bit", "fluent_bit"),
+        ("quirin-provider-fluent-otel-proto", "fluent_otel_proto"),
         ("quirin-provider-shared", "shared"),
         // Card CONTRACT-INHERIT-QCORE-PROVIDER-NAMING (the user's option B):
         // the second admitted prefix derives the same way.

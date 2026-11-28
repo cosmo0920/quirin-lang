@@ -1,0 +1,242 @@
+{
+ "schema": "connect-libc-effect-claims-census/1",
+ "scanned": {
+  "crates": 13,
+  "modules": 166,
+  "declarations": 1003
+ },
+ "hits": [
+  {
+   "crate": "qcore-provider-libevent",
+   "load_paths": [
+    "shipped"
+   ],
+   "module": "monkey/callback_task_handoff.qv",
+   "declaration": "effect_errno_location",
+   "position": "literal",
+   "keys": [
+    "callee"
+   ],
+   "libc_names": [
+    "__errno_location"
+   ],
+   "clause": "() -> unit contract { ensures normal callee == \"__errno_location\""
+  },
+  {
+   "crate": "qcore-provider-libevent",
+   "load_paths": [
+    "shipped"
+   ],
+   "module": "monkey/callback_task_handoff.qv",
+   "declaration": "effect_perror",
+   "position": "literal",
+   "keys": [
+    "callee"
+   ],
+   "libc_names": [
+    "perror"
+   ],
+   "clause": "() -> unit contract { ensures normal callee == \"perror\""
+  },
+  {
+   "crate": "qcore-provider-libevent",
+   "load_paths": [
+    "shipped"
+   ],
+   "module": "monkey/callback_task_handoff.qv",
+   "declaration": "effect_send",
+   "position": "literal",
+   "keys": [
+    "callee"
+   ],
+   "libc_names": [
+    "send"
+   ],
+   "clause": "() -> unit contract { ensures normal callee == \"send\""
+  },
+  {
+   "crate": "qcore-provider-libevent",
+   "load_paths": [
+    "shipped"
+   ],
+   "module": "monkey/event_payload.qv",
+   "declaration": "contextual_payload_access",
+   "position": "bare",
+   "keys": [],
+   "libc_names": [
+    "index"
+   ],
+   "clause": "ensures normal offset == index * element_size"
+  },
+  {
+   "crate": "qcore-provider-libevent",
+   "load_paths": [
+    "shipped"
+   ],
+   "module": "monkey/native_platform_matrix.qv",
+   "declaration": "linux_poll_asan_profile",
+   "position": "literal",
+   "keys": [
+    "backend"
+   ],
+   "libc_names": [
+    "poll"
+   ],
+   "clause": "ensures normal backend == \"poll\""
+  },
+  {
+   "crate": "qcore-provider-libevent",
+   "load_paths": [
+    "shipped"
+   ],
+   "module": "monkey/native_platform_matrix.qv",
+   "declaration": "linux_select_asan_profile",
+   "position": "literal",
+   "keys": [
+    "backend"
+   ],
+   "libc_names": [
+    "select"
+   ],
+   "clause": "ensures normal backend == \"select\""
+  },
+  {
+   "crate": "qcore-provider-libevent",
+   "load_paths": [
+    "shipped"
+   ],
+   "module": "monkey/timeout_teardown.qv",
+   "declaration": "cb_timeout_source",
+   "position": "literal",
+   "keys": [
+    "path_call_sequences"
+   ],
+   "libc_names": [
+    "__errno_location",
+    "perror",
+    "send"
+   ],
+   "clause": "ensures normal path_call_sequences == \"send,__errno_location,perror,evutil_closesocket,event_del,event_free,mk_mem_free;send,__errno_location,evutil_closesocket,event_del,event_free,mk_mem_free;send\""
+  },
+  {
+   "crate": "qcore-provider-libevent",
+   "load_paths": [
+    "shipped"
+   ],
+   "module": "monkey/timeout_teardown.qv",
+   "declaration": "cb_timeout_teardown_path",
+   "position": "literal",
+   "keys": [
+    "path_calls"
+   ],
+   "libc_names": [
+    "__errno_location",
+    "perror",
+    "send"
+   ],
+   "clause": "() -> unit contract { ensures normal (path_calls == \"send,__errno_location,perror,evutil_closesocket,event_del,event_free,mk_mem_free\") or (path_calls == \"send,__errno_location,evutil_closesocket,event_del,event_free,mk_mem_free\")"
+  },
+  {
+   "crate": "quirin-provider-fluent-bit",
+   "load_paths": [
+    "shipped"
+   ],
+   "module": "fluent_bit/input_instance.qv",
+   "declaration": "flb_service_set",
+   "position": "literal",
+   "keys": [],
+   "libc_names": [
+    "read"
+   ],
+   "clause": "ensures normal resource_review_pending(resource_variadic_data_tail(), \"key-dependent effects: the tail is read as NULL-terminated key/value pairs, key first (src/flb_lib.c:683-684), each key passed to flb_config_set_property(ctx->config,..."
+  },
+  {
+   "crate": "quirin-provider-fluent-bit",
+   "load_paths": [
+    "shipped"
+   ],
+   "module": "fluent_bit/input_instance.qv",
+   "declaration": "flb_config_set_property",
+   "position": "literal",
+   "keys": [],
+   "libc_names": [
+    "log",
+    "read"
+   ],
+   "clause": "ensures normal resource_review_pending(resource_borrowed(config), \"key-dependent effects: for every service_configs entry whose key equals k ignoring ASCII case over its whole length (prop_key_check, src/flb_config.c:782-791), the entry'..."
+  },
+  {
+   "crate": "quirin-provider-fluent-bit",
+   "load_paths": [
+    "shipped"
+   ],
+   "module": "fluent_bit/lib_engine_thread.qv",
+   "declaration": "flb_start",
+   "position": "literal",
+   "keys": [],
+   "libc_names": [
+    "read"
+   ],
+   "clause": "requires resource_review_pending(\"Observed at 90978ac6 (src/flb_lib.c), checked by the rule 10q census: do_start spawns the engine thread flb_lib_worker through mk_utils_worker_spawn, which creates it joinable (PTHREAD_CREATE_JOINABLE, l..."
+  },
+  {
+   "crate": "quirin-provider-fluent-bit",
+   "load_paths": [
+    "shipped"
+   ],
+   "module": "fluent_bit/lib_engine_thread.qv",
+   "declaration": "flb_stop",
+   "position": "literal",
+   "keys": [],
+   "libc_names": [
+    "exit",
+    "read",
+    "write"
+   ],
+   "clause": "requires resource_review_pending(\"Observed at 90978ac6 (src/flb_lib.c), checked by the rule 10q census: flb_stop reads ctx->config->worker (:1047) before its !ctx->config test (:1062), and ctx->config is stored only by flb_create before ..."
+  },
+  {
+   "crate": "quirin-provider-fluent-bit",
+   "load_paths": [
+    "shipped"
+   ],
+   "module": "fluent_bit/lib_engine_thread.qv",
+   "declaration": "flb_destroy",
+   "position": "literal",
+   "keys": [],
+   "libc_names": [
+    "read",
+    "shutdown"
+   ],
+   "clause": "requires resource_review_pending(\"Observed at 90978ac6 (src/flb_lib.c:230-263), identical at 046accf6 and 66910c10, read by the rule 10q census: flb_destroy returns at once on a null ctx; otherwise it deletes and frees ctx->event_channel..."
+  },
+  {
+   "crate": "quirin-provider-fluent-bit",
+   "load_paths": [
+    "shipped"
+   ],
+   "module": "fluent_bit/lib_engine_thread.qv",
+   "declaration": "flb_input_thread_instance_exit",
+   "position": "literal",
+   "keys": [],
+   "libc_names": [
+    "exit"
+   ],
+   "clause": "requires resource_review_pending(\"Read at 90978ac6 (src/flb_input_thread.c), not derived by the census: it copies the input worker's identifier (:591), writes the exit command to the worker and joins it with the result ignored (:607), re..."
+  },
+  {
+   "crate": "quirin-provider-fluent-bit",
+   "load_paths": [
+    "shipped"
+   ],
+   "module": "fluent_bit/lib_engine_thread.qv",
+   "declaration": "flb_output_thread_pool_destroy",
+   "position": "literal",
+   "keys": [],
+   "libc_names": [
+    "write"
+   ],
+   "clause": "requires resource_review_pending(\"Read at 90978ac6 (src/flb_output_thread.c), not derived by the census: for each running pool worker it writes the stop command and joins the worker with the result ignored (:646), then destroys the pool ..."
+  }
+ ]
+}
