@@ -1,0 +1,58 @@
+{
+ "opt-in-base": {
+  "totals": {
+   "Safe": 1209,
+   "Pending": 2,
+   "Unknown": 3586,
+   "Unsafe": 7,
+   "other": {},
+   "access_rows": 2091,
+   "access_alone": 201,
+   "access_leaves": 8909
+  },
+  "report_sha256": "ba7881c1dab14ed11f349932433fcc48bb62dd753b29eb9d356301d25d255872",
+  "census_lines": 0
+ },
+ "opt-in-tip": {
+  "totals": {
+   "Safe": 1209,
+   "Pending": 2,
+   "Unknown": 3586,
+   "Unsafe": 7,
+   "other": {},
+   "access_rows": 2091,
+   "access_alone": 201,
+   "access_leaves": 8909
+  },
+  "report_sha256": "62f38a6c1b16793f3816a1e32eb34e91ce5f89e8e3a6c4774c7f973a7d1162da",
+  "census_lines": 0
+ },
+ "system-base": {
+  "totals": {
+   "Safe": 124,
+   "Pending": 0,
+   "Unknown": 320,
+   "Unsafe": 4,
+   "other": {},
+   "access_rows": 145,
+   "access_alone": 8,
+   "access_leaves": 626
+  },
+  "report_sha256": "5cb1adfd52367d781c1c0d5c4bdd1e719d46a4b23681287ac771a8e3718beea3",
+  "census_lines": 0
+ },
+ "system-tip": {
+  "totals": {
+   "Safe": 124,
+   "Pending": 0,
+   "Unknown": 320,
+   "Unsafe": 4,
+   "other": {},
+   "access_rows": 145,
+   "access_alone": 8,
+   "access_leaves": 626
+  },
+  "report_sha256": "689dc8b8b7e07f42691680b0e769692d96be07af87590cecd7cca723ec53c6c5",
+  "census_lines": 0
+ }
+}

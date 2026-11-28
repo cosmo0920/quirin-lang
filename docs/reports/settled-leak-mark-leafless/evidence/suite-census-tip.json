@@ -1,0 +1,83 @@
+{
+ "lines": 174,
+ "functions": {
+  "pending": 3,
+  "none": 1
+ },
+ "by_class_held_witnessed_claimable": {
+  "none/False/False/False": 9,
+  "none/False/False/True": 4,
+  "none/False/True/True": 8,
+  "none/True/False/True": 4,
+  "none/True/True/True": 4,
+  "pending/False/False/False": 9,
+  "pending/False/False/True": 128,
+  "pending/False/True/True": 4,
+  "pending/True/True/True": 4
+ },
+ "decided_differently_beside_pending": {
+  "w": [
+   [
+    [
+     0,
+     4
+    ],
+    "witnessed"
+   ]
+  ]
+ },
+ "held_beside_no_blocking_leaf": {
+  "subject": [
+   [
+    [
+     0,
+     21
+    ],
+    false
+   ],
+   [
+    [
+     0,
+     21
+    ],
+    true
+   ]
+  ]
+ },
+ "leafless_claimable": {
+  "mark_leafless::both_orders_of_a_leafless_mark_decide_the_same subject": [
+   [
+    [
+     0,
+     21
+    ],
+    false,
+    false
+   ],
+   [
+    [
+     0,
+     21
+    ],
+    false,
+    true
+   ],
+   [
+    [
+     0,
+     21
+    ],
+    true,
+    false
+   ],
+   [
+    [
+     0,
+     21
+    ],
+    true,
+    true
+   ]
+  ]
+ }
+}
