@@ -33,9 +33,10 @@
 //! point carry no blocking leaf, the marked current-generation `(exit,
 //! identity)` pairs (rule 84's `marked_exits`) whose identity the exit's
 //! settled output would claim but for the mark: `LIVE`, not exempt, no
-//! reference family ([`leafless`]). An exempt identity (an entry-custody site)
-//! or one no path leaves live is no leak question in any schedule, so it is
-//! not a candidate; the suite's nine rule 43 marks are all of that kind.
+//! reference family ([`leafless`]). An exempt identity or one no path leaves
+//! live is no leak question in any schedule, so it is not a candidate. The
+//! suite's nine rule 43 marks beside no leaf are of that kind: each is an
+//! object the caller published (`ESCAPED`, never `LIVE`) before the drain.
 //!
 //! **The decision** ([`outcome`]). Rule 74c's held reports leave the
 //! candidates alone. Each is published as a `Leak` exactly when rule 84's

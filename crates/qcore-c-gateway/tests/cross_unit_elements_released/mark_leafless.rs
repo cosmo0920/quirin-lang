@@ -162,22 +162,20 @@ fn both_orders_of_a_leafless_mark_decide_the_same() {
     );
 }
 
-/// The nine rule 43 marks the suite census found beside no leaf at base sit
-/// on an exempt entry-custody site: no candidate, no reason, still `Safe`
-/// (the same bodies as `an_imported_clause_reaches_the_caller_and_both_bodies_replay`).
+/// The nine rule 43 marks the suite census found beside no leaf at base are
+/// all this body's (in `an_imported_clause_reaches_the_caller_and_both_bodies_replay`):
+/// `x` is published, so `ESCAPED` and never `LIVE`, when the drain marks it.
+/// No candidate, no reason, still `Safe`.
 #[test]
-fn an_exempt_mark_records_no_reason() {
+fn a_published_mark_records_no_reason() {
     if std::env::var_os(CHILD).is_some() || !clang_available() {
         return;
     }
-    for body in [
-        "void subject(struct queue *q) { drain(q); }",
-        "void subject(void *data) { struct queue *q = data; if (drain(q) > 0) q_use(q); }",
-    ] {
-        assert_eq!(
-            analysed(body),
-            expect(AnalysisStatus::Safe, 0, &[]),
-            "{body}"
-        );
-    }
+    let body = "void subject(struct queue *q) { struct item *x = q_alloc(); if (!x) return;
+         mk_list_add(&x->_head, &q->items); drain(q); }";
+    assert_eq!(
+        analysed(body),
+        expect(AnalysisStatus::Safe, 0, &[]),
+        "{body}"
+    );
 }
