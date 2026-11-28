@@ -15427,4 +15427,71 @@ an unrelated held call (both `Unknown`, no leak, both holds kept).
     `wouldExceed_iff`, `batch_overshoot_bound`, `negative_magnitude`);
     [report](../reports/fb-backlog-accounting/README.md).
 
+<a id="constraint-94"></a>
+
+94. **A bit-count builtin is custody-neutral only where the path proves its
+    operand nonzero.** Card K2-BUILTIN-BIT-COUNTS
+    (`bit_count_builtins.rs`; one delimited hook in
+    `legacy_c::build_function_cfg_with`), on the user's decision of
+    2026-11-28 (option (a), obligation-bearing). GCC and Clang define
+    `__builtin_clz`, `__builtin_ctz` and their `l`/`ll` widths on an
+    unsigned operand with an undefined result at zero; they read no memory,
+    write nothing and move no custody. They are compiler builtins: no
+    provider declares them, and the gateway's builtin table
+    (`bit_count_builtins::BUILTINS`, beside `__builtin_expect` in
+    `legacy_condition_desugar` and the `__builtin_mem*` writers in
+    `constructed_state`) names them with their one C fault case. Rule
+    [10s](#constraint-10s)'s premise stands: a node with a C fault case is
+    never custody-neutral with its obligation undischarged. **The
+    obligation `x ≠ 0` is discharged at a call site** (read from the
+    function's Clang AST) when (1) the operand is a read of one named object
+    through parentheses and integer conversions to an unsigned type of no
+    lower rank (a narrowing conversion, an expression, a member, a subscript
+    or a call refuses); (2) that object is a parameter, or an automatic
+    local with an initializer, of a non-volatile integer type, which no `&`,
+    assignment, compound assignment, increment or decrement in the function
+    touches, whose own initializer does not hold the call, in a function with
+    no `asm` statement (its value is then fixed from its declaration on);
+    and (3) a guard on the call's path proves `x ≠ 0` on the edge the call
+    is reached by: the selected arm of `C ? A : B`, the right operand of
+    `C && B` or `C || B`, a branch of `if (C)`, or a block after an earlier
+    statement `if (C) S` whose `S` always returns (then `C`'s false edge),
+    where `C` proves it by `x`, `x != 0`, `0 != x`, `x > 0`, `0 < x`, `x == 0`
+    / `x <= 0` / `!x` on the false edge, `&&` on the true edge and `||` on
+    the false edge (either operand), `x` read through any integer
+    conversion (a conversion maps zero to zero). The statement forms need
+    structured flow: a function with a label or `goto`, or a `case` /
+    `default` label inside the guarded region, refuses them. **Admission.**
+    When every bit-count call site of the function is discharged and the
+    analysed tokens and the AST agree on the sites (callee and line, as a
+    multiset), the function's CFG is built under an environment that adds,
+    for each bit count the body calls, the contract `Borrowed` in, no result
+    custody (`neutral_contract`); every older route then reads the call as
+    the identity on custody. A declaration the environment already holds for
+    the name is never replaced. **Refusal.** Otherwise nothing is added and
+    every site keeps its base refusal byte for byte (``call to uncontracted
+    function `__builtin_clz` `` or the position's own text); the reason
+    (`bit-count-operand-not-a-named-object`,
+    `bit-count-operand-object-not-stable`,
+    `bit-count-operand-not-proved-nonzero`, `bit-count-sites-unmatched`) is
+    recorded on the typed-path parity stream only (position
+    `bit-count-builtin`). **Do not** count `assert(x != 0)` as a guard (under
+    `NDEBUG` it is `((void)0)`; otherwise it is a call, not a branch), admit
+    a site whose object is written anywhere in the function, read a guard
+    through a narrowing conversion of the operand, or admit any other
+    builtin through this table. Premises stated, not proved: faithful Clang
+    extraction of the operand, the object's declaration and every write to
+    it, the path's guards and the labels (trust boundary 28), and the
+    builtins' documented semantics. `QCore.BitCountBuiltins`
+    (`undefined_at_zero`, `defined_off_zero`,
+    `the_neutral_contract_is_the_identity`, `conversion_keeps_zero`,
+    `widening_keeps_nonzero`, `proves_sound`, `admitted_exactly_when`,
+    `an_admitted_site_has_a_nonzero_operand`,
+    `an_admitted_call_is_defined`, `an_unguarded_site_is_refused`,
+    `an_unstable_object_is_refused`, `a_narrowed_operand_is_refused`,
+    `a_statement_guard_needs_structured_flow`, `proof_vectors_hold`,
+    `decision_vectors_hold`, `the_tables_are_counted`), bound to the builtin
+    table, `PROOF_VECTORS` and `DECISION_VECTORS` by shared-vector unit
+    tests; [report](../reports/k2-builtin-bit-counts/README.md).
+
 <!-- generated:rules:end -->

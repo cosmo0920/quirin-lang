@@ -29,6 +29,7 @@ import QCore.AtomicPublication
 import QCore.AtomicSourceRoute
 import QCore.AuditComposition
 import QCore.BacklogLedger
+import QCore.BitCountBuiltins
 import QCore.BitfieldSourceConcurrency
 import QCore.Bitwise
 import QCore.BodyClauseStanding
