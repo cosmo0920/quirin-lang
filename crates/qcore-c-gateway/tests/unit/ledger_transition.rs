@@ -1377,7 +1377,7 @@ int append_finish(struct flb_input_instance *in, struct flb_input_chunk *ic, int
     /// The `memrb` checker's arm on a path.
     #[derive(Clone, Copy, Debug, PartialEq, Eq, PartialOrd, Ord)]
     enum Memrb {
-        NotMemrb,
+        OtherStore,
         BelowLimit,
         Released,
     }
@@ -1421,7 +1421,7 @@ int append_finish(struct flb_input_instance *in, struct flb_input_chunk *ic, int
             };
             assert!(gate_c(row.0, row.1, row.2));
             let memrb = match (guard(&events, "storage_type", "10"), released) {
-                (Some(false), false) => Memrb::NotMemrb,
+                (Some(false), false) => Memrb::OtherStore,
                 (Some(true), false) => Memrb::BelowLimit,
                 (Some(true), true) => Memrb::Released,
                 other => return Err(format!("memrb arm {other:?}")),
@@ -1439,7 +1439,7 @@ int append_finish(struct flb_input_instance *in, struct flb_input_chunk *ic, int
         }
         let entry = summary(MBL, "append_entry");
         let mut expected = Vec::new();
-        for memrb in [Memrb::NotMemrb, Memrb::BelowLimit, Memrb::Released] {
+        for memrb in [Memrb::OtherStore, Memrb::BelowLimit, Memrb::Released] {
             for gate in [Gate::Running, Gate::ShutdownFlush] {
                 expected.push((memrb, gate));
             }
@@ -1474,7 +1474,7 @@ int append_finish(struct flb_input_instance *in, struct flb_input_chunk *ic, int
         Unwritten,
         /// The write failed and was rolled back; `cio_memfs_write` changes
         /// nothing on failure (`Exit.refused`).
-        WriteFailed,
+        Failed,
         /// One write of `final_data_size` bytes: `buf_size`, or the filter's
         /// output for a log chunk (the `W` of P-MBL-WRITE-BOUND).
         Written(&'static str),
@@ -1496,7 +1496,7 @@ int append_finish(struct flb_input_instance *in, struct flb_input_chunk *ic, int
                             if calls(&events[*at..], "cio_chunk_tx_rollback").len() != 1 {
                                 return Err("failed write without rollback".into());
                             }
-                            WriteExit::WriteFailed
+                            WriteExit::Failed
                         }
                         Some(false) => match arguments[2].as_str() {
                             "param7" => WriteExit::Written("buf_size"),
@@ -1525,7 +1525,7 @@ int append_finish(struct flb_input_instance *in, struct flb_input_chunk *ic, int
         // the filter: four written paths, each a single write.
         assert_eq!(count(WriteExit::Written("buf_size")), 2);
         assert_eq!(count(WriteExit::Written("filtered")), 2);
-        assert_eq!(count(WriteExit::WriteFailed), 8);
+        assert_eq!(count(WriteExit::Failed), 8);
         assert_eq!(count(WriteExit::Unwritten), 14);
         assert_eq!(rows.len(), 26);
         // Mutation control: a second write after the first.
