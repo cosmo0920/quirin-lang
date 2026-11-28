@@ -121,7 +121,18 @@ Fluent Bit `046accf6` (`private/fb-046accf6`, read-only), base and tip each
 from its own `git archive` tree and its own release binary, with
 `docs/reports/fb-retry-or6-element-identity/scripts/` (paths changed).
 
-MEASUREMENT_TABLE
+| run | Safe / Pending / Unknown / Unsafe | access rows / alone / leaves |
+|---|---|---|
+| base `287dce8ed` | 1,209 / 2 / 3,586 / 7 | 2,091 / 201 / 8,909 |
+| tip `6aa742484` | **1,209 / 2 / 3,586 / 7** | 2,091 / 201 / 8,909 |
+
+**No row moved and no leaf changed**
+([moved-rows-base-tip.jsonl](evidence/moved-rows-base-tip.jsonl) is
+`{"moves": {}}`, [changed-rows-base-tip.txt](evidence/changed-rows-base-tip.txt)
+is empty), as predicted. There is no `Unknown -> Safe` move to justify. Both
+named rows and `rd_kafka_share_subscription` keep their base leaves
+([evidence/named-rows.txt](evidence/named-rows.txt)). The later commits change
+only this report.
 
 **System-slice route: not run.** Neither row is in
 `contract/profiles/fluent-bit/system-selection.json`, and the tip changes no
@@ -167,7 +178,33 @@ write nothing.
 
 ## 8. Gate
 
-GATE_SECTION
+Scoped card gate: `python3 scripts/gate_scope.py --base 287dce8ed --out
+private/gate` through `private/toolchain/env.sh` (Clang 21, Lean 4.35), head
+`c7ece88bf` (tests as at `6aa742484`). It ran in scoped mode: no affected
+crate and 12 test targets reached through the changed test file. Lean was not
+selected and the provider gate was not selected. The record is
+[gate/gate-1.json](gate/gate-1.json), with logs in the worktree's
+`private/gate/`.
+
+| step | exit | result |
+|---|---:|---|
+| submodules | 0 | 1 submodule |
+| `cargo fmt --all -- --check` | 0 | |
+| `cargo clippy` (5 packages, the selected targets) `-D warnings` | 0 | |
+| `run_test_binaries.py --targets …` (12) | 0 | 74 passed, 0 failed |
+| `python3 -m unittest discover -s scripts/tests` | **1** | 814 tests, 1 failure: `test_report_hygiene…test_real_repository_passes_hygiene_and_index_checks`, `docs/reports/INDEX.md` stale after this report was added |
+
+The one failure was this card's own: `python3 scripts/build_docs_index.py`
+had not been rerun. It was fixed in the next commit (INDEX.md and README.md
+regenerated). The Python suite was then rerun standalone: exit 0, 814 tests
+(`private/m/python-rerun.log`). `python3 scripts/check_lean_audits.py` was run
+standalone: exit 0, 536 audits passed (`private/m/lean-audits.log`). The gate was not rerun after the fix, which touched
+only generated report indexes and this report. No base failure was seen.
+
+LLP64 fixture scan over the changed test paths
+(`crates/qcore-c-gateway/tests/op_constructor_declarations.rs`): exit 0.
+`check_report_hygiene.py`: exit 0. `apply_amendments.py … --check
+--profiles-base 287dce8ed`: exit 0.
 
 ## 9. Follow-ups
 

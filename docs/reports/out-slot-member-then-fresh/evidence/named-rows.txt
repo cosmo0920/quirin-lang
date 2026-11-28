@@ -1,0 +1,38 @@
+base rd_kafka_assignment Unknown
+    3 indirect memory access is outside the resource projection
+    1 owned result of resource API `rd_kafka_topic_partition_list_new` stored through `*partitions` without an out-parameter contract
+    1 unresolved resource identity `partitions`
+    1 unresolved resource identity `rkcg`
+    2 unresolved resource identity `rko`
+base rd_kafka_share_subscription Unknown
+    1 call to uncontracted function `rd_kafka_error_code`
+    1 call to uncontracted function `rd_kafka_error_destroy`
+    1 call to uncontracted function `rd_kafka_share_acquire` in branch condition
+    1 call to uncontracted function `rd_kafka_share_consumer_closed_err` in branch condition
+    1 call to uncontracted function `rd_kafka_share_release`
+    1 call to uncontracted function `rd_kafka_subscription`
+base rd_kafka_subscription Unknown
+    3 indirect memory access is outside the resource projection
+    1 owned result of resource API `rd_kafka_topic_partition_list_new` stored through `*topics` without an out-parameter contract
+    1 unresolved resource identity `rkcg`
+    2 unresolved resource identity `rko`
+    1 unresolved resource identity `topics`
+tip rd_kafka_assignment Unknown
+    3 indirect memory access is outside the resource projection
+    1 owned result of resource API `rd_kafka_topic_partition_list_new` stored through `*partitions` without an out-parameter contract
+    1 unresolved resource identity `partitions`
+    1 unresolved resource identity `rkcg`
+    2 unresolved resource identity `rko`
+tip rd_kafka_share_subscription Unknown
+    1 call to uncontracted function `rd_kafka_error_code`
+    1 call to uncontracted function `rd_kafka_error_destroy`
+    1 call to uncontracted function `rd_kafka_share_acquire` in branch condition
+    1 call to uncontracted function `rd_kafka_share_consumer_closed_err` in branch condition
+    1 call to uncontracted function `rd_kafka_share_release`
+    1 call to uncontracted function `rd_kafka_subscription`
+tip rd_kafka_subscription Unknown
+    3 indirect memory access is outside the resource projection
+    1 owned result of resource API `rd_kafka_topic_partition_list_new` stored through `*topics` without an out-parameter contract
+    1 unresolved resource identity `rkcg`
+    2 unresolved resource identity `rko`
+    1 unresolved resource identity `topics`
