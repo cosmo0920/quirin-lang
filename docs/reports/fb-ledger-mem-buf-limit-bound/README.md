@@ -6,7 +6,7 @@ Card FB-LEDGER-MEM-BUF-LIMIT-BOUND, 2026-11-28, which discharges the
 `cio_chunk_up_force`, `sb.c:412`, `:633`) and `storage.backlog.mem_limit`'s
 batch test (`sb.c:605`, `:611`) stay uncertified by that decision. Base
 `287dce8ed` (main, r86). Probe `1dae0daee`, prediction `6e157a91f`, semantic
-commit `748c0a6a7` (the measured tip; later commits change records only).
+commit `748c0a6a7` (the measured tip; later commits change Lean, tests and records only, no crate source).
 
 ## Headline
 
@@ -175,7 +175,12 @@ routes (`quirin-audit measure --declared`) cannot run on this host (no
 the Rust step is the selected targets. Lean runs in full because
 `proof/QCore.lean` changed.
 
-FINAL_GATE
+**Final tree `70231c114`: exit 0** ([gate.json](integration/gate.json);
+logs in this worktree's `private/gate2/`). Submodules 0, fmt 0, five Clippy
+runs 0 (`qcore-c-gateway --lib --profile test` included). Rust:
+`run_test_binaries.py` over 14 units, **1,605 passed / 0 failed / 2
+ignored**. `check_lean_audits.py`: **537 audits**. Python: **814 tests**,
+exit 0.
 
 An earlier attempt (`private/gate/`, on `2c07d93d6` plus the uncommitted
 report) failed two steps, both the card's own and both fixed:
