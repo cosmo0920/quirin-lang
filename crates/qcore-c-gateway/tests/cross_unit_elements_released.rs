@@ -443,3 +443,8 @@ fn child_rule_43_off() {
     assert!(!exports.contains_key("drain"), "{:?}", exports.keys());
     assert!(exports.contains_key("touch"));
 }
+
+// Card SETTLED-LEAK-MARK-LEAFLESS (rule 84, amended): a leak marked by rule
+// 43's modelled effect beside no non-`Safe` leaf.
+#[path = "cross_unit_elements_released/mark_leafless.rs"]
+mod mark_leafless;
