@@ -1,0 +1,20 @@
+PROBE Safe []
+   int p_clz(unsigned x); int w(unsigned n) { return n == 0 ? -1 : 31 ^ p_clz(n); }
+PROBE Safe []
+   int p_clz(unsigned x); int w(unsigned n) { return p_clz(n); }
+PROBE Safe []
+   int p_clz(unsigned x); int w(unsigned n) { if (n != 0) return p_clz(n); return -1; }
+PROBE Safe []
+   int p_clz(unsigned x); int w(unsigned n) { if (n == 0) return -1; return p_clz(n); }
+PROBE Safe []
+   int p_clz(unsigned x); int w(unsigned n) { return n ? p_clz(n) : 32; }
+PROBE Safe []
+   int p_clzll(unsigned long long x); unsigned w(unsigned long long val) { ((void)0); return (unsigned)p_clzll((unsigned long long)val) >> 3; }
+PROBE Safe []
+   int p_clz(unsigned x); int w(unsigned n) { int r; r = p_clz(n); return r; }
+PROBE Safe []
+   int p_clz(unsigned x); int w(unsigned n) { int r; if (n) { r = p_clz(n); } else { r = 0; } return r; }
+PROBE Safe []
+   int p_clz(unsigned x); int w(unsigned n) { int r = p_clz(n) + 1; return r; }
+PROBE Safe []
+   int p_clz(unsigned x); int w(unsigned n) { int r = 0; while (n) { r += p_clz(n); n >>= 1; } return r; }
