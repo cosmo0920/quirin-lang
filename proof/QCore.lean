@@ -510,6 +510,7 @@ import QCore.ScalarTypes
 import QCore.SchedulerLifetime
 import QCore.ScopedTasks
 import QCore.SettledLeakJoined
+import QCore.SettledLeakLeafless
 import QCore.ShortCircuit
 import QCore.SiblingBorrowedCalls
 import QCore.SingleEmissionRoute

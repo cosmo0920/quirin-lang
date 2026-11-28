@@ -2296,11 +2296,21 @@ fn analyze_cfg_with_entry_collected(
     let decided = joined_leak_route::candidates(&replay, &incoming, &diagnostics);
     // Card SETTLED-LEAK-MARK-WITHOUT-UNKNOWN-LEAF: census (feature-gated).
     mark_without_unknown_route::record(&replay, &incoming, &held_leaks, &diagnostics);
+    // Card SETTLED-LEAK-MARK-LEAFLESS: a live marked identity beside no
+    // blocking leaf, also left by rule 74c's held reports.
+    let leafless = mark_leafless_route::candidates(&replay, &incoming, &diagnostics);
     // Card NULLABLE-GUARDED-RELEASE (rule 74c): publish every held leak the
     // settled exit does not withdraw and rule 84 does not decide.
-    held_leaks.settle(&cfg, &incoming, &decided, &mut diagnostics);
+    held_leaks.settle(
+        &cfg,
+        &incoming,
+        &decided.union(&leafless).copied().collect(),
+        &mut diagnostics,
+    );
     // Rule 84: publish every decided leak a path avoiding every mark carries.
     joined_leak_route::settle(&replay, &incoming, &decided, &mut diagnostics);
+    // Card SETTLED-LEAK-MARK-LEAFLESS: witnessed, a leak; otherwise the reason.
+    mark_leafless_route::settle(&replay, &incoming, &leafless, &mut diagnostics);
 
     if incoming.iter().flatten().any(|state| state.widened) {
         diagnostics.insert(LegacyDiagnostic {

@@ -347,6 +347,13 @@ mod joined_leak_route;
 #[path = "legacy_mark_without_unknown.rs"]
 mod mark_without_unknown_route;
 
+// Card SETTLED-LEAK-MARK-LEAFLESS (rule 84, amended): a live identity a
+// settled exit marks beside no non-`Safe` leaf; unwitnessed, it is `Unknown`
+// for the reason "mark without refusal". The hooks below naming the card are
+// thin.
+#[path = "legacy_mark_leafless.rs"]
+mod mark_leafless_route;
+
 // Card NULLABLE-LAZY-CONSTRUCTOR-IN-LOOP (rule 74d): a resolved, possibly-null
 // resource returned under a non-null result mode is refused as that. The hook
 // below naming the card is thin.
