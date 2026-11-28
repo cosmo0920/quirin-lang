@@ -88,6 +88,8 @@ const JOINED: [(&str, &str); 2] = [
 const EXIT_WITHHELD: &str =
     "exit withholds a possibly-live obligation whose effect is unresolved and unreported";
 const RETAINED_EDGE: &str = "loop exit edge retained: a modeled value cannot remove it";
+const REASON: &str = "the identity acquired at line 21 may be live at this exit under a modelled \
+                      effect's mark, and no refusal explains the mark (mark-without-refusal)";
 
 type Row = (AnalysisStatus, usize, Vec<String>);
 
@@ -126,9 +128,14 @@ fn check(shapes: &[(&str, &str); 2], rows: [Row; 2]) {
 }
 
 /// At base `287dce8ed` the verdict read the schedule (rule 6's hazard): the
-/// open arm first was claimed and published, the drained arm first was not.
+/// open arm first was claimed and published (`Unsafe`, one leak), the drained
+/// arm first was not (`Unknown`, no leak), in all three shapes (probe
+/// `8ba33c206`). Now both orders of each shape decide the same: the witnessed
+/// open arm is published, the arm through the retained exit is withdrawn with
+/// the reason, and the published-first `JOINED` program's stale mark is
+/// witnessed by its open arm.
 #[test]
-fn the_leafless_mark_reads_the_schedule_at_base() {
+fn both_orders_of_a_leafless_mark_decide_the_same() {
     if std::env::var_os(CHILD).is_some() || !clang_available() {
         return;
     }
@@ -136,21 +143,41 @@ fn the_leafless_mark_reads_the_schedule_at_base() {
         &ONE_ARM,
         [
             expect(AnalysisStatus::Unsafe, 1, &[EXIT_WITHHELD]),
-            expect(AnalysisStatus::Unknown, 0, &[EXIT_WITHHELD]),
+            expect(AnalysisStatus::Unsafe, 1, &[EXIT_WITHHELD]),
         ],
     );
     check(
         &RETAINED,
         [
-            expect(AnalysisStatus::Unsafe, 1, &[RETAINED_EDGE]),
-            expect(AnalysisStatus::Unknown, 0, &[RETAINED_EDGE]),
+            expect(AnalysisStatus::Unknown, 0, &[REASON, RETAINED_EDGE]),
+            expect(AnalysisStatus::Unknown, 0, &[REASON, RETAINED_EDGE]),
         ],
     );
     check(
         &JOINED,
         [
             expect(AnalysisStatus::Unsafe, 1, &[]),
-            expect(AnalysisStatus::Unknown, 0, &[EXIT_WITHHELD]),
+            expect(AnalysisStatus::Unsafe, 1, &[EXIT_WITHHELD]),
         ],
     );
+}
+
+/// The nine rule 43 marks the suite census found beside no leaf at base sit
+/// on an exempt entry-custody site: no candidate, no reason, still `Safe`
+/// (the same bodies as `an_imported_clause_reaches_the_caller_and_both_bodies_replay`).
+#[test]
+fn an_exempt_mark_records_no_reason() {
+    if std::env::var_os(CHILD).is_some() || !clang_available() {
+        return;
+    }
+    for body in [
+        "void subject(struct queue *q) { drain(q); }",
+        "void subject(void *data) { struct queue *q = data; if (drain(q) > 0) q_use(q); }",
+    ] {
+        assert_eq!(
+            analysed(body),
+            expect(AnalysisStatus::Safe, 0, &[]),
+            "{body}"
+        );
+    }
 }

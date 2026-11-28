@@ -909,6 +909,12 @@ SETTLED-LEAK-MARK-WITHOUT-UNKNOWN-LEAF): the same holds beside a `Pending`
 leaf (a call held for a human act); a mark beside no blocking leaf is still
 rule 74c's.
 
+Rule 6 is amended by [rule 84](#constraint-84) (card
+SETTLED-LEAK-MARK-LEAFLESS): beside no blocking leaf, an identity a modelled
+effect marks that the settled exit would otherwise claim is decided from the
+settled states too (a witnessed leak, or the `Unknown` reason
+`mark-without-refusal`).
+
 <a id="constraint-7"></a>
 
 7. Leak diagnostics are **34** across the pinned 185-unit corpus
@@ -13338,6 +13344,11 @@ Rule 74c is amended by [rule 84](#constraint-84) (card
 SETTLED-LEAK-MARK-WITHOUT-UNKNOWN-LEAF): the same holds beside a `Pending`
 leaf with no `Unknown` leaf (a call held for a human act marks the identity);
 only a mark beside no blocking leaf is still decided here.
+Rule 74c is amended by [rule 84](#constraint-84) (card
+SETTLED-LEAK-MARK-LEAFLESS): beside no blocking leaf, a marked identity the
+settled exit would claim but for the mark is no longer decided here either
+(rule 84 publishes it on its witness or records the `Unknown` reason
+`mark-without-refusal`); only an exempt or non-live marked identity is.
 
 <a id="constraint-74d"></a>
 
@@ -15020,7 +15031,8 @@ it `Unknown`). No `Pending` reason is added or removed, and nothing becomes
 could leave a row with no non-`Safe` leaf, so rule 74c's held report keeps
 deciding it (in the gateway suite such marks come from a modelled effect,
 rule 43's `ElementsReleased` on an entry-custody site, and are never
-claimable). Pinned in `tests/settled_leak_other_refusal/mark_without_unknown.rs`: the held
+claimable; amended below by SETTLED-LEAK-MARK-LEAFLESS for a claimable
+identity). Pinned in `tests/settled_leak_other_refusal/mark_without_unknown.rs`: the held
 close on one arm in two schedules (both `Unsafe`, one leak, the hold kept),
 on both arms (both `Pending`, the hold's reason only), and the open arm past
 an unrelated held call (both `Unknown`, no leak, both holds kept).
@@ -15034,6 +15046,56 @@ an unrelated held call (both `Unknown`, no leak, both holds kept).
 `a_decision_beside_a_blocking_leaf_is_never_safe`,
 `a_withdrawal_beside_holds_only_is_pending`);
 [report](../reports/settled-leak-mark-without-unknown-leaf/README.md).
+
+Rule 84 is amended by card SETTLED-LEAK-MARK-LEAFLESS (user decision of
+2026-11-28, option (b); `crates/qcore-c-gateway/src/legacy_mark_leafless.rs`,
+new: `leafless`, `outcome`, `candidates`, `settle` and the reason text
+`description`; one `mod` line in `legacy_c.rs`; in the settle block of
+`legacy_transfer.rs` its candidates join the set rule 74c's held reports
+leave alone and its `settle` runs after rule 84's). **A mark beside no
+blocking leaf.** Beside no `Unknown` or `Pending` leaf the mark is no
+refusal's: rule 43's `ElementsReleased` clause at a call withdraws every
+object the caller published (`forget_published`), a modelled "may have
+released" effect. Rule 74c's held report decided such an identity, so the
+leak read the schedule: at `287dce8ed` a caller that publishes `x` and drains
+on one arm and leaves `x` open on the other was `Unsafe` (one leak) when the
+open arm reached the exit first and `Unknown` (no leak) when the drained arm
+did. **The candidates** are, when the diagnostics at the settle point carry
+no blocking leaf, the marked current-generation `(exit, identity)` pairs
+(`marked_exits`) whose identity the exit's settled output would claim but for
+the mark: `LIVE`, not exempt, no reference family (`claimable`). **The
+decision.** Rule 74c's held reports leave the candidates alone. A candidate
+is published as a `Leak` exactly when this rule's restricted replay and
+witness carry it (its existing route for a refusal-free path, the replay
+check included); otherwise the report is withdrawn and the function records
+the `Unknown` reason `the identity acquired at line N may be live at this
+exit under a modelled effect's mark, and no refusal explains the mark
+(mark-without-refusal)` at the exit, unless a leak with the same key is
+published there. The reason is a gateway `Unsupported` leaf (a category, not
+a `Q` code; no code is allocated). Both read settled facts only, so the
+verdict does not depend on the schedule. A decided candidate leaves a leak or
+the reason, so the row is never `Safe`; the reason is never `Unsafe`. Moves:
+`Unsafe -> Unknown` (a claim only an iterate made, unwitnessed),
+`Unknown -> Unsafe` (a witnessed arm the schedule hid), and `Safe -> Unknown`
+only where the reason fires on a row with no other leaf. **Do not** decide an
+exempt or non-live marked identity: it is no leak in any schedule (the
+suite's nine rule 43 marks, all on an exempt entry-custody site, keep their
+`Safe` rows and record no reason); **do not** decide here beside a blocking
+leaf (the amendment above keeps it). Pinned in
+`tests/cross_unit_elements_released/mark_leafless.rs`: the open arm beside a
+published-and-drained arm in two schedules (both `Unsafe`, one leak), the
+same with the open arm through a retained loop exit edge (both `Unknown`, the
+reason and the retained-edge refusal, no leak), a drain after a one-arm
+publication in two programs (both `Unsafe`), and two exempt marks (`Safe`, no
+reason). `QCore.SettledLeakLeafless` (`leafless`, `outcome`,
+`the_reason_is_never_safe_or_unsafe`, `a_leafless_decision_is_never_safe`,
+`a_withdrawal_in_a_leafless_row_is_unknown`, `outcome_is_order_independent`,
+`the_leafless_case_read_the_schedule`,
+`agrees_with_rule_84_beside_a_blocking_leaf`,
+`a_witnessed_mark_is_published`, `an_unclaimable_mark_is_left_to_rule_74c`,
+`both_orders_publish_the_open_arm`, `both_orders_record_the_reason`,
+`outcome_vectors_hold`);
+[report](../reports/settled-leak-mark-leafless/README.md).
 
 <a id="constraint-85"></a>
 
