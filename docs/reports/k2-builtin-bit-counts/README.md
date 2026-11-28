@@ -197,7 +197,20 @@ allowed for. Corpus and twelve-home remain unmeasured here.
 | `crates/qcore-c-gateway/tests/k2_no_typed_access.rs` | section (3) appended; one doc-comment sentence |
 | generated | `docs/agents/gateway.md`, `docs/agents/README.md` (rule 94), `proof/QCore.lean` |
 
-## 8. Follow-ons
+## 8. Gate
+
+Scoped card gate on `fb912bf40` (`sh private/toolchain/env.sh python3
+scripts/gate_scope.py --base 287dce8ed --out private/gate`), mode full (the
+diff reaches `qcore-c-gateway`), exit 0, 8 steps passed: submodules 0; fmt 0;
+Clippy 0; Rust suite 0 (725 units, 10,424 passed, 0 failed, 24 ignored);
+both reevaluation probes 0; Lean audits 0 (537 audits); Python suite 0 (814
+tests). No base failure was seen. `private/gate/gate.json` (SHA-256
+`f4c881fe…a8cb`); Clang `Ubuntu clang version 21.1.8`. LLP64 fixture scan
+over the card's test paths: 0 counted, exit 0. Report hygiene: passed.
+`apply_amendments.py --check --profiles-base 287dce8ed`: exit 0. The records
+commit after the gate adds only this section; the Python suite rerun on it as the card gate runs it (`QUIRIN_CARD_GATE_BASE=287dce8ed`) exits 0 (814 tests, 1 skipped). Run without that variable, `test_the_derived_facts_are_recomputed_rather_than_carried` fails by design (the committed matrix counts 536 Lean audits, the tree 537 with this card's; the matrix is regenerated at landing).
+
+## 9. Follow-ons
 
 Amended in [integration-amendments.json](integration-amendments.json)
 (`K2-BUILTIN-BIT-COUNTS`, what remains): a caller-established precondition
