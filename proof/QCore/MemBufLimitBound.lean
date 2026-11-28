@@ -37,7 +37,9 @@ Modelled transitions (the census, `docs/reports/fb-ledger-mem-buf-limit-bound/CE
 * `release`: a chunk destroyed outside an append (flush, task destroy,
   eviction): the resident bytes fall, the snapshot is not refreshed;
 * `setLimits`: `flb_task_destroy` refreshes the snapshot and may resume
-  (`src/flb_task.c:939-941`).
+  (`src/flb_task.c:939-941`);
+* `refresh`: `flb_input_chunk_set_up_down` refreshes the snapshot only
+  (`:3140-3163`, from `src/flb_task.c:372`).
 
 The pause reasons other than `mem_buf_status` (storage, rate gate) only add
 refusals at the gate, so the model admits every append they would admit and
@@ -161,15 +163,22 @@ structure Cfg where
   maxWrite : Nat
   shutdownFlush : Bool
 
+/-- `flb_input_chunk_set_up_down` (`:3140-3163`), called on a task retry
+(`src/flb_task.c:372`): it refreshes the snapshot and resumes nothing; its
+`cio_chunk_down` does nothing to a memory chunk. -/
+def refresh (s : St) : St := { s with snapshot := s.resident }
+
 inductive Step where
   | append (a : Append)
   | release (d : Nat)
   | setLimits (resumeAllowed : Bool)
+  | refresh
 
 def step (c : Cfg) : Step → St → St
   | .append a, s => append c.store c.limit c.shutdownFlush a s
   | .release d, s => release d s
   | .setLimits r, s => setLimits c.limit r s
+  | .refresh, s => refresh s
 
 def run (c : Cfg) : List Step → St → St
   | [], s => s
@@ -222,6 +231,15 @@ theorem release_preserves (c : Cfg) (d : Nat) (s : St) (h : Inv c s) :
   obtain ⟨h1, h2, h3⟩ := h
   unfold Inv release
   exact ⟨by simp; omega, h2, h3⟩
+
+theorem refresh_preserves (c : Cfg) (s : St) (h : Inv c s) : Inv c (refresh s) := by
+  obtain ⟨h1, h2, h3⟩ := h
+  unfold Inv refresh
+  refine ⟨Nat.le_refl _, by simp; omega, ?_⟩
+  intro hm hp
+  have := h3 hm hp
+  simp only at hp ⊢
+  omega
 
 theorem setLimits_preserves (c : Cfg) (r : Bool) (s : St) (hc : Certified c) (h : Inv c s) :
     Inv c (setLimits c.limit r s) := by
@@ -338,6 +356,7 @@ theorem step_preserves (c : Cfg) (t : Step) (s : St) (hc : Certified c)
       · exact append_memrb_preserves c a s hc hm ht h
   | release d => exact release_preserves c d s h
   | setLimits r => exact setLimits_preserves c r s hc h
+  | refresh => exact refresh_preserves c s h
 
 theorem run_preserves (c : Cfg) (hc : Certified c) :
     ∀ (ts : List Step) (s : St), (∀ t ∈ ts, Admissible c t) → Inv c s → Inv c (run c ts s)

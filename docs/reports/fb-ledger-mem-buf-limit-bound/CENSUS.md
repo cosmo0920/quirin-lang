@@ -69,6 +69,7 @@ caller that sets `local_append` (`flb_input_log.c:1611-1625` to `:1392`,
 | `include/fluent-bit/flb_input.h:783-807` | `flb_input_paused` is true when `mem_buf_status`, `storage_buf_status` or (metrics on) `rate_gate_status` is paused |
 | `src/flb_input.c:661` | status `RUNNING` at creation |
 | `src/flb_task.c:940` | `flb_task_destroy` calls `set_limits` after destroying its chunk |
+| `src/flb_task.c:372` | a task retry calls `flb_input_chunk_set_up_down` (IC:3140-3163): snapshot only, no resume |
 
 `mem_buf_status` is written at exactly three sites: `flb_input.c:661`,
 IC:3033 and IC:3126. `mem_buf_limit` is written only at configuration time:

@@ -263,6 +263,7 @@ for rel, needle, line in [
     (IC, "if (flb_input_is_threaded(in)) {", 3798),
     (IC, "if (flb_input_paused(ins) == FLB_TRUE) {", 3747),
     ("src/flb_task.c", "flb_input_chunk_set_limits(task->i_ins);", 940),
+    ("src/flb_task.c", "flb_input_chunk_set_up_down(task->ic);", 372),
 ]:
     if needle not in read(rel)[line - 1]:
         failures.append(f"{rel}:{line}: expected {needle!r}")
