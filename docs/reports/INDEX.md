@@ -612,6 +612,8 @@ Regenerate with `python3 scripts/build_docs_index.py`; validate with `--check`.
 
 | [fb-event-loop-retention](archive/contracts-and-premises/fb-event-loop-retention/README.md) | FB-EVENT-LOOP-RETENTION-AND-REGISTRATION |
 
+| [fb-ledger-mem-buf-limit-bound](fb-ledger-mem-buf-limit-bound/README.md) | FB-LEDGER-MEM-BUF-LIMIT-BOUND: mem_buf_limit + one write, certified under named premises |
+
 | [fb-loop-chain-blockers](archive/contracts-and-premises/fb-loop-chain-blockers/README.md) | FB-LOOP-CHAIN-ACCESS-IDENTITY-BLOCKERS: the access and identity blockers on the event-loop chains |
 
 | [fb-plugin-descriptor-nonnull](archive/contracts-and-premises/fb-plugin-descriptor-nonnull/README.md) | FB-PLUGIN-DESCRIPTOR-NONNULL-SCOPE |
