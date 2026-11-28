@@ -182,6 +182,13 @@ test files exit 0 ("0 counted, 0 found"); `apply_amendments.py --check
 provider file changed, so the provider gate was not selected. No base failure
 was seen.
 
+On the records head (`78d5997d1`, after the report and the regenerated
+`docs/reports/INDEX.md`): the Python suite with `QUIRIN_CARD_GATE_BASE=287dce8ed`
+(as the gate runs it) ran 814 tests, OK. Run bare, it fails
+`test_build_matrix_sections.test_the_derived_facts_are_recomputed_rather_than_carried`
+on `lean_audits` 536 against 537: this card's own new audit file, which the
+acceptance matrix picks up when it is regenerated at landing.
+
 ## 5. Ledger and follow-ups
 
 **SETTLED-LEAK-MARK-LEAFLESS** is retired in
