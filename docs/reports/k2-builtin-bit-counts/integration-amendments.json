@@ -1,0 +1,17 @@
+{
+ "schema": "quirin-amendments/2",
+ "card": "K2-BUILTIN-BIT-COUNTS",
+ "base": "287dce8ed",
+ "measured_tip": "edf56d4e9",
+ "profiles": [],
+ "increment_paragraph": "**K2-BUILTIN-BIT-COUNTS** (user decision 2026-11-28, option (a); gateway rule 94, Lean `QCore.BitCountBuiltins`; [report](../../reports/k2-builtin-bit-counts/README.md)). A call of a bit-count builtin `__builtin_c{l,t}z{,l,ll}(x)`, undefined at `x = 0`, is read as the identity on custody (its one scalar `Borrowed`, no result custody) only when every such call of the function reads a stable automatic integer object through widening conversions and a guard on its path proves `x ≠ 0` on the edge it is reached by (a `?:` arm, the right operand of `&&`/`||`, an `if` branch, or the block after `if (C) return`, the statement forms on structured flow only); the contract enters only that function's CFG environment (`bit_count_builtins.rs`, one hook in `legacy_c::build_function_cfg_with`), and every undischarged site keeps its base refusal byte for byte. The builtins are modelled in the gateway's own builtin table, as `__builtin_expect` and the `__builtin_mem*` writers are, not in a provider. `assert(x != 0)` is no guard. Measured base `287dce8ed` against tip `edf56d4e9` over this host's 046accf6 preparation: opt-in current 1,209/2/3,586/7 → 1,210/2/3,585/7 (`log2_floor` Unknown → Safe, exactly the prediction; `compress_fragment` loses its `call to uncontracted function log2_floor` leaf and stays Unknown); `LZ4_NbCommonBytes` and `find_lsb_set_non_zero{,64}` unchanged (unguarded); system 124/0/320/4 unchanged.",
+ "status_edits": [],
+ "ledger": [
+  {
+   "id": "K2-BUILTIN-BIT-COUNTS",
+   "operation": "amend",
+   "text": "DISCHARGED IN PART by K2-BUILTIN-BIT-COUNTS (user decision 2026-11-28, option (a); gateway rule 94, Lean QCore.BitCountBuiltins, base 287dce8ed): a bit-count call is custody-neutral when every such call of the function reads a stable automatic integer object through widening conversions and a guard on its path proves the operand nonzero on its edge (?: arm, && / || right operand, if branch, block after if (C) return; statement forms on structured flow only); the declarations live in the gateway's builtin table (bit_count_builtins::BUILTINS), not in a provider. Measured on opt-in current: log2_floor Unknown -> Safe (1,209/2/3,586/7 -> 1,210/2/3,585/7). REMAINING: LZ4_NbCommonBytes (lz4.c; assert(val != 0) is ((void)0) under NDEBUG, and its 32-bit arms narrow val with (U32)) and find_lsb_set_non_zero / find_lsb_set_non_zero64 (snappy.c) stay Unknown with their base leaves: the nonzero operand is a caller precondition (their in-unit callers test the value first). Also out of the rule: an object written in the function (a loop clearing the lowest bit), guards beyond the listed forms (x == K with K != 0), and a per-site reading of a body that mixes guarded and unguarded sites (refused as a whole). DISCHARGE: a nonzero-argument precondition carried to callers (a derived or declared x != 0 entry premise checked at every call site, with Lean parity), measured; or a recorded decision that these stay refused.",
+   "source": "docs/reports/k2-builtin-bit-counts/README.md"
+  }
+ ]
+}

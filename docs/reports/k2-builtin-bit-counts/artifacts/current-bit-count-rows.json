@@ -1,0 +1,176 @@
+{
+ "lib/librdkafka-2.15.0/src/lz4.c::LZ4_NbCommonBytes": {
+  "base": {
+   "status": "Unknown",
+   "leaves": [
+    "451: unmodeled call, aggregate or indirect access in return expression",
+    "453: unmodeled call, aggregate or indirect access in return expression",
+    "457: unmodeled call, aggregate or indirect access in return expression",
+    "459: unmodeled call, aggregate or indirect access in return expression"
+   ],
+   "contract_dependencies": {
+    "declarations": [],
+    "hypothesis_dependencies": {},
+    "summaries": [
+     "LZ4_isLittleEndian"
+    ]
+   }
+  },
+  "tip": {
+   "status": "Unknown",
+   "leaves": [
+    "451: unmodeled call, aggregate or indirect access in return expression",
+    "453: unmodeled call, aggregate or indirect access in return expression",
+    "457: unmodeled call, aggregate or indirect access in return expression",
+    "459: unmodeled call, aggregate or indirect access in return expression"
+   ],
+   "contract_dependencies": {
+    "declarations": [],
+    "hypothesis_dependencies": {},
+    "summaries": [
+     "LZ4_isLittleEndian"
+    ]
+   }
+  }
+ },
+ "lib/librdkafka-2.15.0/src/snappy.c::compress_fragment": {
+  "base": {
+   "status": "Unknown",
+   "leaves": [
+    "20051: unresolved resource identity `input`",
+    "20054: call to uncontracted function `log2_floor`",
+    "20056: unsupported assignment expression",
+    "20061: unsupported assignment expression",
+    "20064: unmodeled increment or decrement expression",
+    "20079: indirect memory access is outside the resource projection",
+    "20082: unrecognized assignment destination",
+    "20085: call to uncontracted function `emit_literal`",
+    "20090: call to uncontracted function `find_match_length`",
+    "20094: unsupported assignment expression",
+    "20096: call to uncontracted function `emit_copy`",
+    "20106: unrecognized assignment destination",
+    "20110: indirect memory access is outside the resource projection",
+    "20112: unrecognized assignment destination",
+    "20123: call to uncontracted function `emit_literal`"
+   ],
+   "contract_dependencies": {
+    "declarations": [
+     "__assert_fail",
+     "memcmp",
+     "memcpy"
+    ],
+    "hypothesis_dependencies": {},
+    "summaries": [
+     "get_eight_bytes_at",
+     "get_u32_at_offset",
+     "get_unaligned32",
+     "get_unaligned64",
+     "hash",
+     "hash_bytes",
+     "is_little_endian"
+    ]
+   }
+  },
+  "tip": {
+   "status": "Unknown",
+   "leaves": [
+    "20051: unresolved resource identity `input`",
+    "20056: unsupported assignment expression",
+    "20061: unsupported assignment expression",
+    "20064: unmodeled increment or decrement expression",
+    "20079: indirect memory access is outside the resource projection",
+    "20082: unrecognized assignment destination",
+    "20085: call to uncontracted function `emit_literal`",
+    "20090: call to uncontracted function `find_match_length`",
+    "20094: unsupported assignment expression",
+    "20096: call to uncontracted function `emit_copy`",
+    "20106: unrecognized assignment destination",
+    "20110: indirect memory access is outside the resource projection",
+    "20112: unrecognized assignment destination",
+    "20123: call to uncontracted function `emit_literal`"
+   ],
+   "contract_dependencies": {
+    "declarations": [
+     "__assert_fail",
+     "memcmp",
+     "memcpy"
+    ],
+    "hypothesis_dependencies": {},
+    "summaries": [
+     "get_eight_bytes_at",
+     "get_u32_at_offset",
+     "get_unaligned32",
+     "get_unaligned64",
+     "hash",
+     "hash_bytes",
+     "is_little_endian",
+     "log2_floor"
+    ]
+   }
+  }
+ },
+ "lib/librdkafka-2.15.0/src/snappy.c::find_lsb_set_non_zero": {
+  "base": {
+   "status": "Unknown",
+   "leaves": [
+    "19673: call to uncontracted function `__builtin_ctz`"
+   ],
+   "contract_dependencies": {
+    "declarations": [],
+    "hypothesis_dependencies": {}
+   }
+  },
+  "tip": {
+   "status": "Unknown",
+   "leaves": [
+    "19673: call to uncontracted function `__builtin_ctz`"
+   ],
+   "contract_dependencies": {
+    "declarations": [],
+    "hypothesis_dependencies": {}
+   }
+  }
+ },
+ "lib/librdkafka-2.15.0/src/snappy.c::find_lsb_set_non_zero64": {
+  "base": {
+   "status": "Unknown",
+   "leaves": [
+    "19677: call to uncontracted function `__builtin_ctzll`"
+   ],
+   "contract_dependencies": {
+    "declarations": [],
+    "hypothesis_dependencies": {}
+   }
+  },
+  "tip": {
+   "status": "Unknown",
+   "leaves": [
+    "19677: call to uncontracted function `__builtin_ctzll`"
+   ],
+   "contract_dependencies": {
+    "declarations": [],
+    "hypothesis_dependencies": {}
+   }
+  }
+ },
+ "lib/librdkafka-2.15.0/src/snappy.c::log2_floor": {
+  "base": {
+   "status": "Unknown",
+   "leaves": [
+    "19669: unmodeled call, aggregate or indirect access in return expression"
+   ],
+   "contract_dependencies": {
+    "declarations": [],
+    "hypothesis_dependencies": {}
+   }
+  },
+  "tip": {
+   "status": "Safe",
+   "leaves": [],
+   "contract_dependencies": {
+    "declarations": [],
+    "hypothesis_dependencies": {}
+   }
+  }
+ }
+}

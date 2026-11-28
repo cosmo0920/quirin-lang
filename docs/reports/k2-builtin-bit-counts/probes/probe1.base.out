@@ -1,0 +1,42 @@
+PROBE Unknown ["unsupported:unmodeled call, aggregate or indirect access in return expression"]
+   int w(unsigned n) { return n == 0 ? -1 : 31 ^ __builtin_clz(n); }
+PROBE Unknown ["unsupported:call to uncontracted function `__builtin_clz`"]
+   int w(unsigned n) { return __builtin_clz(n); }
+PROBE Unknown ["unsupported:call to uncontracted function `__builtin_ctz`"]
+   int w(unsigned n) { return __builtin_ctz(n); }
+PROBE Unknown ["unsupported:call to uncontracted function `__builtin_ctz`"]
+   int w(unsigned n) { if (n != 0) return __builtin_ctz(n); return -1; }
+PROBE Unknown ["unsupported:call to uncontracted function `__builtin_clz`"]
+   int w(unsigned n) { if (n == 0) return -1; return __builtin_clz(n); }
+PROBE Unknown ["unsupported:unmodeled call, aggregate or indirect access in return expression"]
+   int w(unsigned n) { return n ? __builtin_ctz(n) : 32; }
+PROBE Unknown ["unsupported:unmodeled call, aggregate or indirect access in return expression"]
+   int w(unsigned n) { return n != 0 ? __builtin_ctz(n) : 32; }
+PROBE Unknown ["unsupported:unmodeled call, aggregate or indirect access in return expression"]
+   int w(unsigned n) { return n > 0 ? __builtin_ctz(n) : 32; }
+PROBE Unknown ["unsupported:unmodeled call, aggregate or indirect access in return expression"]
+   int w(unsigned long n) { return n ? __builtin_clzl(n) : 64; }
+PROBE Unknown ["unsupported:call to uncontracted function `__builtin_clzl`"]
+   int w(unsigned long n) { return __builtin_clzl(n); }
+PROBE Unknown ["unsupported:unmodeled call, aggregate or indirect access in return expression"]
+   int w(unsigned long n) { return n ? __builtin_ctzl(n) : 64; }
+PROBE Unknown ["unsupported:unmodeled call, aggregate or indirect access in return expression"]
+   int w(unsigned long long n) { return n ? __builtin_clzll(n) : 64; }
+PROBE Unknown ["unsupported:call to uncontracted function `__builtin_ctzll`"]
+   int w(unsigned long long n) { return __builtin_ctzll(n); }
+PROBE Unknown ["unsupported:unmodeled call, aggregate or indirect access in return expression"]
+   int w(unsigned long long n) { return n != 0 ? __builtin_ctzll(n) : 64; }
+PROBE Unknown ["unsupported:unmodeled call, aggregate or indirect access in return expression"]
+   unsigned w(unsigned long long val) { ((void)0); return (unsigned)__builtin_ctzll((unsigned long long)val) >> 3; }
+PROBE Unknown ["unsupported:call to uncontracted function `__builtin_ctz`"]
+   int w(unsigned n) { int r; r = __builtin_ctz(n); return r; }
+PROBE Unknown ["unsupported:call to uncontracted function `__builtin_ctz`"]
+   int w(unsigned n) { int r; if (n) { r = __builtin_ctz(n); } else { r = 0; } return r; }
+PROBE Unknown ["unsupported:unmodeled call, aggregate or indirect access in return expression"]
+   int w(unsigned n, unsigned m) { return n == 0 ? -1 : __builtin_clz(m); }
+PROBE Unknown ["unsupported:unmodeled call, aggregate or indirect access in return expression"]
+   int w(unsigned n) { return n == 0 ? __builtin_clz(n) : -1; }
+PROBE Unknown ["unsupported:unmodeled call, aggregate or indirect access in return expression"]
+   int w(unsigned n) { return n == 0 ? -1 : 31 ^ ext(n); }
+PROBE Safe []
+   int w(unsigned n) { return n == 0 ? -1 : 31 ^ (int)n; }

@@ -716,6 +716,8 @@ Regenerate with `python3 scripts/build_docs_index.py`; validate with `--check`.
 
 | [k1-call-actual-access](archive/wave-48/k1-call-actual-access/README.md) | K1-CALL-ACTUAL-ACCESS: call-actual access reads, re-censused; rule 75 |
 
+| [k2-builtin-bit-counts](k2-builtin-bit-counts/README.md) | K2-BUILTIN-BIT-COUNTS: a bit-count builtin under a nonzero guard |
+
 | [k2-no-typed-access](archive/wave-48/k2-no-typed-access/README.md) | K2-NO-TYPED-ACCESS: leaves with no typed access, re-censused |
 
 | [k3-pointer-valued-stores](archive/wave-48/k3-pointer-valued-stores/README.md) | K3-POINTER-VALUED-STORES |

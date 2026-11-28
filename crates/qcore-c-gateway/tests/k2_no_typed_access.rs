@@ -17,6 +17,8 @@
 //! type query, (2) `NAME * sizeof` read as no declaration; admitted shapes and
 //! the adversarial near-misses that keep their refusal. Each body's base
 //! answer (5087f9295) is recorded in docs/reports/k2-no-typed-access/probes/.
+//! Section (3) is card K2-BUILTIN-BIT-COUNTS (gateway rule 94): a bit-count
+//! builtin under a guard that proves its operand nonzero.
 
 use std::collections::BTreeMap;
 
@@ -256,4 +258,158 @@ fn a_real_declaration_after_a_parenthesis_is_still_read() {
     safe(
         "long w(long n) { long s; for (box_t *p = 0; p; ) { break; } s = (n * sizeof(long)); return s; }",
     );
+}
+
+// ---- (3) Card K2-BUILTIN-BIT-COUNTS (rule 94): a bit-count builtin under a
+// nonzero guard. Each body's base answer (287dce8ed) is recorded in
+// docs/reports/k2-builtin-bit-counts/probes/ (`probe1`, `probe3`): every one
+// was Unknown there. An undischarged site keeps that refusal byte for byte.
+
+const RETURN: &str =
+    "unsupported:unmodeled call, aggregate or indirect access in return expression";
+
+fn uncontracted(builtin: &str) -> String {
+    format!("unsupported:call to uncontracted function `{builtin}`")
+}
+
+fn unknown_with(body: &str, keys: &[&str]) {
+    let expected = keys.iter().map(|k| (*k).to_owned()).collect::<Vec<_>>();
+    assert_eq!(outcome(body), ("Unknown", expected), "{body}");
+}
+
+#[test]
+fn a_guarded_bit_count_is_admitted_in_every_width() {
+    // snappy.c's `log2_floor` (`rd_clz` is `__builtin_clz`).
+    safe("int w(unsigned n) { return n == 0 ? -1 : 31 ^ __builtin_clz(n); }");
+    safe("int w(unsigned n) { return n ? __builtin_ctz(n) : 32; }");
+    safe("int w(unsigned n) { return n > 0 ? __builtin_ctz(n) : 32; }");
+    // A subject's own `unsigned long` formal (no contract position).
+    safe("int w(unsigned long n) { return n ? __builtin_clzl(n) : 64; }"); // llp64-scan: allow
+    safe("int w(unsigned long n) { return n ? __builtin_ctzl(n) : 64; }"); // llp64-scan: allow
+    safe("int w(unsigned long long n) { return n ? __builtin_clzll(n) : 64; }");
+    safe("int w(unsigned long long n) { return n != 0 ? __builtin_ctzll(n) : 64; }");
+    // A widening operand, a signed operand of the same rank, a `const` local.
+    safe("int w(unsigned n) { return n ? __builtin_ctzll(n) : 64; }");
+    safe("int w(int n) { return n > 0 ? __builtin_ctz(n) : 0; }");
+    safe("int w(unsigned m) { const unsigned n = m; return n ? __builtin_ctz(n) : 0; }");
+    // `&&`, `||` and a connective guard.
+    safe("int w(unsigned n) { return n && __builtin_clz(n) > 3; }");
+    safe("int w(unsigned n) { return n == 0 || __builtin_clz(n) > 3; }");
+    safe("int w(unsigned n) { return (n != 0 && n < 8) ? __builtin_clz(n) : 0; }");
+}
+
+#[test]
+fn a_statement_guard_is_admitted_on_structured_flow() {
+    safe("int w(unsigned n) { if (n != 0) return __builtin_ctz(n); return -1; }");
+    safe("int w(unsigned n) { if (n == 0) return -1; return __builtin_clz(n); }");
+    safe("int w(unsigned n) { if (!n) return 32; return __builtin_ctz(n); }");
+    safe("int w(unsigned n) { if (n == 0) { return -1; } return 31 ^ __builtin_clz(n); }");
+    safe("int w(unsigned n) { int r; if (n) { r = __builtin_ctz(n); } else { r = 0; } return r; }");
+    safe("int w(unsigned n) { int r; if (n == 0) r = 0; else r = __builtin_ctz(n); return r; }");
+}
+
+#[test]
+fn an_unguarded_bit_count_keeps_the_base_refusal() {
+    for builtin in ["__builtin_clz", "__builtin_ctz"] {
+        let body = format!("int w(unsigned n) {{ return {builtin}(n); }}");
+        unknown_with(&body, &[&uncontracted(builtin)]);
+    }
+    unknown_with(
+        "int w(unsigned long n) { return __builtin_clzl(n); }", // llp64-scan: allow
+        &[&uncontracted("__builtin_clzl")],
+    );
+    unknown_with(
+        "int w(unsigned long long n) { return __builtin_ctzll(n); }",
+        &[&uncontracted("__builtin_ctzll")],
+    );
+    unknown_with(
+        "int w(unsigned n) { int r; r = __builtin_ctz(n); return r; }",
+        &[&uncontracted("__builtin_ctz")],
+    );
+    // lz4.c's `LZ4_NbCommonBytes`: `assert(val != 0)` is `((void)0)` under
+    // NDEBUG, so nothing proves the operand nonzero.
+    unknown_with(
+        "unsigned w(unsigned long long val) { ((void)0); return (unsigned)__builtin_ctzll((unsigned long long)val) >> 3; }",
+        &[RETURN],
+    );
+}
+
+#[test]
+fn a_guard_that_does_not_prove_the_operand_nonzero_keeps_the_refusal() {
+    // The wrong arm, another object, a test that says nothing of zero.
+    unknown_with(
+        "int w(unsigned n) { return n == 0 ? __builtin_clz(n) : -1; }",
+        &[RETURN],
+    );
+    unknown_with(
+        "int w(unsigned n, unsigned m) { return n == 0 ? -1 : __builtin_clz(m); }",
+        &[RETURN],
+    );
+    unknown_with(
+        "int w(unsigned n) { return n >= 0 ? __builtin_clz(n) : 0; }",
+        &[RETURN],
+    );
+    unknown_with(
+        "int w(unsigned n) { return n == 1 ? __builtin_clz(n) : 0; }",
+        &[RETURN],
+    );
+    // A branch that does not always return; a write after the test.
+    unknown_with(
+        "int w(unsigned n) { if (n) {} return __builtin_clz(n); }",
+        &[&uncontracted("__builtin_clz")],
+    );
+    unknown_with(
+        "int w(unsigned n) { if (n == 0) { n = 1; } return __builtin_clz(n); }",
+        &[&uncontracted("__builtin_clz")],
+    );
+    unknown_with(
+        "int w(unsigned n) { if (n) { n = 0; return __builtin_ctz(n); } return 0; }",
+        &[&uncontracted("__builtin_ctz")],
+    );
+    unknown_with(
+        "int w(unsigned n) { int r = 0; while (n) { r += __builtin_ctz(n); n &= n - 1; } return r; }",
+        &[&uncontracted("__builtin_ctz")],
+    );
+}
+
+#[test]
+fn an_unstable_or_narrowed_operand_keeps_the_refusal() {
+    unknown_with(
+        "int w(unsigned long long v) { return v ? __builtin_ctz((unsigned)v) : 0; }",
+        &[RETURN],
+    );
+    unknown_with(
+        "int w(volatile unsigned n) { return n ? __builtin_ctz(n) : 0; }",
+        &[RETURN],
+    );
+    unknown_with(
+        "int w(void) { static unsigned s = 1; return s ? __builtin_ctz(s) : 0; }",
+        &[RETURN],
+    );
+    unknown_with(
+        "unsigned g; int w(void) { return g ? __builtin_ctz(g) : 0; }",
+        &[RETURN],
+    );
+    let (status, keys) =
+        outcome("int w(unsigned n) { unsigned *p = &n; return n ? __builtin_ctz(n) : 0; }");
+    assert_eq!(status, "Unknown");
+    assert!(keys.iter().any(|k| k == RETURN), "{keys:?}");
+}
+
+#[test]
+fn unstructured_flow_or_a_mixed_body_keeps_the_refusal() {
+    unknown_with(
+        "int w(unsigned n) { if (n == 0) return -1; L: return __builtin_clz(n); }",
+        &[&uncontracted("__builtin_clz")],
+    );
+    unknown_with(
+        "int w(unsigned n, int k) { switch (k) { case 0: if (n == 0) return -1; case 1: return __builtin_clz(n); } return 0; }",
+        &[&uncontracted("__builtin_clz")],
+    );
+    // One undischarged site leaves the whole body at base.
+    let mixed =
+        "int w(unsigned n) { int a = n ? __builtin_ctz(n) : 0; return a + __builtin_clz(n); }";
+    let mut expected = vec![uncontracted("__builtin_ctz"), RETURN.to_owned()];
+    expected.sort();
+    assert_eq!(outcome(mixed), ("Unknown", expected), "{mixed}");
 }

@@ -3996,6 +3996,10 @@ fn build_function_cfg_with(
     admit_derived_returns: bool,
     own: Option<&ResourceFunctionContract>,
 ) -> Result<LegacyCfg, LegacyCError> {
+    // K2-BUILTIN-BIT-COUNTS hook (rule 94): begin
+    let bit_count_environment = crate::bit_count_builtins::environment(tokens, function, contracts);
+    let contracts = bit_count_environment.as_ref().unwrap_or(contracts);
+    // K2-BUILTIN-BIT-COUNTS hook (rule 94): end
     // Card VERDICT-CONTRACT-DEPENDENCIES (rule 13f): every lookup this build
     // makes is `function`'s consultation; the identity without a recording.
     let result = crate::contract_dependencies::within(function, || {

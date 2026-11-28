@@ -320,6 +320,13 @@ mod type_query_positions;
 #[cfg(test)]
 #[path = "../tests/unit/type_query_positions.rs"]
 mod type_query_positions_tests;
+// Card K2-BUILTIN-BIT-COUNTS (rule 94): a bit-count builtin is custody-neutral
+// where the path proves its operand nonzero; the hook is
+// `legacy_c::build_function_cfg_with`.
+mod bit_count_builtins;
+#[cfg(test)]
+#[path = "../tests/unit/bit_count_builtins.rs"]
+mod bit_count_builtins_tests;
 // Card CG15-STORAGE-DURATION-AND-VOLATILE (rule 11h): storage duration and
 // `volatile`; the G hooks are in `legacy_storage_duration.rs`.
 mod storage_duration;

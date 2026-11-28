@@ -1,0 +1,55 @@
+// Probe harness for card K2-BUILTIN-BIT-COUNTS (kept as text, not a cargo
+// target). Appended temporarily to crates/qcore-c-gateway/tests/k2_no_typed_access.rs
+// (it reuses that file's DECLARATIONS, program() and key()); built by
+// build.sh, run by probe.sh over one function `w` per line. K2BC_EXTRA_QV
+// loads one more contract file (extra.qv: the pure stand-ins p_clz/p_clzll).
+
+#[test]
+fn zz_probe() {
+    let Ok(path) = std::env::var("K2BC_PROBE_FILE") else {
+        return;
+    };
+    for body in std::fs::read_to_string(path).unwrap().lines() {
+        if body.trim().is_empty() {
+            continue;
+        }
+        let mut files = BTreeMap::from([
+            (
+                "descriptor_generic.qv".to_owned(),
+                include_str!("fixtures/contracts/descriptor_generic.qv").to_owned(),
+            ),
+            (
+                "derived_result_generic.qv".to_owned(),
+                include_str!("fixtures/contracts/derived_result_generic.qv").to_owned(),
+            ),
+        ]);
+        if let Ok(extra) = std::env::var("K2BC_EXTRA_QV") {
+            files.insert("extra.qv".to_owned(), std::fs::read_to_string(extra).unwrap());
+        }
+        let contracts = load_resource_contract_sources(&files).expect("load");
+        let source = format!("{DECLARATIONS} {body}");
+        let result = analyze_unrestricted_c11(
+            &C11TranslationUnit {
+                source: &source,
+                ..Default::default()
+            },
+            "w",
+            &contracts,
+        )
+        .unwrap();
+        let status = match &result {
+            UnrestrictedLegacyResult::Safe(_) => "Safe",
+            UnrestrictedLegacyResult::Unsafe(_) => "Unsafe",
+            UnrestrictedLegacyResult::Unknown { .. } => "Unknown",
+        };
+        let function = program(&result).functions.get("w").expect("w analysed");
+        let mut keys = function
+            .diagnostics
+            .iter()
+            .map(|diagnostic| key(&diagnostic.kind))
+            .collect::<Vec<_>>();
+        keys.sort();
+        keys.dedup();
+        println!("PROBE {status} {keys:?}\n   {body}");
+    }
+}

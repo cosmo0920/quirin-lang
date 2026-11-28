@@ -1,0 +1,15 @@
+module contract;
+
+extern fn p_clz(x: u32) -> i32
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(x);
+    ensures normal resource_return_none();
+};
+
+extern fn p_clzll(x: u64) -> i32
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(x);
+    ensures normal resource_return_none();
+};
