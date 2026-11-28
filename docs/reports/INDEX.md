@@ -952,7 +952,7 @@ Regenerate with `python3 scripts/build_docs_index.py`; validate with `--check`.
 
 | [out-slot-conditional-delivery](archive/language-and-tooling/out-slot-conditional-delivery/README.md) | OUT-SLOT-CONDITIONAL-DELIVERY: the keep-or-deliver summary of an in-out slot |
 
-| [out-slot-member-then-fresh](out-slot-member-then-fresh/README.md) | OUT-SLOT-MEMBER-THEN-FRESH: option (a), the op's member custody |
+| [out-slot-member-then-fresh](out-slot-member-then-fresh/README.md) | OUT-SLOT-MEMBER-THEN-FRESH: an owned member, its move-out, and a slot delivered or left unwritten |
 
 | [outer-contract](archive/contracts-and-premises/outer-contract/README.md) | OUTER-CONTRACT: outer contracts and the runtime projection (stage 1) |
 

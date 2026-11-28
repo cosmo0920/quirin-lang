@@ -31,3 +31,18 @@ access rows, 201 alone and 8,909 leaves.
 [changed-rows-base-tip.txt](changed-rows-base-tip.txt) is empty: no row
 changes status or any leaf. [named-rows.txt](named-rows.txt) lists the two
 rows and their forwarding caller, identical at base and tip.
+
+## The implementation (USER DECISION 2026-11-28, (a1)+(b))
+
+| run | binary sha256 | started / finished (UTC) | exit |
+|---|---|---|---:|
+| tip `b1cfce380` | `c1c04fa8549b562d…` | 2026-11-28 03:03:42 / 03:53:37 | 0 |
+
+The tip was compared against the same base run. Its raw report digest is
+`bff8f6b1f623b748d05da3737c00e01a5fb495ef15ee91d6b7bb2457dc501550`.
+[totals-tip-b1cfce380.json](totals-tip-b1cfce380.json) gives 1,209 / 2 /
+3,586 / 7, with 2,091 access rows, 201 alone and 8,909 leaves.
+[moved-rows-base-tip-b1cfce380.jsonl](moved-rows-base-tip-b1cfce380.jsonl) is
+`{"moves": {}}`. [changed-rows-base-tip-b1cfce380.txt](changed-rows-base-tip-b1cfce380.txt)
+is empty. [named-rows-tip-b1cfce380.txt](named-rows-tip-b1cfce380.txt) lists
+the two rows and their forwarding caller, with leaves identical to base.
