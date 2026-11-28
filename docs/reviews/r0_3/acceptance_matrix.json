@@ -195,7 +195,7 @@
   "ct_stage_names": 20,
   "ct_cells": 1000,
   "unverified_spec_items": 10,
-  "named_followups": 1144
+  "named_followups": 1145
  },
  "derivation": {
   "rule": "no count in a section this file marks `derived` is hand-copied from a status ledger; each is read from the manifest or validated run record named beside it. Sections marked `hand_maintained` are recorded analysis carried verbatim from the previous matrix, and `integrator_supplied` numbers name whether they were measured for this run or carried - see section_ownership.",
@@ -6921,11 +6921,11 @@
   "note": "providers/ is a separate Cargo workspace, excluded from the core workspace; P01 verified empirically that the core workspace builds and passes its full suite with providers/ moved out of the tree."
  },
  "validation": {
-  "note": "Landing integrate/r87 (base main 287dce8ed; USER DECISION 2026-11-28 option (b), the Unknown reason, and \"land SETTLED-LEAK-MARK-LEAFLESS as r87 and FB-LEDGER as r88\"). Contents: SETTLED-LEAK-MARK-LEAFLESS c79e6fbfe (gateway rule 84 amended in place, with amendment lines in rules 74c and 6, no new id: beside no Unknown or Pending leaf at the settle point, a marked current-generation identity the settled exit would claim but for the mark (live, not exempt, no reference family) is decided from settled states by the new legacy_mark_leafless.rs, published on rule 84's witness and otherwise withdrawn with the new Unknown reason mark-without-refusal at the exit; never Safe, the reason never Unsafe, schedule-independent; the probe at 287dce8ed pinned three rule 43 caller shapes over an imported drain whose verdict read the schedule (Unsafe or Unknown by arm order), each now one verdict in both orders; QCore.SettledLeakLeafless new, with outcome_is_order_independent, a_leafless_decision_is_never_safe and agrees_with_rule_84_beside_a_blocking_leaf). Merge clean. Amendments applied with --profiles-base origin/main: retires SETTLED-LEAK-MARK-LEAFLESS; registers FORGET-PUBLISHED-STALE-MARK. llp64_fixture_scan over the card's test changes: 0 counted. Full landing gate on 1a76d1cd2 (raw record private/integrate-r87/gate/gate.json, kept out of the tree by the report-hygiene rule) via scripts/gate_scope.py --base origin/main --full --landing through private/toolchain/env.sh: Rust 725 units / 770 summaries, 10415 passed, 0 failed, 24 ignored; fmt, Clippy and both reevaluation examples exit 0; Lean exit 0 and scripts/check_lean_audits.py over all modules exit 0, 537 audits (private/integrate-r87/lean.log). The gate scope did not select the provider gate; provider_tests 182 (1 ignored) is carried from the integrate/r85 landing gate. Python (814 tests) exit 1 only on the stale matrix Lean-audit count (536 against 537 from the new QCore.SettledLeakLeafless audit), cleared by regenerating from this record; the rerun after the records commit exits 0. Measurement is the card's own (gateway suite census 174 marked exit lines at base and tip, the 9 leafless non-fixture lines a published ESCAPED object and non-claimable; opt-in current --monkey-linked and the fluent-bit-system route over Fluent Bit 046accf6, base 287dce8ed vs tip 2e949e11a, each from its own git archive tree and binary: current 1209/2/3586/7 unchanged, no row moved on either route and no census line, as predicted; no Unknown to Safe and no Safe to Unknown move). Pinned-route parity (quirin-audit measure --declared) was not run: this host holds no build/cycle19 inputs or baselines. No profile baseline is changed and land.py publish is owed.",
-  "workspace_tests": 10415,
+  "note": "Landing integrate/r88 (base main 94e9c7b74; USER DECISION 2026-11-28 \"limit + one write only\" and \"land SETTLED-LEAK-MARK-LEAFLESS as r87 and FB-LEDGER as r88\"). Contents: FB-LEDGER-MEM-BUF-LIMIT-BOUND ff94be398 (no gateway rule: a checked census of Fluent Bit 046accf6 (CENSUS.md, census.py over 24 hashed inputs, 93 rows) locates the append's one write (flb_input_chunk.c:3455) after the paused gate and every mem_buf_status and mem_buf_limit write; QCore.MemBufLimitBound new proves mem_chunks_size <= L + W and resident bytes <= L + W for storage.type memory and memrb under named premises (P-MBL-WRITE-BOUND for W, engine-thread serialisation, no re-entrant append, one stream per instance, no size_t wrap, non-zero limit, destroy removing content, no shutdown-flush append, quiet rate gate for memory, non-expanding filters for memrb), with L - 1 + W reached; counterexamples outside the premises (protect's rate-gate return, the shutdown-flush arm, filesystem storage, expanding memrb filters, limit 0) recorded, none presented as an upstream defect; ledger_transition unit fixtures read route T's paths row for row against the Lean vectors with seven mutation controls; max_chunks_up and storage.backlog.mem_limit stay uncertified by the user's choice). Merge clean. Amendments applied with --profiles-base origin/main: amends FB-LEDGER-ADVISORY-LIMITS; registers FB-MBL-PINNED-BODIES; one STATUS edit under Coverage by area. llp64_fixture_scan over the card's test changes: 0 counted. Full landing gate on 0261efa75 (raw record private/integrate-r88/gate/gate.json, kept out of the tree by the report-hygiene rule) via scripts/gate_scope.py --base origin/main --full --landing through private/toolchain/env.sh: Rust 725 units / 770 summaries, 10421 passed, 0 failed, 24 ignored; fmt, Clippy and both reevaluation examples exit 0; Lean exit 0 and scripts/check_lean_audits.py over all modules exit 0, 538 audits (private/integrate-r88/lean.log). The gate scope did not select the provider gate; provider_tests 182 (1 ignored) is carried from the integrate/r85 landing gate. Python (814 tests) exit 1 only on the stale matrix Lean-audit count (537 against 538 from the new QCore.MemBufLimitBound audit), follow-up count (1144 against 1145) and report index (280 against 281 directories), cleared by regenerating from this record; the rerun after the records commit exits 0. Measurement is the card's own (opt-in current --monkey-linked over Fluent Bit 046accf6, base 287dce8ed vs tip 748c0a6a7, each from its own git archive tree: no moved row, 4,804 function rows and 181 unit statuses identical). The card measured on a base without r87; the combination is covered by this gate, not by a joint measurement. Pinned-route parity (quirin-audit measure --declared) was not run: this host holds no build/cycle19 inputs or baselines. No profile baseline is changed and land.py publish is owed.",
+  "workspace_tests": 10421,
   "provider_tests": 182,
   "python_evidence_validator_tests": 814,
-  "lean_audits": 537,
+  "lean_audits": 538,
   "lean_audit_files": [
    "AuditAbiEnumConstPointer.lean",
    "AuditAddressArrowPlace.lean",
@@ -7171,6 +7171,7 @@
    "AuditLoopWindows.lean",
    "AuditMayAlias.lean",
    "AuditMeasureConnect.lean",
+   "AuditMemBufLimitBound.lean",
    "AuditMemberAddress.lean",
    "AuditMemberAddressReader.lean",
    "AuditMemberCustodyAttribution.lean",
@@ -7471,7 +7472,7 @@
   "cargo_clippy": "clean",
   "standing_gate": "full landing gate: every step exits 0 except the Python suite's stale-matrix check, cleared by regenerating the matrix from this record; provider gate not selected (no providers/ change), provider count carried from the integrate/r74 landing batch A gate",
   "full_language_conformance": false,
-  "measurement_provenance": "integrator_supplied (docs/reports/settled-leak-mark-leafless/integration/gate.json)"
+  "measurement_provenance": "integrator_supplied (docs/reports/fb-ledger-mem-buf-limit-bound/integration/gate.json)"
  },
  "named_followups": [
   {
